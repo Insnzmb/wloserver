@@ -3,8 +3,8 @@ import logging
 import os
 import sys
 
-# Ensure current folder is on PATH
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Ensure server folder is on PATH
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from server.gameserver import GameServer
 from server.web_admin import WebAdminServer
@@ -16,8 +16,8 @@ async def main():
     logger.info("Initializing Wonderland Online Private Server...")
     
     # Initialize Game Server on port 6414 with absolute paths
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    db_path = os.path.join(base_dir, "server", "wlo_server.db")
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    db_path = os.path.join(base_dir, "wlo_server.db")
     static_db_path = os.path.join(base_dir, "server", "ServerDataBase.db")
     server = GameServer(db_path=db_path, static_db_path=static_db_path)
     
