@@ -1,3 +1,3 @@
-@echo off
+#!/bin/bash
+cd ..
 python -m server.gameserver
-pause
