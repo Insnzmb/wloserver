@@ -392,4 +392,5 @@ class WebRegistrationServer:
         await runner.setup()
         site = web.TCPSite(runner, host, port)
         await site.start()
-        logger.info(f"Web Registration Panel successfully started on http://{host}:{port}")
+        display_host = "127.0.0.1" if host == "0.0.0.0" else host
+        logger.info(f"Web Registration Panel successfully started on http://{display_host}:{port}")
