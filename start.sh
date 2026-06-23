@@ -1,3 +1,3 @@
 #!/bin/bash
 cd ..
-python -m server.gameserver
+python -m server.main

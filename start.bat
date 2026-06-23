@@ -1,4 +1,4 @@
 @echo off
 cd ..
-python -m server.gameserver
+python -m server.main
 pause
