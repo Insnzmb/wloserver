@@ -3417,6 +3417,7 @@ class GameServer:
         m_fighter = {
             'role': 1, 'ftype': 7,
             'id': raw_battle_npc_id, 'click_id': click_id,
+            'db_id': battle_npc_id,
             'x': 2, 'y': 2,
             'max_hp': mon_max_hp, 'max_sp': mon_max_sp,
             'hp': mon_max_hp,     'sp': mon_max_sp,
@@ -3754,6 +3755,157 @@ class GameServer:
 
         # ── Oyuncu Eylemi (Saldırı, Beceri veya Savunma) ───────────────────────
         if action in ('attack', 'defend'):
+            if skill_id == 10008:
+                # ── YAKALAMA (CAPTURE) MEKANİĞİ ───────────────────────────────
+                logger.info(f"[{session.char_name}] Attempting capture on {mf['name']} (level={mf['level']}, HP={mf['hp']}/{mf['max_hp']})")
+                
+                # 1. Limit Check: max 4 pets
+                if len(session.pets) >= 4:
+                    # Send list full chat notification
+                    sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Evcil hayvan listeniz dolu! (Maksimum 4)")
+                    await session.send_packet(sys_msg)
+                    
+                    # Play capture fail animation (skill 10009)
+                    await session.send_packet(
+                        PacketWriter().write_8(53).write_8(5).write_8(pf['x']).write_8(pf['y'])
+                    )
+                    
+                    p_anim = PacketWriter()
+                    p_anim.write_8(50).write_8(1)
+                    p_anim.write_8(0x11).write_8(0x00)
+                    p_anim.write_8(pf['x']).write_8(pf['y'])
+                    p_anim.write_16(10009)                       # Capture Fail Skill ID
+                    p_anim.write_8(0)
+                    p_anim.write_8(1)
+                    p_anim.write_8(mf['x']).write_8(mf['y'])
+                    p_anim.write_8(1).write_8(0).write_8(1)
+                    p_anim.write_8(0x19)
+                    p_anim.write_32(0)
+                    p_anim.write_8(1)
+                    await session.send_packet(p_anim)
+                    
+                    await asyncio.sleep(1.2)
+                    # Let the battle continue to monster's turn
+                else:
+                    # 2. Probability check
+                    current_hp = mf['hp']
+                    max_hp = mf['max_hp']
+                    player_level = pf['level']
+                    monster_level = mf['level']
+                    
+                    chance = 0.1 + (0.4 * (1.0 - current_hp / max_hp)) + (0.02 * (player_level - monster_level))
+                    chance = max(0.05, min(0.95, chance))
+                    
+                    success = random.random() < chance
+                    logger.info(f"[{session.char_name}] Capture chance: {chance:.2f}, success: {success}")
+                    
+                    if success:
+                        # Success animation (skill 10008)
+                        await session.send_packet(
+                            PacketWriter().write_8(53).write_8(5).write_8(pf['x']).write_8(pf['y'])
+                        )
+                        
+                        p_anim = PacketWriter()
+                        p_anim.write_8(50).write_8(1)
+                        p_anim.write_8(0x11).write_8(0x00)
+                        p_anim.write_8(pf['x']).write_8(pf['y'])
+                        p_anim.write_16(10008)                       # Capture Success Skill ID
+                        p_anim.write_8(0)
+                        p_anim.write_8(1)
+                        p_anim.write_8(mf['x']).write_8(mf['y'])
+                        p_anim.write_8(1).write_8(0).write_8(1)
+                        p_anim.write_8(0x19)
+                        p_anim.write_32(0)
+                        p_anim.write_8(1)
+                        await session.send_packet(p_anim)
+                        
+                        await asyncio.sleep(1.2)
+                        
+                        # Send HP update to monster = 0 (to make it disappear visually)
+                        await session.send_packet(_hp_pkt(mf['x'], mf['y'], 0))
+                        
+                        # Add pet dict to session.pets with full stats
+                        pet_id = mf.get('db_id', mf['id'])
+                        if not pet_id:
+                            # Fallback mapping
+                            mapped_npc_id = ((mf['id'] & 0xFFFF) ^ 0x5209) - 9
+                            pet_id = mapped_npc_id
+                            
+                        lvl = max(1, min(199, mf['level']))
+                        base_con = 5 + lvl // 3
+                        base_wis = 5 + lvl // 3
+                        base_str = 5 + lvl // 3
+                        base_agi = 5 + lvl // 3
+                        base_int = 5 + lvl // 3
+                        pet_max_hp = int(round(((lvl ** 0.35) * base_con * 2) + (lvl * 1) + (base_con * 2) + 180))
+                        pet_max_sp = int(round(((lvl ** 0.3) * base_wis * 3.2) + (lvl * 1) + (base_wis * 2) + 94))
+                        
+                        pet_data = {
+                            "pet_id": pet_id,
+                            "level": lvl,
+                            "exp": 0,
+                            "amity": 100,
+                            "reborn": 0,
+                            "potential": 0,
+                            "str": base_str,
+                            "con": base_con,
+                            "int": base_int,
+                            "wis": base_wis,
+                            "agi": base_agi,
+                            "hp": pet_max_hp,
+                            "sp": pet_max_sp
+                        }
+                        session.pets.append(pet_data)
+                        self.save_player_to_db(session)
+                        
+                        # Companion dynamics addition packet 15, 1
+                        pkt = PacketWriter()
+                        pkt.write_8(15).write_8(1)
+                        pkt.write_32(session.char_id)
+                        pkt.write_32(pet_id)
+                        pkt.write_8(lvl)
+                        pkt.write_32(0) # EXP
+                        pkt.write_8(1).write_32(0) # Skill 1 Grade, EXP
+                        await session.send_packet(pkt)
+                        
+                        # Update pet list on client
+                        await self.send_pet_list(session)
+                        
+                        # Chat notification
+                        sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string(f"Tebrikler! {mf['name']} yakalandı!")
+                        await session.send_packet(sys_msg)
+                        
+                        # End battle in victory
+                        await self._end_battle(session, battle, won=True)
+                        return
+                    else:
+                        # Fail animation (skill 10009)
+                        await session.send_packet(
+                            PacketWriter().write_8(53).write_8(5).write_8(pf['x']).write_8(pf['y'])
+                        )
+                        
+                        p_anim = PacketWriter()
+                        p_anim.write_8(50).write_8(1)
+                        p_anim.write_8(0x11).write_8(0x00)
+                        p_anim.write_8(pf['x']).write_8(pf['y'])
+                        p_anim.write_16(10009)                       # Capture Fail Skill ID
+                        p_anim.write_8(0)
+                        p_anim.write_8(1)
+                        p_anim.write_8(mf['x']).write_8(mf['y'])
+                        p_anim.write_8(1).write_8(0).write_8(1)
+                        p_anim.write_8(0x19)
+                        p_anim.write_32(0)
+                        p_anim.write_8(1)
+                        await session.send_packet(p_anim)
+                        
+                        await asyncio.sleep(1.2)
+                        
+                        # Chat notification
+                        sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string(f"{mf['name']} yakalanamadı.")
+                        await session.send_packet(sys_msg)
+                        # Let the battle continue to monster's turn
+
+            # Normal skill processing
             skill_info = SKILL_INFO.get(
                 skill_id, ("Attack", pf['element'], False, 1.0, False, 0)
             )
@@ -3923,6 +4075,31 @@ class GameServer:
 
     async def _do_flee(self, session: 'PlayerSession', battle: dict):
         """Kaçma işlemi: Her zaman başarılı (kullanıcı isteği üzerine)."""
+        pf = battle['player']
+        
+        # 1. AC 53:5 - Action notification
+        await session.send_packet(
+            PacketWriter().write_8(53).write_8(5).write_8(pf['x']).write_8(pf['y'])
+        )
+        
+        # 2. AC 50:1 - Flee animation (skill 60041, source/target = player, no damage)
+        p_anim = PacketWriter()
+        p_anim.write_8(50).write_8(1)
+        p_anim.write_8(0x11).write_8(0x00)          # unk header
+        p_anim.write_8(pf['x']).write_8(pf['y'])    # source
+        p_anim.write_16(60041)                       # Flee skill ID
+        p_anim.write_8(0)                            # flag
+        p_anim.write_8(1)                            # hit count
+        p_anim.write_8(pf['x']).write_8(pf['y'])    # target
+        p_anim.write_8(1).write_8(0).write_8(1)      # flags + is_hit
+        p_anim.write_8(0)                            # stat_id (none)
+        p_anim.write_32(0)                           # value
+        p_anim.write_8(1)                            # final flag
+        await session.send_packet(p_anim)
+        
+        # 3. Wait for client to show escape animation
+        await asyncio.sleep(1.2)
+        
         await self._end_battle(session, battle, won=False, fled=True)
 
     async def _end_battle(self, session: 'PlayerSession', battle: dict,
