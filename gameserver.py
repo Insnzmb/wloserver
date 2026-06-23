@@ -675,6 +675,50 @@ class GameServer:
             self.map_players[map_id] = set()
         self.map_players[map_id].add(session)
 
+    def update_character_skills(self, session: PlayerSession):
+        """Automatically unlocks all matching element skills for the player's element."""
+        if not session.char_id:
+            return
+        
+        # Load skills from skills.json if not already loaded
+        if not hasattr(self, 'all_skills_db'):
+            self.all_skills_db = []
+            try:
+                import json
+                import os
+                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(self.static_db_path)))
+                skills_path = os.path.join(base_dir, "server", "skills.json")
+                if os.path.exists(skills_path):
+                    with open(skills_path, "r", encoding="utf-8") as f:
+                        self.all_skills_db = json.load(f)
+            except Exception as e:
+                logger.error(f"[SKILL] Failed to load skills.json: {e}")
+                
+        if not self.all_skills_db:
+            return
+            
+        existing_ids = {sk['skill_id'] for sk in session.skills}
+        new_skills_added = False
+        
+        # Determine player's starting special skill ID
+        stunt_id = self.get_starter_skill_id(session.body, session.head)
+        if stunt_id not in existing_ids:
+            session.skills.append({"skill_id": stunt_id, "grade": 1, "exp": 0})
+            existing_ids.add(stunt_id)
+            new_skills_added = True
+            
+        for sk in self.all_skills_db:
+            sk_id = sk['id']
+            # Only add if it belongs to player's element and is not already learned
+            # Earth=1, Water=2, Fire=3, Wind=4
+            if sk['element'] == session.element and sk_id not in existing_ids:
+                session.skills.append({"skill_id": sk_id, "grade": 1, "exp": 0})
+                existing_ids.add(sk_id)
+                new_skills_added = True
+                
+        if new_skills_added:
+            self.save_player_to_db(session)
+
     def save_player_to_db(self, session: PlayerSession):
         """Saves session state to database."""
         if not session.char_id:
@@ -1299,32 +1343,11 @@ class GameServer:
         # Update HP/SP dynamically using base stats and calculated level
         session.update_max_hp_sp()
 
-        # Dynamically patch starting skill and element skills if missing
-        if not session.skills:
-            session.skills = []
-            
-        stunt_id = self.get_starter_skill_id(session.body, session.head)
-        element_skills = []
-        if session.element == 1: # Earth
-            element_skills = [15085, 30113]
-        elif session.element == 2: # Water
-            element_skills = [15091, 30079]
-        elif session.element == 3: # Fire
-            element_skills = [11016, 30112]
-        elif session.element == 4: # Wind
-            element_skills = [11007, 30111]
-            
-        target_skills = [stunt_id] + element_skills
-        existing_ids = {s.get('skill_id') for s in session.skills}
-        
-        has_skill_changes = False
-        for sk_id in target_skills:
-            if sk_id not in existing_ids:
-                session.skills.append({"skill_id": sk_id, "grade": 1, "exp": 0})
-                has_skill_changes = True
-                
-        # If migrated potential or added missing starter skills, save character state
-        if (char.get('points', 0) == 0 and char.get('potential', 0) > 0) or has_skill_changes:
+        # Automatically update/patch character skills based on element from skills.json
+        self.update_character_skills(session)
+
+        # If migrated potential, save character state
+        if (char.get('points', 0) == 0 and char.get('potential', 0) > 0):
             self.save_player_to_db(session)
 
         # Fix for existing naked characters: if level == 1 and all equipments are 0, set beginner outfit

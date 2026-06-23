@@ -459,6 +459,25 @@ HTML_CONTENT = """<!DOCTYPE html>
                 </table>
             </div>
         </div>
+
+        <!-- Fourth Row: Registered Accounts -->
+        <div class="card" style="margin-top: 2rem;">
+            <div class="card-title">Registered Accounts / Kayıtlı Hesaplar</div>
+            <div class="players-table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Username / Kullanıcı Adı</th>
+                            <th>Actions / İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-list">
+                        <!-- Filled dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- Teleport Modal -->
@@ -1911,13 +1930,60 @@ HTML_CONTENT = """<!DOCTYPE html>
             return `${h}h ${m}m ${s}s`;
         }
 
+        async function fetchUsers() {
+            try {
+                const res = await fetch('/api/users');
+                const users = await res.json();
+                const tbody = document.getElementById('users-list');
+                tbody.innerHTML = '';
+                
+                users.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.id}</td>
+                        <td style="font-weight: 600; color: var(--accent-cyan);">${user.username}</td>
+                        <td>
+                            <button class="btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="deleteUser(${user.id}, '${user.username}')">Delete / Sil</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch(e) {
+                console.error("Failed to fetch users", e);
+            }
+        }
+
+        async function deleteUser(userId, username) {
+            if(!confirm(`Are you sure you want to delete the user "${username}" (ID: ${userId})? This will also delete all their characters!`)) {
+                return;
+            }
+            try {
+                const res = await fetch('/api/users/delete', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: userId})
+                });
+                const data = await res.json();
+                if(data.status === 'success') {
+                    fetchUsers();
+                    fetchPlayers();
+                } else {
+                    alert("Error: " + data.message);
+                }
+            } catch(e) {
+                alert("Failed to delete user.");
+            }
+        }
+
         // Auto-refresh loops
         fetchStatus();
         fetchPlayers();
         fetchLogs();
+        fetchUsers();
         setInterval(fetchStatus, 3000);
         setInterval(fetchPlayers, 2000);
         setInterval(fetchLogs, 1000);
+        setInterval(fetchUsers, 5000);
     </script>
 </body>
 </html>
@@ -1943,6 +2009,8 @@ class WebAdminServer:
         self.app.router.add_post('/api/players/item', self.handle_give_item)
         self.app.router.add_post('/api/players/pet', self.handle_give_pet)
         self.app.router.add_get('/api/logs', self.handle_logs)
+        self.app.router.add_get('/api/users', self.handle_get_users)
+        self.app.router.add_post('/api/users/delete', self.handle_delete_user)
 
     async def handle_index(self, request):
         return web.Response(text=HTML_CONTENT, content_type='text/html')
@@ -2191,6 +2259,30 @@ class WebAdminServer:
 
     async def handle_logs(self, request):
         return web.json_response(list(recent_logs))
+
+    async def handle_get_users(self, request):
+        try:
+            users = self.game_server.db.get_all_users()
+            return web.json_response(users)
+        except Exception as e:
+            return web.json_response({"status": "error", "message": str(e)}, status=500)
+
+    async def handle_delete_user(self, request):
+        try:
+            data = await request.json()
+            user_id = int(data.get('user_id'))
+            
+            # Kick online player sessions belonging to this user
+            for session in list(self.game_server.active_sessions):
+                if session.user_id == user_id:
+                    session.writer.close()
+                    logger.info(f"[WebAdmin] Kicked player {session.char_name} because user account {user_id} was deleted.")
+            
+            self.game_server.db.delete_user(user_id)
+            logger.info(f"[WebAdmin] Deleted user account ID {user_id}")
+            return web.json_response({"status": "success"})
+        except Exception as e:
+            return web.json_response({"status": "error", "message": str(e)}, status=500)
 
     async def start(self, host="0.0.0.0", port=8080):
         runner = web.AppRunner(self.app, access_log=None)

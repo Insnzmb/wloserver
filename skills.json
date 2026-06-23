@@ -1,0 +1,4934 @@
+[
+    {
+        "id": 28316,
+        "name": "",
+        "element": 249,
+        "sp": 28316
+    },
+    {
+        "id": 60021,
+        "name": "Defense",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 60041,
+        "name": "Flee",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 60045,
+        "name": "Monster Flee",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 60046,
+        "name": "Fail to Flee",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10001,
+        "name": "Hand Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10002,
+        "name": "Blade Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10003,
+        "name": "Pestle Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10004,
+        "name": "Spell Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10005,
+        "name": "Sword Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10010,
+        "name": "Monster Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10011,
+        "name": "Monster Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10012,
+        "name": "M. Special Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10006,
+        "name": "Bow Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10007,
+        "name": "Gun Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10026,
+        "name": "Bazooka Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10015,
+        "name": "Mess Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10016,
+        "name": "Monster Mess Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10018,
+        "name": "NPC Gun Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10020,
+        "name": "NPC Bow Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10027,
+        "name": "NPC Bazooka Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10019,
+        "name": "Bow Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10023,
+        "name": "Monster Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10025,
+        "name": "Monster Item Usage",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10008,
+        "name": "Capture",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10009,
+        "name": "Fail to Capture",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10024,
+        "name": "Item Usage",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15085,
+        "name": "Rock Attack",
+        "element": 1,
+        "sp": 7
+    },
+    {
+        "id": 11085,
+        "name": "Rock Hit",
+        "element": 1,
+        "sp": 8
+    },
+    {
+        "id": 15074,
+        "name": "Rock Beating",
+        "element": 1,
+        "sp": 11
+    },
+    {
+        "id": 11017,
+        "name": "Earth Attack",
+        "element": 1,
+        "sp": 9
+    },
+    {
+        "id": 11086,
+        "name": "Earth Hit",
+        "element": 1,
+        "sp": 11
+    },
+    {
+        "id": 11065,
+        "name": "Earth Beating",
+        "element": 1,
+        "sp": 17
+    },
+    {
+        "id": 11087,
+        "name": "Rupture Attack",
+        "element": 1,
+        "sp": 13
+    },
+    {
+        "id": 11071,
+        "name": "Rupture Hit",
+        "element": 1,
+        "sp": 16
+    },
+    {
+        "id": 11088,
+        "name": "Rupture Beating",
+        "element": 1,
+        "sp": 23
+    },
+    {
+        "id": 15083,
+        "name": "Boulder Attack",
+        "element": 1,
+        "sp": 19
+    },
+    {
+        "id": 12025,
+        "name": "Boulder Hit",
+        "element": 1,
+        "sp": 23
+    },
+    {
+        "id": 15084,
+        "name": "Boulder Beating",
+        "element": 1,
+        "sp": 30
+    },
+    {
+        "id": 15049,
+        "name": "Jump Attack",
+        "element": 1,
+        "sp": 31
+    },
+    {
+        "id": 15020,
+        "name": "Jump Hit",
+        "element": 1,
+        "sp": 38
+    },
+    {
+        "id": 15043,
+        "name": "Jump Beating",
+        "element": 1,
+        "sp": 52
+    },
+    {
+        "id": 15146,
+        "name": "Scurry Attack",
+        "element": 1,
+        "sp": 43
+    },
+    {
+        "id": 15144,
+        "name": "Scurry Hit",
+        "element": 1,
+        "sp": 51
+    },
+    {
+        "id": 15147,
+        "name": "Scurry Beating",
+        "element": 1,
+        "sp": 70
+    },
+    {
+        "id": 15184,
+        "name": "Combo Earth Attack",
+        "element": 1,
+        "sp": 58
+    },
+    {
+        "id": 15183,
+        "name": "Combo Earth Hit",
+        "element": 1,
+        "sp": 68
+    },
+    {
+        "id": 15185,
+        "name": "Combo Earth Beating",
+        "element": 1,
+        "sp": 90
+    },
+    {
+        "id": 12006,
+        "name": "Rock Elf Attack",
+        "element": 1,
+        "sp": 9
+    },
+    {
+        "id": 21301,
+        "name": "Rock Elf Hit",
+        "element": 1,
+        "sp": 10
+    },
+    {
+        "id": 15094,
+        "name": "Rock Elf Beating",
+        "element": 1,
+        "sp": 14
+    },
+    {
+        "id": 15056,
+        "name": "Rockfall Attack",
+        "element": 1,
+        "sp": 11
+    },
+    {
+        "id": 11090,
+        "name": "Rockfall Hit",
+        "element": 1,
+        "sp": 13
+    },
+    {
+        "id": 11091,
+        "name": "Rockfall Beating",
+        "element": 1,
+        "sp": 22
+    },
+    {
+        "id": 11019,
+        "name": "Rock Blast Attack",
+        "element": 1,
+        "sp": 16
+    },
+    {
+        "id": 11093,
+        "name": "Rock Blast Hit",
+        "element": 1,
+        "sp": 21
+    },
+    {
+        "id": 11092,
+        "name": "Rock Blast Beating",
+        "element": 1,
+        "sp": 30
+    },
+    {
+        "id": 11031,
+        "name": "Rock Ball Attack",
+        "element": 1,
+        "sp": 23
+    },
+    {
+        "id": 11094,
+        "name": "Rock Ball Hit",
+        "element": 1,
+        "sp": 28
+    },
+    {
+        "id": 11105,
+        "name": "Rock Ball Beating",
+        "element": 1,
+        "sp": 41
+    },
+    {
+        "id": 15086,
+        "name": "Stress Attack",
+        "element": 1,
+        "sp": 34
+    },
+    {
+        "id": 15087,
+        "name": "Stress Hit",
+        "element": 1,
+        "sp": 41
+    },
+    {
+        "id": 15088,
+        "name": "Stress Beating",
+        "element": 1,
+        "sp": 57
+    },
+    {
+        "id": 11107,
+        "name": "Megalith Attack",
+        "element": 1,
+        "sp": 52
+    },
+    {
+        "id": 15152,
+        "name": "Megalith Hit",
+        "element": 1,
+        "sp": 57
+    },
+    {
+        "id": 15153,
+        "name": "Megalith Beating",
+        "element": 1,
+        "sp": 77
+    },
+    {
+        "id": 12018,
+        "name": "Acrolith Attack",
+        "element": 1,
+        "sp": 69
+    },
+    {
+        "id": 11061,
+        "name": "Aerolite Hit",
+        "element": 1,
+        "sp": 85
+    },
+    {
+        "id": 15154,
+        "name": "Aerolite Beating",
+        "element": 1,
+        "sp": 110
+    },
+    {
+        "id": 12012,
+        "name": "Moon Strike",
+        "element": 1,
+        "sp": 20
+    },
+    {
+        "id": 11057,
+        "name": "Shield Defence",
+        "element": 1,
+        "sp": 15
+    },
+    {
+        "id": 12043,
+        "name": "Wake Spell",
+        "element": 1,
+        "sp": 21
+    },
+    {
+        "id": 12048,
+        "name": "Ice-out",
+        "element": 1,
+        "sp": 29
+    },
+    {
+        "id": 11055,
+        "name": "Stone Wall",
+        "element": 1,
+        "sp": 110
+    },
+    {
+        "id": 15070,
+        "name": "Tree Bind",
+        "element": 1,
+        "sp": 60
+    },
+    {
+        "id": 15035,
+        "name": "Terrafication",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 15066,
+        "name": "Summon Mosquito",
+        "element": 1,
+        "sp": 91
+    },
+    {
+        "id": 15187,
+        "name": "Blockage",
+        "element": 1,
+        "sp": 60
+    },
+    {
+        "id": 11069,
+        "name": "Earth Arrow",
+        "element": 0,
+        "sp": 14
+    },
+    {
+        "id": 11070,
+        "name": "Earth Elf Arrow",
+        "element": 0,
+        "sp": 19
+    },
+    {
+        "id": 30154,
+        "name": "Deadly Coins",
+        "element": 1,
+        "sp": 75
+    },
+    {
+        "id": 15091,
+        "name": "Ice Attack",
+        "element": 2,
+        "sp": 9
+    },
+    {
+        "id": 15092,
+        "name": "Ice Hit",
+        "element": 2,
+        "sp": 10
+    },
+    {
+        "id": 15093,
+        "name": "Ice Beating",
+        "element": 2,
+        "sp": 15
+    },
+    {
+        "id": 11001,
+        "name": "Icicle Attack",
+        "element": 2,
+        "sp": 11
+    },
+    {
+        "id": 15062,
+        "name": "Icicle Hit",
+        "element": 2,
+        "sp": 13
+    },
+    {
+        "id": 15063,
+        "name": "Icicle Beating",
+        "element": 2,
+        "sp": 18
+    },
+    {
+        "id": 11044,
+        "name": "Water Attack",
+        "element": 2,
+        "sp": 17
+    },
+    {
+        "id": 11004,
+        "name": "Water Hit",
+        "element": 2,
+        "sp": 20
+    },
+    {
+        "id": 11096,
+        "name": "Water Beating",
+        "element": 2,
+        "sp": 27
+    },
+    {
+        "id": 15019,
+        "name": "Turning Ice Attack",
+        "element": 2,
+        "sp": 23
+    },
+    {
+        "id": 15059,
+        "name": "Turning Ice Hit",
+        "element": 2,
+        "sp": 27
+    },
+    {
+        "id": 15073,
+        "name": "Turning Ice Beating",
+        "element": 2,
+        "sp": 38
+    },
+    {
+        "id": 12007,
+        "name": "Frost Attack",
+        "element": 2,
+        "sp": 32
+    },
+    {
+        "id": 11010,
+        "name": "Frost Hit",
+        "element": 2,
+        "sp": 38
+    },
+    {
+        "id": 21201,
+        "name": "Frost Beating",
+        "element": 2,
+        "sp": 52
+    },
+    {
+        "id": 15156,
+        "name": "Eddy Attack",
+        "element": 2,
+        "sp": 42
+    },
+    {
+        "id": 15155,
+        "name": "Eddy Hit",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 15157,
+        "name": "Eddy Beating",
+        "element": 2,
+        "sp": 70
+    },
+    {
+        "id": 15175,
+        "name": "Swirling Attack",
+        "element": 2,
+        "sp": 55
+    },
+    {
+        "id": 15213,
+        "name": "Swirling Hit",
+        "element": 2,
+        "sp": 65
+    },
+    {
+        "id": 15214,
+        "name": "Swirling Beating",
+        "element": 2,
+        "sp": 87
+    },
+    {
+        "id": 15097,
+        "name": "Water Pole Attack",
+        "element": 2,
+        "sp": 11
+    },
+    {
+        "id": 15096,
+        "name": "Water Pole Hit",
+        "element": 2,
+        "sp": 12
+    },
+    {
+        "id": 15095,
+        "name": "Water Pole Beating",
+        "element": 2,
+        "sp": 15
+    },
+    {
+        "id": 11040,
+        "name": "Chill Attack",
+        "element": 2,
+        "sp": 11
+    },
+    {
+        "id": 11022,
+        "name": "Chill Hit",
+        "element": 2,
+        "sp": 13
+    },
+    {
+        "id": 11100,
+        "name": "Chill Beating",
+        "element": 2,
+        "sp": 21
+    },
+    {
+        "id": 11110,
+        "name": "Ice Ball Attack",
+        "element": 2,
+        "sp": 16
+    },
+    {
+        "id": 15098,
+        "name": "Ice Ball Hit",
+        "element": 2,
+        "sp": 20
+    },
+    {
+        "id": 15099,
+        "name": "Ice Ball Beating",
+        "element": 2,
+        "sp": 30
+    },
+    {
+        "id": 11113,
+        "name": "Ice Elf Attack",
+        "element": 2,
+        "sp": 23
+    },
+    {
+        "id": 12002,
+        "name": "Ice Elf Hit",
+        "element": 2,
+        "sp": 28
+    },
+    {
+        "id": 11058,
+        "name": "Ice Elf Beating",
+        "element": 2,
+        "sp": 41
+    },
+    {
+        "id": 11024,
+        "name": "Thunder Attack",
+        "element": 2,
+        "sp": 34
+    },
+    {
+        "id": 15010,
+        "name": "Thunder Hit",
+        "element": 2,
+        "sp": 41
+    },
+    {
+        "id": 15011,
+        "name": "Thunder Beating",
+        "element": 2,
+        "sp": 57
+    },
+    {
+        "id": 15158,
+        "name": "Water Thunder Attack",
+        "element": 2,
+        "sp": 52
+    },
+    {
+        "id": 15159,
+        "name": "Water Thunder Hit",
+        "element": 2,
+        "sp": 61
+    },
+    {
+        "id": 15160,
+        "name": "W.T. Beating",
+        "element": 2,
+        "sp": 82
+    },
+    {
+        "id": 15215,
+        "name": "Freeze Attack",
+        "element": 2,
+        "sp": 66
+    },
+    {
+        "id": 15216,
+        "name": "Freeze Strike",
+        "element": 2,
+        "sp": 77
+    },
+    {
+        "id": 15186,
+        "name": "Freeze Beat-down",
+        "element": 2,
+        "sp": 110
+    },
+    {
+        "id": 15100,
+        "name": "Detoxifcation",
+        "element": 2,
+        "sp": 14
+    },
+    {
+        "id": 11042,
+        "name": "Cure Spell",
+        "element": 2,
+        "sp": 19
+    },
+    {
+        "id": 15075,
+        "name": "Magic Recovery",
+        "element": 2,
+        "sp": 26
+    },
+    {
+        "id": 11080,
+        "name": "Water Shield",
+        "element": 2,
+        "sp": 35
+    },
+    {
+        "id": 11051,
+        "name": "Freezing Spell",
+        "element": 2,
+        "sp": 49
+    },
+    {
+        "id": 11043,
+        "name": "Recovery",
+        "element": 2,
+        "sp": 62
+    },
+    {
+        "id": 12042,
+        "name": "Free From mess",
+        "element": 2,
+        "sp": 82
+    },
+    {
+        "id": 12041,
+        "name": "Sleep",
+        "element": 2,
+        "sp": 109
+    },
+    {
+        "id": 11053,
+        "name": "Revival",
+        "element": 2,
+        "sp": 139
+    },
+    {
+        "id": 15042,
+        "name": "Recover Normal",
+        "element": 2,
+        "sp": 179
+    },
+    {
+        "id": 11041,
+        "name": "Arrow Rain",
+        "element": 2,
+        "sp": 25
+    },
+    {
+        "id": 15026,
+        "name": "Soul Dodge",
+        "element": 2,
+        "sp": 9
+    },
+    {
+        "id": 12016,
+        "name": "Suction Attack",
+        "element": 0,
+        "sp": 13
+    },
+    {
+        "id": 15013,
+        "name": "Echo Arrow",
+        "element": 0,
+        "sp": 17
+    },
+    {
+        "id": 12033,
+        "name": "Drop Attack",
+        "element": 0,
+        "sp": 20
+    },
+    {
+        "id": 15016,
+        "name": "Chill Ball",
+        "element": 0,
+        "sp": 25
+    },
+    {
+        "id": 15188,
+        "name": "Shrink",
+        "element": 2,
+        "sp": 52
+    },
+    {
+        "id": 15001,
+        "name": "Exact Combo Hit",
+        "element": 0,
+        "sp": 12
+    },
+    {
+        "id": 15012,
+        "name": "Fire Arrow",
+        "element": 0,
+        "sp": 18
+    },
+    {
+        "id": 15007,
+        "name": "Fire Combo Arrow",
+        "element": 0,
+        "sp": 28
+    },
+    {
+        "id": 15031,
+        "name": "Fly Fire Arrow",
+        "element": 0,
+        "sp": 36
+    },
+    {
+        "id": 11016,
+        "name": "Flame Attack",
+        "element": 3,
+        "sp": 6
+    },
+    {
+        "id": 11029,
+        "name": "Flame Hit",
+        "element": 3,
+        "sp": 7
+    },
+    {
+        "id": 11025,
+        "name": "Flame Beating",
+        "element": 3,
+        "sp": 10
+    },
+    {
+        "id": 15101,
+        "name": "Sword Awn Attack",
+        "element": 3,
+        "sp": 8
+    },
+    {
+        "id": 20003,
+        "name": "Sword Awn Hit",
+        "element": 3,
+        "sp": 11
+    },
+    {
+        "id": 15089,
+        "name": "Sword Awn Beating",
+        "element": 3,
+        "sp": 16
+    },
+    {
+        "id": 11114,
+        "name": "Turning Fire Attack",
+        "element": 3,
+        "sp": 12
+    },
+    {
+        "id": 11115,
+        "name": "Turning Fire Hit",
+        "element": 3,
+        "sp": 15
+    },
+    {
+        "id": 12022,
+        "name": "Turning Fire Beating",
+        "element": 3,
+        "sp": 23
+    },
+    {
+        "id": 12039,
+        "name": "Fire Wave Attack",
+        "element": 3,
+        "sp": 18
+    },
+    {
+        "id": 12034,
+        "name": "Fire Wave Hit",
+        "element": 3,
+        "sp": 22
+    },
+    {
+        "id": 12038,
+        "name": "Fire Wave Beating",
+        "element": 3,
+        "sp": 33
+    },
+    {
+        "id": 15102,
+        "name": "Five Star Attack",
+        "element": 3,
+        "sp": 30
+    },
+    {
+        "id": 15015,
+        "name": "Five Star Hit",
+        "element": 3,
+        "sp": 37
+    },
+    {
+        "id": 15103,
+        "name": "Five Star Beating",
+        "element": 3,
+        "sp": 52
+    },
+    {
+        "id": 15044,
+        "name": "Hagendis Attack",
+        "element": 3,
+        "sp": 41
+    },
+    {
+        "id": 15017,
+        "name": "Hagendis Hit",
+        "element": 3,
+        "sp": 49
+    },
+    {
+        "id": 15045,
+        "name": "Hagendis Beating",
+        "element": 3,
+        "sp": 67
+    },
+    {
+        "id": 15217,
+        "name": "Fancy Eagle Attack",
+        "element": 3,
+        "sp": 54
+    },
+    {
+        "id": 15218,
+        "name": "Fancy Eagle Hit",
+        "element": 3,
+        "sp": 64
+    },
+    {
+        "id": 15219,
+        "name": "Fancy Eagle Beating",
+        "element": 3,
+        "sp": 85
+    },
+    {
+        "id": 25021,
+        "name": "Confusion Attack",
+        "element": 3,
+        "sp": 74
+    },
+    {
+        "id": 25016,
+        "name": "Confusion Hit",
+        "element": 3,
+        "sp": 86
+    },
+    {
+        "id": 25020,
+        "name": "Confusion Beating",
+        "element": 3,
+        "sp": 115
+    },
+    {
+        "id": 11166,
+        "name": "Blast Attack",
+        "element": 3,
+        "sp": 9
+    },
+    {
+        "id": 15104,
+        "name": "Blast Hit",
+        "element": 3,
+        "sp": 10
+    },
+    {
+        "id": 15105,
+        "name": "Blast Beating",
+        "element": 3,
+        "sp": 14
+    },
+    {
+        "id": 11005,
+        "name": "Fire Blast Attack",
+        "element": 3,
+        "sp": 15
+    },
+    {
+        "id": 30000,
+        "name": "Fire Blast Hit",
+        "element": 3,
+        "sp": 17
+    },
+    {
+        "id": 15110,
+        "name": "Fire Blast Beating",
+        "element": 3,
+        "sp": 26
+    },
+    {
+        "id": 11034,
+        "name": "Fire Ball Attack",
+        "element": 3,
+        "sp": 16
+    },
+    {
+        "id": 11117,
+        "name": "Fire Ball Hit",
+        "element": 3,
+        "sp": 20
+    },
+    {
+        "id": 15106,
+        "name": "Fire Ball Beating",
+        "element": 3,
+        "sp": 30
+    },
+    {
+        "id": 15109,
+        "name": "Blaze Attack",
+        "element": 3,
+        "sp": 23
+    },
+    {
+        "id": 15107,
+        "name": "Blaze Hit",
+        "element": 3,
+        "sp": 29
+    },
+    {
+        "id": 15108,
+        "name": "Blaze Beating",
+        "element": 3,
+        "sp": 48
+    },
+    {
+        "id": 15111,
+        "name": "Fire Combo Attack",
+        "element": 3,
+        "sp": 36
+    },
+    {
+        "id": 12021,
+        "name": "Fire Combo Hit",
+        "element": 3,
+        "sp": 43
+    },
+    {
+        "id": 12024,
+        "name": "Fire Combo Beating",
+        "element": 3,
+        "sp": 60
+    },
+    {
+        "id": 11035,
+        "name": "Fire Stone Attack",
+        "element": 3,
+        "sp": 54
+    },
+    {
+        "id": 15112,
+        "name": "Fire Stone Hit",
+        "element": 3,
+        "sp": 64
+    },
+    {
+        "id": 11059,
+        "name": "Fire Stone Bead",
+        "element": 3,
+        "sp": 88
+    },
+    {
+        "id": 25028,
+        "name": "Unclear Burst",
+        "element": 3,
+        "sp": 69
+    },
+    {
+        "id": 25026,
+        "name": "Unclear Blast",
+        "element": 3,
+        "sp": 81
+    },
+    {
+        "id": 25027,
+        "name": "Unclear Explosion",
+        "element": 3,
+        "sp": 108
+    },
+    {
+        "id": 11056,
+        "name": "Slowdown",
+        "element": 3,
+        "sp": 17
+    },
+    {
+        "id": 11002,
+        "name": "Poison Spell",
+        "element": 3,
+        "sp": 23
+    },
+    {
+        "id": 11072,
+        "name": "Fiery Attack",
+        "element": 3,
+        "sp": 31
+    },
+    {
+        "id": 12045,
+        "name": "Free From Coma",
+        "element": 3,
+        "sp": 41
+    },
+    {
+        "id": 11003,
+        "name": "Mess Spell",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 15171,
+        "name": "Fire Attack",
+        "element": 3,
+        "sp": 71
+    },
+    {
+        "id": 11008,
+        "name": "Magma Attack",
+        "element": 3,
+        "sp": 31
+    },
+    {
+        "id": 15189,
+        "name": "Hot Fire Attack",
+        "element": 3,
+        "sp": 82
+    },
+    {
+        "id": 11007,
+        "name": "Wind Attack",
+        "element": 4,
+        "sp": 9
+    },
+    {
+        "id": 11014,
+        "name": "Wind Hit",
+        "element": 4,
+        "sp": 10
+    },
+    {
+        "id": 15113,
+        "name": "Wind Bead",
+        "element": 4,
+        "sp": 15
+    },
+    {
+        "id": 15079,
+        "name": "Air Attack",
+        "element": 4,
+        "sp": 11
+    },
+    {
+        "id": 15080,
+        "name": "Air Hit",
+        "element": 4,
+        "sp": 13
+    },
+    {
+        "id": 15081,
+        "name": "Air Bead",
+        "element": 4,
+        "sp": 16
+    },
+    {
+        "id": 15117,
+        "name": "Cyclone Attack",
+        "element": 4,
+        "sp": 14
+    },
+    {
+        "id": 12009,
+        "name": "Cyclone Hit",
+        "element": 4,
+        "sp": 16
+    },
+    {
+        "id": 15129,
+        "name": "Cyclone Beating",
+        "element": 4,
+        "sp": 22
+    },
+    {
+        "id": 15002,
+        "name": "Instant Attack",
+        "element": 4,
+        "sp": 18
+    },
+    {
+        "id": 11045,
+        "name": "Instant Hit",
+        "element": 4,
+        "sp": 21
+    },
+    {
+        "id": 15061,
+        "name": "Instant Beating",
+        "element": 4,
+        "sp": 30
+    },
+    {
+        "id": 11046,
+        "name": "Wind Stress Attack",
+        "element": 4,
+        "sp": 25
+    },
+    {
+        "id": 11098,
+        "name": "Wind Stress Hit",
+        "element": 4,
+        "sp": 29
+    },
+    {
+        "id": 12032,
+        "name": "Wind Stress Beating",
+        "element": 4,
+        "sp": 36
+    },
+    {
+        "id": 15114,
+        "name": "Dead Wind Attack",
+        "element": 4,
+        "sp": 32
+    },
+    {
+        "id": 15115,
+        "name": "Dead Wind Hit",
+        "element": 4,
+        "sp": 36
+    },
+    {
+        "id": 15116,
+        "name": "Dead Wind Beating",
+        "element": 4,
+        "sp": 45
+    },
+    {
+        "id": 15128,
+        "name": "Shadow Attack",
+        "element": 4,
+        "sp": 39
+    },
+    {
+        "id": 15130,
+        "name": "Shadow Hit",
+        "element": 4,
+        "sp": 44
+    },
+    {
+        "id": 15131,
+        "name": "Shadow Beating",
+        "element": 4,
+        "sp": 55
+    },
+    {
+        "id": 15120,
+        "name": "Afterimage Attack",
+        "element": 4,
+        "sp": 50
+    },
+    {
+        "id": 15121,
+        "name": "Afterimage Hit",
+        "element": 4,
+        "sp": 56
+    },
+    {
+        "id": 11012,
+        "name": "Afterimage Beating",
+        "element": 4,
+        "sp": 69
+    },
+    {
+        "id": 21401,
+        "name": "Storm Attack",
+        "element": 4,
+        "sp": 62
+    },
+    {
+        "id": 11023,
+        "name": "Storm Hit",
+        "element": 4,
+        "sp": 69
+    },
+    {
+        "id": 20001,
+        "name": "Storm Beating",
+        "element": 4,
+        "sp": 85
+    },
+    {
+        "id": 25022,
+        "name": "\u771f\u7a7a\u4e82\u821e",
+        "element": 4,
+        "sp": 95
+    },
+    {
+        "id": 25023,
+        "name": "\u771f\u7a7a\u4e82\u821e\u02d9\u6539",
+        "element": 4,
+        "sp": 95
+    },
+    {
+        "id": 25010,
+        "name": "\u771f\u02d9\u771f\u7a7a\u4e82\u821e",
+        "element": 4,
+        "sp": 95
+    },
+    {
+        "id": 30002,
+        "name": "Wind Blade Attack",
+        "element": 4,
+        "sp": 13
+    },
+    {
+        "id": 15122,
+        "name": "Wind Blade Hit",
+        "element": 4,
+        "sp": 14
+    },
+    {
+        "id": 11050,
+        "name": "Wind Blade Beating",
+        "element": 4,
+        "sp": 19
+    },
+    {
+        "id": 11015,
+        "name": "Wind Cut Attack",
+        "element": 4,
+        "sp": 11
+    },
+    {
+        "id": 15009,
+        "name": "Wind Cut Hit",
+        "element": 4,
+        "sp": 13
+    },
+    {
+        "id": 15018,
+        "name": "Wind Cut Beating",
+        "element": 4,
+        "sp": 21
+    },
+    {
+        "id": 15123,
+        "name": "Whirlwind Attack",
+        "element": 4,
+        "sp": 16
+    },
+    {
+        "id": 15000,
+        "name": "Whirlwind Hit",
+        "element": 4,
+        "sp": 20
+    },
+    {
+        "id": 15124,
+        "name": "Whirlwind Beating",
+        "element": 4,
+        "sp": 28
+    },
+    {
+        "id": 15125,
+        "name": "Space Attack",
+        "element": 4,
+        "sp": 24
+    },
+    {
+        "id": 15126,
+        "name": "Space Hit",
+        "element": 4,
+        "sp": 29
+    },
+    {
+        "id": 15127,
+        "name": "Space Beating",
+        "element": 4,
+        "sp": 45
+    },
+    {
+        "id": 15048,
+        "name": "Sky Attack",
+        "element": 4,
+        "sp": 36
+    },
+    {
+        "id": 15050,
+        "name": "Sky Hit",
+        "element": 4,
+        "sp": 43
+    },
+    {
+        "id": 15051,
+        "name": "Sky Beating",
+        "element": 4,
+        "sp": 60
+    },
+    {
+        "id": 15161,
+        "name": "Air Stress Attack",
+        "element": 4,
+        "sp": 50
+    },
+    {
+        "id": 15162,
+        "name": "Air Stress Hit",
+        "element": 4,
+        "sp": 57
+    },
+    {
+        "id": 15163,
+        "name": "Aire Stress Beating",
+        "element": 4,
+        "sp": 77
+    },
+    {
+        "id": 15223,
+        "name": "Tornado Attack",
+        "element": 4,
+        "sp": 55
+    },
+    {
+        "id": 15221,
+        "name": "Tornado Hit",
+        "element": 4,
+        "sp": 65
+    },
+    {
+        "id": 15224,
+        "name": "Tornado Beating",
+        "element": 4,
+        "sp": 90
+    },
+    {
+        "id": 11052,
+        "name": "Speedup",
+        "element": 4,
+        "sp": 15
+    },
+    {
+        "id": 11073,
+        "name": "Shield Smash",
+        "element": 4,
+        "sp": 21
+    },
+    {
+        "id": 12046,
+        "name": "Unload Wall",
+        "element": 4,
+        "sp": 29
+    },
+    {
+        "id": 15032,
+        "name": "Cord Spell",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 15036,
+        "name": "Unstun",
+        "element": 4,
+        "sp": 52
+    },
+    {
+        "id": 11026,
+        "name": "Coma Spell",
+        "element": 4,
+        "sp": 81
+    },
+    {
+        "id": 11099,
+        "name": "Swift Attack",
+        "element": 0,
+        "sp": 16
+    },
+    {
+        "id": 15014,
+        "name": "Arrow Bundle",
+        "element": 0,
+        "sp": 14
+    },
+    {
+        "id": 15025,
+        "name": "Blood-suck Attack",
+        "element": 0,
+        "sp": 30
+    },
+    {
+        "id": 15008,
+        "name": "Arrow Storm",
+        "element": 0,
+        "sp": 26
+    },
+    {
+        "id": 15190,
+        "name": "Vanish",
+        "element": 4,
+        "sp": 109
+    },
+    {
+        "id": 17018,
+        "name": "Gaea",
+        "element": 1,
+        "sp": 120
+    },
+    {
+        "id": 17011,
+        "name": "Najas",
+        "element": 2,
+        "sp": 127
+    },
+    {
+        "id": 17019,
+        "name": "Zavrl",
+        "element": 3,
+        "sp": 105
+    },
+    {
+        "id": 17013,
+        "name": "Gephil",
+        "element": 4,
+        "sp": 117
+    },
+    {
+        "id": 15222,
+        "name": "Collapse",
+        "element": 1,
+        "sp": 191
+    },
+    {
+        "id": 15225,
+        "name": "Curdle",
+        "element": 2,
+        "sp": 191
+    },
+    {
+        "id": 25067,
+        "name": "Fervidity",
+        "element": 3,
+        "sp": 191
+    },
+    {
+        "id": 15166,
+        "name": "Fast",
+        "element": 4,
+        "sp": 191
+    },
+    {
+        "id": 15241,
+        "name": "Murder",
+        "element": 0,
+        "sp": 132
+    },
+    {
+        "id": 15240,
+        "name": "Holy Shield",
+        "element": 0,
+        "sp": 142
+    },
+    {
+        "id": 15242,
+        "name": "Knight",
+        "element": 0,
+        "sp": 146
+    },
+    {
+        "id": 15243,
+        "name": "Cuss",
+        "element": 0,
+        "sp": 152
+    },
+    {
+        "id": 15244,
+        "name": "Rest",
+        "element": 0,
+        "sp": 188
+    },
+    {
+        "id": 15245,
+        "name": "Foretell",
+        "element": 0,
+        "sp": 147
+    },
+    {
+        "id": 25147,
+        "name": "Deadly Hit",
+        "element": 0,
+        "sp": 220
+    },
+    {
+        "id": 15041,
+        "name": "Love Wish",
+        "element": 3,
+        "sp": 10
+    },
+    {
+        "id": 15038,
+        "name": "Overarm Stumble",
+        "element": 1,
+        "sp": 8
+    },
+    {
+        "id": 15060,
+        "name": "Throw Dish",
+        "element": 4,
+        "sp": 6
+    },
+    {
+        "id": 15039,
+        "name": "Wine Flame",
+        "element": 3,
+        "sp": 9
+    },
+    {
+        "id": 15040,
+        "name": "Palm",
+        "element": 4,
+        "sp": 7
+    },
+    {
+        "id": 12036,
+        "name": "Leap",
+        "element": 3,
+        "sp": 9
+    },
+    {
+        "id": 12049,
+        "name": "Fire Dance",
+        "element": 3,
+        "sp": 15
+    },
+    {
+        "id": 12053,
+        "name": "Gallop",
+        "element": 2,
+        "sp": 35
+    },
+    {
+        "id": 12051,
+        "name": "Note",
+        "element": 1,
+        "sp": 9
+    },
+    {
+        "id": 11075,
+        "name": "Summon Dogs Groups",
+        "element": 1,
+        "sp": 18
+    },
+    {
+        "id": 11076,
+        "name": "Combo x3 Attack",
+        "element": 3,
+        "sp": 9
+    },
+    {
+        "id": 11077,
+        "name": "Cure 2 Players",
+        "element": 7,
+        "sp": 8
+    },
+    {
+        "id": 11078,
+        "name": "Bomber Attack",
+        "element": 4,
+        "sp": 20
+    },
+    {
+        "id": 15003,
+        "name": "Newbie",
+        "element": 1,
+        "sp": 10
+    },
+    {
+        "id": 11183,
+        "name": "Deacon Attack",
+        "element": 4,
+        "sp": 7
+    },
+    {
+        "id": 11182,
+        "name": "Ghost Hammer",
+        "element": 3,
+        "sp": 9
+    },
+    {
+        "id": 10021,
+        "name": "Banana Skin",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10022,
+        "name": "Bowling",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10066,
+        "name": "Big Bowling",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10013,
+        "name": "Bomb",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10067,
+        "name": "Grenade",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10068,
+        "name": "Might Grenade",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10069,
+        "name": "Hot Poi",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10070,
+        "name": "Hot Rice Cake",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10071,
+        "name": "Nature",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10072,
+        "name": "Yellow Bomb",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10073,
+        "name": "Black Coffee",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10074,
+        "name": "Energy Drink",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10075,
+        "name": "Ink",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10076,
+        "name": "Flee Isle",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10077,
+        "name": "Flee Isle",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10078,
+        "name": "Flee Isle",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 10014,
+        "name": "Dart",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15138,
+        "name": "Secular Feather",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15139,
+        "name": "Strengthen",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15140,
+        "name": "Detoxifcation",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15141,
+        "name": "Poison",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15142,
+        "name": "Antidote",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15143,
+        "name": "Ammonia",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15167,
+        "name": "Plaster",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15169,
+        "name": "Speedup",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15172,
+        "name": "Biochemical Battery",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15173,
+        "name": "Biochemical Battery",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15233,
+        "name": "Recovery Medicine",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15246,
+        "name": "Girls",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15247,
+        "name": "Strengthen Bowling",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15983,
+        "name": "Collection",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15984,
+        "name": "Cutting",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15985,
+        "name": "Mining",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15986,
+        "name": "Facture-mounting",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15987,
+        "name": "Facture-forging",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15988,
+        "name": "Facture-mechanism",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15989,
+        "name": "Facture-woodworker",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15990,
+        "name": "Facture-compound",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15991,
+        "name": "Facture-wiring",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15992,
+        "name": "Facture-cooking",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15993,
+        "name": "Primary Fishing",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15994,
+        "name": "Junior Fishing",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15995,
+        "name": "Superior Fishing",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15997,
+        "name": "Primary Alchemy",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15998,
+        "name": "Junior Alchemy",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15999,
+        "name": "Superior Alchemy",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 65000,
+        "name": "Express",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 15900,
+        "name": "\u6e2c\u8a66NPC\u7528\u7279\u6280",
+        "element": 7,
+        "sp": 100
+    },
+    {
+        "id": 12026,
+        "name": "Throw Banana Skin",
+        "element": 0,
+        "sp": 12
+    },
+    {
+        "id": 12027,
+        "name": "Head Attack",
+        "element": 1,
+        "sp": 8
+    },
+    {
+        "id": 12028,
+        "name": "Swirling Wind",
+        "element": 4,
+        "sp": 13
+    },
+    {
+        "id": 15072,
+        "name": "Tulwar",
+        "element": 0,
+        "sp": 18
+    },
+    {
+        "id": 15071,
+        "name": "Star",
+        "element": 3,
+        "sp": 55
+    },
+    {
+        "id": 15135,
+        "name": "Sky Thunder",
+        "element": 2,
+        "sp": 110
+    },
+    {
+        "id": 25008,
+        "name": "Ice Arrow",
+        "element": 2,
+        "sp": 32
+    },
+    {
+        "id": 11170,
+        "name": "Blowout",
+        "element": 3,
+        "sp": 66
+    },
+    {
+        "id": 11171,
+        "name": "Rage Thunder",
+        "element": 3,
+        "sp": 115
+    },
+    {
+        "id": 11172,
+        "name": "Ion Scatter-gun",
+        "element": 3,
+        "sp": 75
+    },
+    {
+        "id": 25048,
+        "name": "Ghost Fire",
+        "element": 3,
+        "sp": 34
+    },
+    {
+        "id": 25049,
+        "name": "Wing Blade",
+        "element": 4,
+        "sp": 34
+    },
+    {
+        "id": 11180,
+        "name": "Alien",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 25064,
+        "name": "Thunder Ball",
+        "element": 4,
+        "sp": 50
+    },
+    {
+        "id": 15226,
+        "name": "Holy Light",
+        "element": 2,
+        "sp": 80
+    },
+    {
+        "id": 15249,
+        "name": "Fury Strike",
+        "element": 2,
+        "sp": 30
+    },
+    {
+        "id": 25029,
+        "name": "Thunder Flash",
+        "element": 2,
+        "sp": 88
+    },
+    {
+        "id": 25030,
+        "name": "Thunder Combo Hit",
+        "element": 2,
+        "sp": 114
+    },
+    {
+        "id": 15021,
+        "name": "Boar Attack",
+        "element": 0,
+        "sp": 29
+    },
+    {
+        "id": 15022,
+        "name": "Boar Jump",
+        "element": 0,
+        "sp": 30
+    },
+    {
+        "id": 15023,
+        "name": "Boar Hit",
+        "element": 0,
+        "sp": 21
+    },
+    {
+        "id": 15027,
+        "name": "Fist Attack",
+        "element": 0,
+        "sp": 27
+    },
+    {
+        "id": 15028,
+        "name": "Fire Puff",
+        "element": 3,
+        "sp": 28
+    },
+    {
+        "id": 15029,
+        "name": "Earth Drop",
+        "element": 0,
+        "sp": 27
+    },
+    {
+        "id": 15030,
+        "name": "Head Hit",
+        "element": 0,
+        "sp": 27
+    },
+    {
+        "id": 30003,
+        "name": "Red Ray",
+        "element": 0,
+        "sp": 45
+    },
+    {
+        "id": 12029,
+        "name": "Bear Palm Attack",
+        "element": 0,
+        "sp": 19
+    },
+    {
+        "id": 12030,
+        "name": "Claw Attack",
+        "element": 0,
+        "sp": 18
+    },
+    {
+        "id": 12031,
+        "name": "Fury Claw",
+        "element": 0,
+        "sp": 19
+    },
+    {
+        "id": 12035,
+        "name": "Rage Bear",
+        "element": 0,
+        "sp": 20
+    },
+    {
+        "id": 12014,
+        "name": "Stone Fist",
+        "element": 0,
+        "sp": 6
+    },
+    {
+        "id": 12013,
+        "name": "Stone Press",
+        "element": 0,
+        "sp": 6
+    },
+    {
+        "id": 12015,
+        "name": "Stone Hit",
+        "element": 1,
+        "sp": 6
+    },
+    {
+        "id": 15004,
+        "name": "Smasher",
+        "element": 0,
+        "sp": 6
+    },
+    {
+        "id": 15005,
+        "name": "Chaotic Stick",
+        "element": 0,
+        "sp": 6
+    },
+    {
+        "id": 15006,
+        "name": "Heavy Press",
+        "element": 0,
+        "sp": 7
+    },
+    {
+        "id": 11064,
+        "name": "Viper",
+        "element": 0,
+        "sp": 9
+    },
+    {
+        "id": 15055,
+        "name": "Fire Eagle",
+        "element": 3,
+        "sp": 50
+    },
+    {
+        "id": 15024,
+        "name": "Fox",
+        "element": 4,
+        "sp": 21
+    },
+    {
+        "id": 15065,
+        "name": "Fire Puff",
+        "element": 3,
+        "sp": 160
+    },
+    {
+        "id": 15068,
+        "name": "Flame Dragon",
+        "element": 0,
+        "sp": 51
+    },
+    {
+        "id": 15069,
+        "name": "Dragon Claw",
+        "element": 0,
+        "sp": 40
+    },
+    {
+        "id": 15067,
+        "name": "Fury Dragon",
+        "element": 0,
+        "sp": 64
+    },
+    {
+        "id": 15064,
+        "name": "Water Lash",
+        "element": 2,
+        "sp": 18
+    },
+    {
+        "id": 11089,
+        "name": "Big Stone Attack",
+        "element": 1,
+        "sp": 15
+    },
+    {
+        "id": 15057,
+        "name": "Big Stone Hit",
+        "element": 1,
+        "sp": 23
+    },
+    {
+        "id": 15058,
+        "name": "Big Stone Beating",
+        "element": 1,
+        "sp": 35
+    },
+    {
+        "id": 11101,
+        "name": "Rolling Air",
+        "element": 4,
+        "sp": 13
+    },
+    {
+        "id": 15076,
+        "name": "Head Lash",
+        "element": 0,
+        "sp": 35
+    },
+    {
+        "id": 15077,
+        "name": "Fly",
+        "element": 0,
+        "sp": 38
+    },
+    {
+        "id": 15078,
+        "name": "Rolling Drop",
+        "element": 0,
+        "sp": 45
+    },
+    {
+        "id": 30007,
+        "name": "Cat Claw Attack",
+        "element": 0,
+        "sp": 9
+    },
+    {
+        "id": 30008,
+        "name": "Cat Claw Hit",
+        "element": 0,
+        "sp": 10
+    },
+    {
+        "id": 30009,
+        "name": "Fart",
+        "element": 0,
+        "sp": 11
+    },
+    {
+        "id": 30010,
+        "name": "Tail Attack",
+        "element": 0,
+        "sp": 12
+    },
+    {
+        "id": 30011,
+        "name": "Tail Hit",
+        "element": 0,
+        "sp": 16
+    },
+    {
+        "id": 15034,
+        "name": "Fall Attack",
+        "element": 2,
+        "sp": 23
+    },
+    {
+        "id": 15046,
+        "name": "Fall Hit",
+        "element": 1,
+        "sp": 30
+    },
+    {
+        "id": 15047,
+        "name": "Fall Beating",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 30012,
+        "name": "Rage Panda",
+        "element": 0,
+        "sp": 21
+    },
+    {
+        "id": 30013,
+        "name": "Big Ass",
+        "element": 0,
+        "sp": 20
+    },
+    {
+        "id": 30016,
+        "name": "Fox",
+        "element": 3,
+        "sp": 50
+    },
+    {
+        "id": 30017,
+        "name": "Chicken Claw",
+        "element": 0,
+        "sp": 23
+    },
+    {
+        "id": 30018,
+        "name": "Tiger Claw",
+        "element": 0,
+        "sp": 7
+    },
+    {
+        "id": 30019,
+        "name": "Dog",
+        "element": 0,
+        "sp": 8
+    },
+    {
+        "id": 11006,
+        "name": "Ice Stone",
+        "element": 2,
+        "sp": 15
+    },
+    {
+        "id": 15033,
+        "name": "Ice Ball",
+        "element": 2,
+        "sp": 40
+    },
+    {
+        "id": 11011,
+        "name": "Small Ice Stone",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 15037,
+        "name": "Light Bomb",
+        "element": 3,
+        "sp": 35
+    },
+    {
+        "id": 11036,
+        "name": "Wind Puff",
+        "element": 4,
+        "sp": 15
+    },
+    {
+        "id": 12010,
+        "name": "Frost Wind",
+        "element": 4,
+        "sp": 12
+    },
+    {
+        "id": 12001,
+        "name": "Fire Light",
+        "element": 4,
+        "sp": 19
+    },
+    {
+        "id": 12023,
+        "name": "Wind Shadow",
+        "element": 4,
+        "sp": 34
+    },
+    {
+        "id": 30020,
+        "name": "Wolf Attack",
+        "element": 0,
+        "sp": 13
+    },
+    {
+        "id": 30022,
+        "name": "Snail Attack",
+        "element": 0,
+        "sp": 6
+    },
+    {
+        "id": 30023,
+        "name": "Ant Attack",
+        "element": 0,
+        "sp": 11
+    },
+    {
+        "id": 30024,
+        "name": "Frog Licking",
+        "element": 0,
+        "sp": 8
+    },
+    {
+        "id": 30025,
+        "name": "Tongue Curve",
+        "element": 0,
+        "sp": 12
+    },
+    {
+        "id": 30027,
+        "name": "Bee Swirl",
+        "element": 0,
+        "sp": 8
+    },
+    {
+        "id": 30028,
+        "name": "Double Kick",
+        "element": 0,
+        "sp": 2
+    },
+    {
+        "id": 30029,
+        "name": "Mana Attack",
+        "element": 0,
+        "sp": 3
+    },
+    {
+        "id": 30030,
+        "name": "Back Kick",
+        "element": 0,
+        "sp": 21
+    },
+    {
+        "id": 30031,
+        "name": "Wolf Hit",
+        "element": 0,
+        "sp": 16
+    },
+    {
+        "id": 30032,
+        "name": "Biting Bite",
+        "element": 0,
+        "sp": 2
+    },
+    {
+        "id": 30033,
+        "name": "Bee Attack",
+        "element": 0,
+        "sp": 1
+    },
+    {
+        "id": 15136,
+        "name": "Tree Jump",
+        "element": 0,
+        "sp": 9
+    },
+    {
+        "id": 30034,
+        "name": "Air Cut",
+        "element": 0,
+        "sp": 5
+    },
+    {
+        "id": 30035,
+        "name": "Electricity",
+        "element": 0,
+        "sp": 7
+    },
+    {
+        "id": 15137,
+        "name": "Thunder Shot",
+        "element": 0,
+        "sp": 99
+    },
+    {
+        "id": 30036,
+        "name": "Blood Suck",
+        "element": 0,
+        "sp": 2
+    },
+    {
+        "id": 30037,
+        "name": "Combo Stab",
+        "element": 0,
+        "sp": 8
+    },
+    {
+        "id": 30038,
+        "name": "Falling",
+        "element": 0,
+        "sp": 19
+    },
+    {
+        "id": 30039,
+        "name": "Red Sting",
+        "element": 0,
+        "sp": 13
+    },
+    {
+        "id": 30040,
+        "name": "Horn Rising",
+        "element": 0,
+        "sp": 8
+    },
+    {
+        "id": 30041,
+        "name": "Horn Rising",
+        "element": 0,
+        "sp": 9
+    },
+    {
+        "id": 30042,
+        "name": "Froze Harm",
+        "element": 0,
+        "sp": 23
+    },
+    {
+        "id": 30043,
+        "name": "Wing Wind",
+        "element": 0,
+        "sp": 20
+    },
+    {
+        "id": 30044,
+        "name": "Tail Stabbing",
+        "element": 0,
+        "sp": 20
+    },
+    {
+        "id": 30045,
+        "name": "Stamp",
+        "element": 0,
+        "sp": 18
+    },
+    {
+        "id": 15148,
+        "name": "Flame Claw",
+        "element": 0,
+        "sp": 14
+    },
+    {
+        "id": 15145,
+        "name": "Fire Puff",
+        "element": 3,
+        "sp": 27
+    },
+    {
+        "id": 15151,
+        "name": "Swift Sword",
+        "element": 1,
+        "sp": 14
+    },
+    {
+        "id": 15133,
+        "name": "Hand Shaking",
+        "element": 1,
+        "sp": 22
+    },
+    {
+        "id": 30047,
+        "name": "Pate Bump",
+        "element": 1,
+        "sp": 27
+    },
+    {
+        "id": 30048,
+        "name": "Circle Beating",
+        "element": 1,
+        "sp": 20
+    },
+    {
+        "id": 30049,
+        "name": "Teeth Attack",
+        "element": 1,
+        "sp": 17
+    },
+    {
+        "id": 30050,
+        "name": "Series Hit",
+        "element": 1,
+        "sp": 16
+    },
+    {
+        "id": 30051,
+        "name": "Orangutan Rage",
+        "element": 1,
+        "sp": 20
+    },
+    {
+        "id": 15164,
+        "name": "Snake Bite",
+        "element": 0,
+        "sp": 7
+    },
+    {
+        "id": 15168,
+        "name": "Ice Claw",
+        "element": 2,
+        "sp": 20
+    },
+    {
+        "id": 15174,
+        "name": "Dragon Swoop",
+        "element": 4,
+        "sp": 19
+    },
+    {
+        "id": 25013,
+        "name": "Circle Run",
+        "element": 0,
+        "sp": 20
+    },
+    {
+        "id": 25005,
+        "name": "Horse Kick",
+        "element": 0,
+        "sp": 19
+    },
+    {
+        "id": 25012,
+        "name": "Stomp Attack",
+        "element": 0,
+        "sp": 28
+    },
+    {
+        "id": 15176,
+        "name": "Mouth Bite",
+        "element": 0,
+        "sp": 21
+    },
+    {
+        "id": 17004,
+        "name": "Cacti Jump",
+        "element": 0,
+        "sp": 18
+    },
+    {
+        "id": 17003,
+        "name": "Urus Run",
+        "element": 0,
+        "sp": 20
+    },
+    {
+        "id": 17005,
+        "name": "Bat Wind",
+        "element": 0,
+        "sp": 17
+    },
+    {
+        "id": 25006,
+        "name": "Helix Slay",
+        "element": 0,
+        "sp": 14
+    },
+    {
+        "id": 25015,
+        "name": "Eye Slay",
+        "element": 1,
+        "sp": 37
+    },
+    {
+        "id": 15178,
+        "name": "Cat Claw",
+        "element": 1,
+        "sp": 17
+    },
+    {
+        "id": 15179,
+        "name": "Body division",
+        "element": 2,
+        "sp": 16
+    },
+    {
+        "id": 15180,
+        "name": "Explosion Hurt",
+        "element": 3,
+        "sp": 18
+    },
+    {
+        "id": 15181,
+        "name": "Rising Swoop",
+        "element": 4,
+        "sp": 17
+    },
+    {
+        "id": 15182,
+        "name": "Reaphook Slay",
+        "element": 0,
+        "sp": 18
+    },
+    {
+        "id": 25011,
+        "name": "Plumb Cut",
+        "element": 0,
+        "sp": 29
+    },
+    {
+        "id": 30053,
+        "name": "Crash",
+        "element": 0,
+        "sp": 14
+    },
+    {
+        "id": 30054,
+        "name": "Combo kick",
+        "element": 0,
+        "sp": 13
+    },
+    {
+        "id": 30056,
+        "name": "Whirly",
+        "element": 0,
+        "sp": 19
+    },
+    {
+        "id": 25032,
+        "name": "Lord Claw",
+        "element": 0,
+        "sp": 38
+    },
+    {
+        "id": 25033,
+        "name": "Chaotic Attack",
+        "element": 0,
+        "sp": 26
+    },
+    {
+        "id": 25034,
+        "name": "Martian Attack",
+        "element": 0,
+        "sp": 19
+    },
+    {
+        "id": 25038,
+        "name": "Bat Wind",
+        "element": 0,
+        "sp": 28
+    },
+    {
+        "id": 25039,
+        "name": "Cacti Jump",
+        "element": 0,
+        "sp": 28
+    },
+    {
+        "id": 17020,
+        "name": "Double Strike",
+        "element": 0,
+        "sp": 29
+    },
+    {
+        "id": 17021,
+        "name": "Chaotic Stick",
+        "element": 0,
+        "sp": 29
+    },
+    {
+        "id": 17022,
+        "name": "Heavy Press",
+        "element": 0,
+        "sp": 27
+    },
+    {
+        "id": 15177,
+        "name": "Ice Shot",
+        "element": 0,
+        "sp": 13
+    },
+    {
+        "id": 25045,
+        "name": "Earth Assault",
+        "element": 1,
+        "sp": 44
+    },
+    {
+        "id": 25046,
+        "name": "Snow Assault",
+        "element": 2,
+        "sp": 44
+    },
+    {
+        "id": 25043,
+        "name": "Fire Assault",
+        "element": 3,
+        "sp": 44
+    },
+    {
+        "id": 25044,
+        "name": "Storm Assault",
+        "element": 4,
+        "sp": 44
+    },
+    {
+        "id": 15192,
+        "name": "Energy Shot",
+        "element": 0,
+        "sp": 22
+    },
+    {
+        "id": 30057,
+        "name": "Electricity Stick",
+        "element": 0,
+        "sp": 23
+    },
+    {
+        "id": 30058,
+        "name": "Star Attack",
+        "element": 2,
+        "sp": 27
+    },
+    {
+        "id": 15193,
+        "name": "Lash Beating",
+        "element": 0,
+        "sp": 15
+    },
+    {
+        "id": 15194,
+        "name": "Icy Fist",
+        "element": 2,
+        "sp": 19
+    },
+    {
+        "id": 15195,
+        "name": "Combo Bombing",
+        "element": 3,
+        "sp": 19
+    },
+    {
+        "id": 15196,
+        "name": "Teeth Crack",
+        "element": 0,
+        "sp": 19
+    },
+    {
+        "id": 15197,
+        "name": "Knock head",
+        "element": 0,
+        "sp": 22
+    },
+    {
+        "id": 15198,
+        "name": "Swirling Suck",
+        "element": 2,
+        "sp": 25
+    },
+    {
+        "id": 15199,
+        "name": "Rabbit Smash",
+        "element": 1,
+        "sp": 18
+    },
+    {
+        "id": 25042,
+        "name": "Earth Roar",
+        "element": 0,
+        "sp": 28
+    },
+    {
+        "id": 25035,
+        "name": "Summon Death",
+        "element": 1,
+        "sp": 60
+    },
+    {
+        "id": 15200,
+        "name": "Rock Flump",
+        "element": 1,
+        "sp": 26
+    },
+    {
+        "id": 15201,
+        "name": "Swirling Wind",
+        "element": 4,
+        "sp": 23
+    },
+    {
+        "id": 15202,
+        "name": "Light Ring",
+        "element": 3,
+        "sp": 32
+    },
+    {
+        "id": 15203,
+        "name": "Double Hit",
+        "element": 1,
+        "sp": 22
+    },
+    {
+        "id": 15204,
+        "name": "Lion Claw",
+        "element": 0,
+        "sp": 28
+    },
+    {
+        "id": 15205,
+        "name": "Dark Thunder",
+        "element": 2,
+        "sp": 91
+    },
+    {
+        "id": 15207,
+        "name": "Shell Crash",
+        "element": 1,
+        "sp": 17
+    },
+    {
+        "id": 30059,
+        "name": "Mighty Bite",
+        "element": 0,
+        "sp": 18
+    },
+    {
+        "id": 30062,
+        "name": "Shell Crash",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 30063,
+        "name": "Scud Crash",
+        "element": 7,
+        "sp": 24
+    },
+    {
+        "id": 30065,
+        "name": "Scatter powder",
+        "element": 7,
+        "sp": 17
+    },
+    {
+        "id": 30067,
+        "name": "Kick Back",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 30068,
+        "name": "Giant Kick",
+        "element": 7,
+        "sp": 55
+    },
+    {
+        "id": 30069,
+        "name": "Giant Push",
+        "element": 7,
+        "sp": 55
+    },
+    {
+        "id": 25047,
+        "name": "Eagle Attack",
+        "element": 3,
+        "sp": 48
+    },
+    {
+        "id": 30071,
+        "name": "Leap Fist",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 30072,
+        "name": "Summon Eagle",
+        "element": 3,
+        "sp": 23
+    },
+    {
+        "id": 30073,
+        "name": "Heaven Rage",
+        "element": 3,
+        "sp": 57
+    },
+    {
+        "id": 30074,
+        "name": "Coherent Strength",
+        "element": 7,
+        "sp": 29
+    },
+    {
+        "id": 30076,
+        "name": "Hand Sword",
+        "element": 7,
+        "sp": 22
+    },
+    {
+        "id": 30077,
+        "name": "Giant Press",
+        "element": 7,
+        "sp": 55
+    },
+    {
+        "id": 30079,
+        "name": "Water Arrow",
+        "element": 2,
+        "sp": 10
+    },
+    {
+        "id": 30075,
+        "name": "Toxophily",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 30080,
+        "name": "Red Sting",
+        "element": 7,
+        "sp": 20
+    },
+    {
+        "id": 17023,
+        "name": "Megalith Fist",
+        "element": 7,
+        "sp": 19
+    },
+    {
+        "id": 17028,
+        "name": "Falling",
+        "element": 7,
+        "sp": 14
+    },
+    {
+        "id": 17029,
+        "name": "Leap Swoop",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 17030,
+        "name": "Tongue Hit",
+        "element": 7,
+        "sp": 15
+    },
+    {
+        "id": 17031,
+        "name": "Poisonous Claw",
+        "element": 7,
+        "sp": 15
+    },
+    {
+        "id": 30081,
+        "name": "Flash Stabbing",
+        "element": 7,
+        "sp": 41
+    },
+    {
+        "id": 25052,
+        "name": "Heavy Kick",
+        "element": 7,
+        "sp": 20
+    },
+    {
+        "id": 30082,
+        "name": "Elf Dancing",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 30083,
+        "name": "Stone Strike",
+        "element": 1,
+        "sp": 28
+    },
+    {
+        "id": 30084,
+        "name": "Wind Cut",
+        "element": 4,
+        "sp": 28
+    },
+    {
+        "id": 30085,
+        "name": "Explosion",
+        "element": 7,
+        "sp": 48
+    },
+    {
+        "id": 30086,
+        "name": "Crane Claw",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 30087,
+        "name": "Sprint Strike",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 25053,
+        "name": "Electricity Attack",
+        "element": 2,
+        "sp": 34
+    },
+    {
+        "id": 25055,
+        "name": "Turtle Palm",
+        "element": 7,
+        "sp": 21
+    },
+    {
+        "id": 15209,
+        "name": "Poisonous Pollen",
+        "element": 1,
+        "sp": 29
+    },
+    {
+        "id": 15210,
+        "name": "Revolving Leaves",
+        "element": 4,
+        "sp": 19
+    },
+    {
+        "id": 15211,
+        "name": "Heavy Chop",
+        "element": 7,
+        "sp": 28
+    },
+    {
+        "id": 15212,
+        "name": "Chaw Throw",
+        "element": 7,
+        "sp": 17
+    },
+    {
+        "id": 11179,
+        "name": "Turtle Stunt",
+        "element": 7,
+        "sp": 43
+    },
+    {
+        "id": 25056,
+        "name": "Cord Spell",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 25057,
+        "name": "Spirit Palsy",
+        "element": 4,
+        "sp": 8
+    },
+    {
+        "id": 25058,
+        "name": "Mesmerism",
+        "element": 2,
+        "sp": 55
+    },
+    {
+        "id": 25059,
+        "name": "Visibility",
+        "element": 0,
+        "sp": 4
+    },
+    {
+        "id": 25060,
+        "name": "Dragon Stone",
+        "element": 1,
+        "sp": 1
+    },
+    {
+        "id": 25061,
+        "name": "Dragon Sleep",
+        "element": 2,
+        "sp": 2
+    },
+    {
+        "id": 30089,
+        "name": "Earth Throw",
+        "element": 1,
+        "sp": 19
+    },
+    {
+        "id": 30090,
+        "name": "Frost Hit",
+        "element": 2,
+        "sp": 18
+    },
+    {
+        "id": 25062,
+        "name": "Light Beam",
+        "element": 3,
+        "sp": 22
+    },
+    {
+        "id": 25063,
+        "name": "Lion Sleep",
+        "element": 2,
+        "sp": 2
+    },
+    {
+        "id": 17033,
+        "name": "Claw",
+        "element": 0,
+        "sp": 8
+    },
+    {
+        "id": 17034,
+        "name": "Claw",
+        "element": 0,
+        "sp": 16
+    },
+    {
+        "id": 17035,
+        "name": "Claw",
+        "element": 0,
+        "sp": 23
+    },
+    {
+        "id": 17036,
+        "name": "Claw",
+        "element": 0,
+        "sp": 34
+    },
+    {
+        "id": 17037,
+        "name": "Claw",
+        "element": 0,
+        "sp": 48
+    },
+    {
+        "id": 17038,
+        "name": "Claw",
+        "element": 0,
+        "sp": 115
+    },
+    {
+        "id": 25065,
+        "name": "Water Thunder",
+        "element": 2,
+        "sp": 66
+    },
+    {
+        "id": 25066,
+        "name": "Flame Bombing",
+        "element": 3,
+        "sp": 68
+    },
+    {
+        "id": 25050,
+        "name": "Swoop",
+        "element": 0,
+        "sp": 9
+    },
+    {
+        "id": 17039,
+        "name": "Swoop",
+        "element": 0,
+        "sp": 19
+    },
+    {
+        "id": 17040,
+        "name": "Swoop",
+        "element": 0,
+        "sp": 28
+    },
+    {
+        "id": 17041,
+        "name": "Swoop",
+        "element": 0,
+        "sp": 40
+    },
+    {
+        "id": 17042,
+        "name": "Swoop",
+        "element": 0,
+        "sp": 55
+    },
+    {
+        "id": 17043,
+        "name": "Swoop",
+        "element": 0,
+        "sp": 130
+    },
+    {
+        "id": 15227,
+        "name": "Overfist",
+        "element": 7,
+        "sp": 20
+    },
+    {
+        "id": 15228,
+        "name": "Leap Kick",
+        "element": 7,
+        "sp": 22
+    },
+    {
+        "id": 15229,
+        "name": "Flame Wave",
+        "element": 3,
+        "sp": 29
+    },
+    {
+        "id": 15230,
+        "name": "Rage Roar",
+        "element": 3,
+        "sp": 30
+    },
+    {
+        "id": 18000,
+        "name": "Dragon Roar",
+        "element": 3,
+        "sp": 105
+    },
+    {
+        "id": 25009,
+        "name": "Ice Freeze",
+        "element": 2,
+        "sp": 66
+    },
+    {
+        "id": 17044,
+        "name": "Dragon Tongue",
+        "element": 7,
+        "sp": 40
+    },
+    {
+        "id": 17045,
+        "name": "Whirlwind",
+        "element": 4,
+        "sp": 40
+    },
+    {
+        "id": 17046,
+        "name": "Fire Column",
+        "element": 3,
+        "sp": 40
+    },
+    {
+        "id": 17047,
+        "name": "Moon Strike",
+        "element": 1,
+        "sp": 28
+    },
+    {
+        "id": 17048,
+        "name": "Revolving Ice",
+        "element": 2,
+        "sp": 28
+    },
+    {
+        "id": 17049,
+        "name": "Fire Column",
+        "element": 3,
+        "sp": 28
+    },
+    {
+        "id": 17050,
+        "name": "Whirlwind",
+        "element": 4,
+        "sp": 24
+    },
+    {
+        "id": 17052,
+        "name": "Mess Spell",
+        "element": 3,
+        "sp": 34
+    },
+    {
+        "id": 25070,
+        "name": "Lightning Lash",
+        "element": 2,
+        "sp": 93
+    },
+    {
+        "id": 30092,
+        "name": "Wind Edge",
+        "element": 7,
+        "sp": 32
+    },
+    {
+        "id": 30093,
+        "name": "Air Freeze",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 30094,
+        "name": "Summon Snake",
+        "element": 7,
+        "sp": 86
+    },
+    {
+        "id": 30095,
+        "name": "Thunder Cloud",
+        "element": 7,
+        "sp": 35
+    },
+    {
+        "id": 30096,
+        "name": "Miasma",
+        "element": 7,
+        "sp": 182
+    },
+    {
+        "id": 30097,
+        "name": "Tail Wind",
+        "element": 7,
+        "sp": 182
+    },
+    {
+        "id": 30098,
+        "name": "Release Air",
+        "element": 7,
+        "sp": 21
+    },
+    {
+        "id": 30099,
+        "name": "Stomach Harm",
+        "element": 3,
+        "sp": 38
+    },
+    {
+        "id": 30100,
+        "name": "Puff Attack",
+        "element": 7,
+        "sp": 25
+    },
+    {
+        "id": 30101,
+        "name": "Four Running Fire",
+        "element": 2,
+        "sp": 75
+    },
+    {
+        "id": 30102,
+        "name": "Vigor Wave",
+        "element": 7,
+        "sp": 48
+    },
+    {
+        "id": 30104,
+        "name": "Water Column",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 30105,
+        "name": "Rush Strike",
+        "element": 7,
+        "sp": 38
+    },
+    {
+        "id": 30103,
+        "name": "Sound Wave",
+        "element": 7,
+        "sp": 47
+    },
+    {
+        "id": 30106,
+        "name": "Brute Bite",
+        "element": 7,
+        "sp": 38
+    },
+    {
+        "id": 18003,
+        "name": "Head Beating",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 18004,
+        "name": "Circle Attack",
+        "element": 7,
+        "sp": 38
+    },
+    {
+        "id": 18005,
+        "name": "Light Ball",
+        "element": 7,
+        "sp": 48
+    },
+    {
+        "id": 18006,
+        "name": "Rage Bite",
+        "element": 7,
+        "sp": 52
+    },
+    {
+        "id": 18007,
+        "name": "Body Bump",
+        "element": 7,
+        "sp": 26
+    },
+    {
+        "id": 18008,
+        "name": "Circle Bump",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 18009,
+        "name": "Combo Kick",
+        "element": 7,
+        "sp": 20
+    },
+    {
+        "id": 18011,
+        "name": "God",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 18012,
+        "name": "Speed Strike",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 18013,
+        "name": "Summon Fire",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 25072,
+        "name": "Fire Strike",
+        "element": 3,
+        "sp": 28
+    },
+    {
+        "id": 25073,
+        "name": "Hell Fire",
+        "element": 7,
+        "sp": 182
+    },
+    {
+        "id": 30107,
+        "name": "Bubble Hit",
+        "element": 7,
+        "sp": 48
+    },
+    {
+        "id": 30108,
+        "name": "Ice Seal",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 18014,
+        "name": "Speed Combo",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 25074,
+        "name": "Icy Flame",
+        "element": 3,
+        "sp": 34
+    },
+    {
+        "id": 25075,
+        "name": "Flame Freeze",
+        "element": 3,
+        "sp": 40
+    },
+    {
+        "id": 15235,
+        "name": "Stone Curse",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 15236,
+        "name": "Water Sleep",
+        "element": 2,
+        "sp": 109
+    },
+    {
+        "id": 15237,
+        "name": "Water Mess",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 15238,
+        "name": "Water Trap",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 15239,
+        "name": "Water Mana",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 30111,
+        "name": "Thunderbolt",
+        "element": 4,
+        "sp": 12
+    },
+    {
+        "id": 30112,
+        "name": "Fire Puff",
+        "element": 3,
+        "sp": 11
+    },
+    {
+        "id": 30113,
+        "name": "Stone Strike",
+        "element": 1,
+        "sp": 10
+    },
+    {
+        "id": 30114,
+        "name": "Water Column",
+        "element": 2,
+        "sp": 10
+    },
+    {
+        "id": 18015,
+        "name": "Heavy Bite",
+        "element": 7,
+        "sp": 55
+    },
+    {
+        "id": 18016,
+        "name": "Sting Bite",
+        "element": 7,
+        "sp": 258
+    },
+    {
+        "id": 18017,
+        "name": "Fire Ball",
+        "element": 7,
+        "sp": 100
+    },
+    {
+        "id": 18018,
+        "name": "Run Bump",
+        "element": 7,
+        "sp": 160
+    },
+    {
+        "id": 18019,
+        "name": "Spring Flow",
+        "element": 7,
+        "sp": 45
+    },
+    {
+        "id": 25076,
+        "name": "Dog Landification",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 25077,
+        "name": "Dog Freeze",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 25078,
+        "name": "Dog Mess",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 25079,
+        "name": "Dog Trap",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 25080,
+        "name": "Flame Strike",
+        "element": 7,
+        "sp": 182
+    },
+    {
+        "id": 25081,
+        "name": "Fox Stone",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 25082,
+        "name": "Freeze Attack",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 25083,
+        "name": "Chaos Attack",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 25084,
+        "name": "Cursed Attack",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 18022,
+        "name": "Shaking Burst",
+        "element": 7,
+        "sp": 9
+    },
+    {
+        "id": 18023,
+        "name": "Brutal Bite",
+        "element": 7,
+        "sp": 7
+    },
+    {
+        "id": 18024,
+        "name": "Flying Attack",
+        "element": 7,
+        "sp": 9
+    },
+    {
+        "id": 18025,
+        "name": "Bat Typhoon",
+        "element": 7,
+        "sp": 11
+    },
+    {
+        "id": 18026,
+        "name": "Dragon Attack",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 18027,
+        "name": "Heavy Knock",
+        "element": 7,
+        "sp": 19
+    },
+    {
+        "id": 18028,
+        "name": "Combo Stab",
+        "element": 7,
+        "sp": 7
+    },
+    {
+        "id": 18029,
+        "name": "Tree Jump",
+        "element": 7,
+        "sp": 7
+    },
+    {
+        "id": 18030,
+        "name": "Heavy Press",
+        "element": 7,
+        "sp": 9
+    },
+    {
+        "id": 18031,
+        "name": "Stone Press",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 18032,
+        "name": "Poisonous Claw",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 18033,
+        "name": "Water Burst",
+        "element": 7,
+        "sp": 16
+    },
+    {
+        "id": 18034,
+        "name": "Typhoon Attack",
+        "element": 4,
+        "sp": 16
+    },
+    {
+        "id": 18035,
+        "name": "Rock Strike",
+        "element": 1,
+        "sp": 13
+    },
+    {
+        "id": 18036,
+        "name": "Ice Strike",
+        "element": 2,
+        "sp": 13
+    },
+    {
+        "id": 18037,
+        "name": "Hot Flame",
+        "element": 3,
+        "sp": 13
+    },
+    {
+        "id": 18038,
+        "name": "Wind Strike",
+        "element": 4,
+        "sp": 13
+    },
+    {
+        "id": 15250,
+        "name": "Bat Stone",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 15251,
+        "name": "Bat Sleep",
+        "element": 2,
+        "sp": 49
+    },
+    {
+        "id": 18040,
+        "name": "Snipe",
+        "element": 2,
+        "sp": 55
+    },
+    {
+        "id": 17053,
+        "name": "Bite",
+        "element": 1,
+        "sp": 19
+    },
+    {
+        "id": 16000,
+        "name": "Strong Whirlwind",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 16002,
+        "name": "Fast Sweep",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 25086,
+        "name": "Bloody Assault",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 25088,
+        "name": "Icy Thunder",
+        "element": 7,
+        "sp": 272
+    },
+    {
+        "id": 25089,
+        "name": "Lightening Attack",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 25091,
+        "name": "Fast Chop",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 30116,
+        "name": "Forward Roll",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 30119,
+        "name": "Jumping Attack",
+        "element": 7,
+        "sp": 40
+    },
+    {
+        "id": 17054,
+        "name": "Burning Fire",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 16008,
+        "name": "Wave Attack",
+        "element": 7,
+        "sp": 55
+    },
+    {
+        "id": 16009,
+        "name": "Snake Bite",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 16010,
+        "name": "Hamper Attack",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 25094,
+        "name": "Ghost Light",
+        "element": 7,
+        "sp": 23
+    },
+    {
+        "id": 25096,
+        "name": "Crushing Chop",
+        "element": 7,
+        "sp": 19
+    },
+    {
+        "id": 25092,
+        "name": "Light Blast",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 25099,
+        "name": "Fiery Ring",
+        "element": 7,
+        "sp": 48
+    },
+    {
+        "id": 25100,
+        "name": "Kick",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 30120,
+        "name": "Fast Beat",
+        "element": 7,
+        "sp": 10
+    },
+    {
+        "id": 30122,
+        "name": "Earth Shatter",
+        "element": 7,
+        "sp": 40
+    },
+    {
+        "id": 17056,
+        "name": "Wave Blast",
+        "element": 7,
+        "sp": 19
+    },
+    {
+        "id": 25103,
+        "name": "Flaying Attack",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 25104,
+        "name": "Wind Chop",
+        "element": 7,
+        "sp": 210
+    },
+    {
+        "id": 25105,
+        "name": "Tail Attack",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 25106,
+        "name": "Jumping Wave",
+        "element": 7,
+        "sp": 13
+    },
+    {
+        "id": 17057,
+        "name": "Heavy Tail",
+        "element": 7,
+        "sp": 19
+    },
+    {
+        "id": 30123,
+        "name": "One-Eyed Rock",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 30124,
+        "name": "One-Eyed Dream",
+        "element": 2,
+        "sp": 49
+    },
+    {
+        "id": 30125,
+        "name": "One-Eyed Mess",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 30126,
+        "name": "One-Eyed Cord",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 25107,
+        "name": "Freezing Spell",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 25108,
+        "name": "Mess Spell",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 25109,
+        "name": "Cord Spell",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 30127,
+        "name": "Aerolite Beating",
+        "element": 1,
+        "sp": 110
+    },
+    {
+        "id": 30128,
+        "name": "Sky Beating",
+        "element": 4,
+        "sp": 60
+    },
+    {
+        "id": 16012,
+        "name": "Eyes Kill",
+        "element": 7,
+        "sp": 66
+    },
+    {
+        "id": 25110,
+        "name": "Poisonous Chill",
+        "element": 7,
+        "sp": 23
+    },
+    {
+        "id": 25111,
+        "name": "Flaming Wave",
+        "element": 7,
+        "sp": 23
+    },
+    {
+        "id": 25112,
+        "name": "Wind Blade",
+        "element": 7,
+        "sp": 19
+    },
+    {
+        "id": 25113,
+        "name": "Poisonous Wave",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 25114,
+        "name": "Icy Blast",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 25115,
+        "name": "Fiery Wave",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 25116,
+        "name": "Deadly Wind",
+        "element": 7,
+        "sp": 28
+    },
+    {
+        "id": 30129,
+        "name": "Cord Spell",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 30130,
+        "name": "Wind Assault",
+        "element": 4,
+        "sp": 28
+    },
+    {
+        "id": 30131,
+        "name": "Hurricane Wolf",
+        "element": 7,
+        "sp": 40
+    },
+    {
+        "id": 30132,
+        "name": "Body Slam",
+        "element": 7,
+        "sp": 40
+    },
+    {
+        "id": 25117,
+        "name": "Huge Pole",
+        "element": 7,
+        "sp": 272
+    },
+    {
+        "id": 25025,
+        "name": "Dragon Whirlwind",
+        "element": 7,
+        "sp": 272
+    },
+    {
+        "id": 25118,
+        "name": "Tiger Rock",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 25119,
+        "name": "Tiger Dream",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 25120,
+        "name": "Tiger Mess",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 25121,
+        "name": "Tiger Cord",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 25122,
+        "name": "Irondino Rock",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 25123,
+        "name": "Irondino Dream",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 25124,
+        "name": "Irondino Mess",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 25125,
+        "name": "Irondino Cord",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 25126,
+        "name": "Phenix Rock",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 25127,
+        "name": "Phenix Dream",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 25128,
+        "name": "Phenix Mess",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 25129,
+        "name": "Phenix Cord",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 25130,
+        "name": "Dragon Rock",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 25131,
+        "name": "Dragon Dream",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 25132,
+        "name": "Dragon Mess",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 25133,
+        "name": "Dragon Cord",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 25134,
+        "name": "Tiger Seal",
+        "element": 1,
+        "sp": 60
+    },
+    {
+        "id": 30133,
+        "name": "Goddess",
+        "element": 3,
+        "sp": 115
+    },
+    {
+        "id": 30134,
+        "name": "Flaming Blast",
+        "element": 7,
+        "sp": 88
+    },
+    {
+        "id": 30135,
+        "name": "Goddess Murmur",
+        "element": 2,
+        "sp": 115
+    },
+    {
+        "id": 30137,
+        "name": "Eagle Thorn",
+        "element": 7,
+        "sp": 130
+    },
+    {
+        "id": 30136,
+        "name": "Falling Eagle",
+        "element": 7,
+        "sp": 130
+    },
+    {
+        "id": 25148,
+        "name": "Blast Assault",
+        "element": 7,
+        "sp": 272
+    },
+    {
+        "id": 30138,
+        "name": "Deadly Assault",
+        "element": 4,
+        "sp": 75
+    },
+    {
+        "id": 30139,
+        "name": "Dark Assault",
+        "element": 4,
+        "sp": 40
+    },
+    {
+        "id": 30142,
+        "name": "Flying Chop",
+        "element": 7,
+        "sp": 28
+    },
+    {
+        "id": 30143,
+        "name": "Huge Stone Hit",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 30144,
+        "name": "Burning Flame",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 30145,
+        "name": "Air Assault",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 30146,
+        "name": "Hell Fire",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 30141,
+        "name": "Lightening Ice",
+        "element": 2,
+        "sp": 135
+    },
+    {
+        "id": 30148,
+        "name": "Air Ball",
+        "element": 4,
+        "sp": 74
+    },
+    {
+        "id": 30149,
+        "name": "Falling Arrows",
+        "element": 2,
+        "sp": 55
+    },
+    {
+        "id": 30151,
+        "name": "Falling Beat",
+        "element": 2,
+        "sp": 65
+    },
+    {
+        "id": 30152,
+        "name": "Super Plasma",
+        "element": 3,
+        "sp": 75
+    },
+    {
+        "id": 25154,
+        "name": "Hurricane Hit",
+        "element": 4,
+        "sp": 75
+    },
+    {
+        "id": 25153,
+        "name": "X Blast",
+        "element": 3,
+        "sp": 80
+    },
+    {
+        "id": 25138,
+        "name": "Flaming Rock",
+        "element": 1,
+        "sp": 75
+    },
+    {
+        "id": 25143,
+        "name": "Eagle Blast",
+        "element": 3,
+        "sp": 140
+    },
+    {
+        "id": 25155,
+        "name": "Force Spall",
+        "element": 1,
+        "sp": 66
+    },
+    {
+        "id": 25156,
+        "name": "Furious Eagle",
+        "element": 3,
+        "sp": 48
+    },
+    {
+        "id": 25157,
+        "name": "Frozen Ball",
+        "element": 2,
+        "sp": 88
+    },
+    {
+        "id": 25135,
+        "name": "Red Dragon Blitz",
+        "element": 3,
+        "sp": 95
+    },
+    {
+        "id": 25200,
+        "name": "Lycan Lightning Rage",
+        "element": 2,
+        "sp": 100
+    },
+    {
+        "id": 30161,
+        "name": "Water Thorn",
+        "element": 2,
+        "sp": 40
+    },
+    {
+        "id": 30158,
+        "name": "Swinging Chop",
+        "element": 1,
+        "sp": 23
+    },
+    {
+        "id": 30159,
+        "name": "Double Strike",
+        "element": 1,
+        "sp": 28
+    },
+    {
+        "id": 30160,
+        "name": "Chaotic Stick",
+        "element": 1,
+        "sp": 28
+    },
+    {
+        "id": 25159,
+        "name": "Fury ATK",
+        "element": 3,
+        "sp": 224
+    },
+    {
+        "id": 25160,
+        "name": "Hell ATK",
+        "element": 3,
+        "sp": 272
+    },
+    {
+        "id": 17058,
+        "name": "Kusarikku",
+        "element": 1,
+        "sp": 146
+    },
+    {
+        "id": 17059,
+        "name": "Kusarikku",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 17060,
+        "name": "Kusarikku",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 17061,
+        "name": "Kusarikku",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 17062,
+        "name": "Kusarikku",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 17063,
+        "name": "Kusarikku",
+        "element": 1,
+        "sp": 210
+    },
+    {
+        "id": 16013,
+        "name": "Snake Bite",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 16014,
+        "name": "Super Bite",
+        "element": 7,
+        "sp": 34
+    },
+    {
+        "id": 16015,
+        "name": "Tyson Bite",
+        "element": 7,
+        "sp": 48
+    },
+    {
+        "id": 25162,
+        "name": "Goddess",
+        "element": 3,
+        "sp": 133
+    },
+    {
+        "id": 25163,
+        "name": "Goddess",
+        "element": 2,
+        "sp": 128
+    },
+    {
+        "id": 25164,
+        "name": "Stun Curse",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 25165,
+        "name": "Crack Beating",
+        "element": 7,
+        "sp": 130
+    },
+    {
+        "id": 25166,
+        "name": "Icy Curse",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 25167,
+        "name": "Chaos Curse",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 25168,
+        "name": "Entangled Curse",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 25169,
+        "name": "Super Crack Beating",
+        "element": 7,
+        "sp": 210
+    },
+    {
+        "id": 25170,
+        "name": "Snake Stun",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 25171,
+        "name": "Snake Rockfall",
+        "element": 1,
+        "sp": 224
+    },
+    {
+        "id": 25172,
+        "name": "Ghostly Thunder",
+        "element": 2,
+        "sp": 224
+    },
+    {
+        "id": 25173,
+        "name": "Blood Sucking",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 25174,
+        "name": "Super Fire Chop",
+        "element": 3,
+        "sp": 272
+    },
+    {
+        "id": 25175,
+        "name": "Furious Cyclone",
+        "element": 7,
+        "sp": 224
+    },
+    {
+        "id": 25176,
+        "name": "Water Arrow",
+        "element": 2,
+        "sp": 210
+    },
+    {
+        "id": 25177,
+        "name": "Super Water Arrow",
+        "element": 2,
+        "sp": 258
+    },
+    {
+        "id": 25178,
+        "name": "Centaur",
+        "element": 1,
+        "sp": 79
+    },
+    {
+        "id": 25179,
+        "name": "Centaur",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 25180,
+        "name": "Centaur",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 25181,
+        "name": "Four Fast Fire",
+        "element": 2,
+        "sp": 258
+    },
+    {
+        "id": 25182,
+        "name": "Super Ghost Fire",
+        "element": 3,
+        "sp": 272
+    },
+    {
+        "id": 25183,
+        "name": "Super Mage ATK",
+        "element": 4,
+        "sp": 258
+    },
+    {
+        "id": 25184,
+        "name": "Ninja Cord Spell",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 25185,
+        "name": "Entangled Wind",
+        "element": 7,
+        "sp": 272
+    },
+    {
+        "id": 25186,
+        "name": "Super Fury Strike",
+        "element": 2,
+        "sp": 258
+    },
+    {
+        "id": 25187,
+        "name": "Super Thunder ATK",
+        "element": 2,
+        "sp": 272
+    },
+    {
+        "id": 25188,
+        "name": "Super Fire Strike",
+        "element": 3,
+        "sp": 258
+    },
+    {
+        "id": 25189,
+        "name": "Super Blowout",
+        "element": 3,
+        "sp": 272
+    },
+    {
+        "id": 25190,
+        "name": "Thunder Blast",
+        "element": 3,
+        "sp": 272
+    },
+    {
+        "id": 30163,
+        "name": "Beam Attack",
+        "element": 0,
+        "sp": 0
+    },
+    {
+        "id": 25191,
+        "name": "Firedragon Stun",
+        "element": 1,
+        "sp": 1
+    },
+    {
+        "id": 25192,
+        "name": "Killing Cyclone",
+        "element": 4,
+        "sp": 100
+    },
+    {
+        "id": 25193,
+        "name": "Super Tiger Claw",
+        "element": 0,
+        "sp": 75
+    },
+    {
+        "id": 25194,
+        "name": "Super Double Strike",
+        "element": 0,
+        "sp": 75
+    },
+    {
+        "id": 25141,
+        "name": "Running Strike",
+        "element": 2,
+        "sp": 75
+    },
+    {
+        "id": 30164,
+        "name": "Deadly Blow",
+        "element": 2,
+        "sp": 40
+    },
+    {
+        "id": 30165,
+        "name": "Summon Orachi",
+        "element": 7,
+        "sp": 30
+    },
+    {
+        "id": 30166,
+        "name": "Flying ATK",
+        "element": 0,
+        "sp": 26
+    },
+    {
+        "id": 30167,
+        "name": "Kusarikku",
+        "element": 1,
+        "sp": 40
+    },
+    {
+        "id": 30168,
+        "name": "Air Crush",
+        "element": 4,
+        "sp": 35
+    },
+    {
+        "id": 30169,
+        "name": "Chaotic Stick",
+        "element": 0,
+        "sp": 29
+    },
+    {
+        "id": 30170,
+        "name": "Wind Blade",
+        "element": 4,
+        "sp": 28
+    },
+    {
+        "id": 30171,
+        "name": "Heaven Fury",
+        "element": 3,
+        "sp": 42
+    },
+    {
+        "id": 30172,
+        "name": "Heaven Fire",
+        "element": 3,
+        "sp": 35
+    },
+    {
+        "id": 25196,
+        "name": "Ancient Roar",
+        "element": 3,
+        "sp": 88
+    },
+    {
+        "id": 25198,
+        "name": "Flaming Demon",
+        "element": 3,
+        "sp": 115
+    },
+    {
+        "id": 25199,
+        "name": "Beastly Gnash",
+        "element": 7,
+        "sp": 40
+    },
+    {
+        "id": 25202,
+        "name": "Centaur Seal",
+        "element": 1,
+        "sp": 60
+    },
+    {
+        "id": 25203,
+        "name": "Centaur Freeze",
+        "element": 2,
+        "sp": 50
+    },
+    {
+        "id": 25204,
+        "name": "Centaur Confusion",
+        "element": 3,
+        "sp": 62
+    },
+    {
+        "id": 25205,
+        "name": "Centaur Curse",
+        "element": 4,
+        "sp": 47
+    },
+    {
+        "id": 25206,
+        "name": "Centaur Kick",
+        "element": 7,
+        "sp": 75
+    },
+    {
+        "id": 25207,
+        "name": "Centaur Rage",
+        "element": 1,
+        "sp": 115
+    },
+    {
+        "id": 25208,
+        "name": "Centaur Waterblast",
+        "element": 2,
+        "sp": 115
+    },
+    {
+        "id": 25209,
+        "name": "Centaur Flameblast",
+        "element": 3,
+        "sp": 115
+    },
+    {
+        "id": 25210,
+        "name": "Centaur Windblast",
+        "element": 4,
+        "sp": 115
+    },
+    {
+        "id": 25211,
+        "name": "Rhino Surge",
+        "element": 7,
+        "sp": 130
+    },
+    {
+        "id": 25212,
+        "name": "Rhino Slash",
+        "element": 7,
+        "sp": 130
+    },
+    {
+        "id": 25214,
+        "name": "Hellfire",
+        "element": 3,
+        "sp": 115
+    },
+    {
+        "id": 25215,
+        "name": "Birdman Seal",
+        "element": 1,
+        "sp": 60
+    },
+    {
+        "id": 25216,
+        "name": "Fissure",
+        "element": 3,
+        "sp": 100
+    },
+    {
+        "id": 25217,
+        "name": "Howling Flame",
+        "element": 3,
+        "sp": 115
+    },
+    {
+        "id": 25218,
+        "name": "Lich Smite",
+        "element": 7,
+        "sp": 40
+    },
+    {
+        "id": 25219,
+        "name": "Lich Lord Smite",
+        "element": 7,
+        "sp": 75
+    }
+]

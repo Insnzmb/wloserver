@@ -309,3 +309,15 @@ class DatabaseManager:
                 char_id
             ))
             conn.commit()
+
+    def get_all_users(self) -> list:
+        with self.get_connection() as conn:
+            rows = conn.execute("SELECT id, username FROM users").fetchall()
+            return [dict(r) for r in rows]
+
+    def delete_user(self, user_id: int):
+        with self.get_connection() as conn:
+            conn.execute("DELETE FROM characters WHERE user_id = ?", (user_id,))
+            conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+            conn.commit()
+
