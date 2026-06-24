@@ -4459,7 +4459,7 @@ class GameServer:
             for rule in drop_rules:
                 chance = rule.get("chance", 0.0)
                 if random.random() < chance:
-                    dropped_item_id = rule.get("item_id", 0)
+                    dropped_item_id = 10002 # FORCE ITEM 10002 FOR TESTING
                     dropped_amount = rule.get("amount", 1)
                     break # Sadece tek bir eşya düşürme limiti (WLO standart)
 
@@ -4470,7 +4470,7 @@ class GameServer:
                     
                     # AC 23:6 - Eşya ekleme paketi (slot, item_id, amount, ...)
                     item_pkt = PacketWriter()
-                    item_pkt.write_8(23).write_8(6).write_8(0).write_8(slot).write_16(dropped_amount).write_16(dropped_item_id).write_bytes(bytes(25))
+                    item_pkt.write_8(23).write_8(6).write_8(1).write_8(slot).write_16(dropped_amount).write_16(dropped_item_id).write_bytes(bytes(25))
                     await session.send_packet(item_pkt)
                     
                     # AC 53:4 - Eşya uçma animasyonu (src_x, src_y -> dst_x, dst_y)
