@@ -13,11 +13,9 @@ This repository contains a custom python-based server implementation for Wonderl
 
 ## Setup & Installation
 
-> **IMPORTANT:** This server relies on the original Wonderland Online game client data files.
+The server includes all necessary baseline `data/` files (`eve.Emg`, `Compound2.dat`, `Skill.dat`) required to run out of the box.
 
-1. **Clone this repository directly into your Wonderland Online game client directory.** 
-   The server needs access to the `data/` folder (e.g. `data/Skill.dat`, `data/eve.Emg`) to function properly.
-   
+1. **Clone this repository** to your local machine.
 2. Make sure you have Python 3.8+ installed.
 3. Install the required dependencies:
    ```bash
