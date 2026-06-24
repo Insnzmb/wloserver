@@ -4691,7 +4691,8 @@ class GameServer:
             item_prices = {602: 50, 603: 100, 701: 200, 702: 150, 703: 250, 27001: 50, 27005: 100}
             price = item_prices.get(item_id, 100) * amount
             if session.gold >= price:
-                if add_item_to_inventory(session, item_id, amount=amount):
+                slot = add_item_to_inventory(session, item_id, amount=amount)
+                if slot is not False:
                     session.gold -= price
                     self.save_player_to_db(session)
                     await session.send_packet(PacketWriter().write_8(26).write_8(4).write_32(session.gold))
