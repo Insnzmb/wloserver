@@ -538,5 +538,26 @@
             "chance": 0.15,
             "amount": 1
         }
+    ],
+    "4185": [
+        {
+            "item_id": 34001,
+            "chance": 0.5,
+            "amount": 1
+        }
+    ],
+    "4184": [
+        {
+            "item_id": 34002,
+            "chance": 0.5,
+            "amount": 1
+        }
+    ],
+    "4197": [
+        {
+            "item_id": 34003,
+            "chance": 0.5,
+            "amount": 1
+        }
     ]
 }
