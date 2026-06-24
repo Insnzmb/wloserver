@@ -62,7 +62,10 @@ class DatabaseManager:
                     inventory TEXT DEFAULT '[]',
                     skills TEXT DEFAULT '[]',
                     quests TEXT DEFAULT '[]',
+                    pets TEXT,
+                    potential INTEGER DEFAULT 0,
                     points INTEGER DEFAULT 0,
+                    skill_points INTEGER DEFAULT 0,
                     FOREIGN KEY(user_id) REFERENCES users(id),
                     UNIQUE(user_id, slot)
                 )
