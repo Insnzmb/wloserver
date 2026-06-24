@@ -369,6 +369,44 @@ HTML_CONTENT = """<!DOCTYPE html>
             background: rgba(255, 255, 255, 0.05);
             color: var(--text-color);
         }
+
+        /* ── Detail Modal ── */
+        .modal-wide .modal-content {
+            max-width: 860px;
+            width: 95%;
+        }
+        .detail-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .detail-tab {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .detail-tab.active {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #fff;
+            border-color: transparent;
+        }
+        .detail-section { display: none; }
+        .detail-section.active { display: block; }
+        .detail-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        .detail-table th { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+        .detail-table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+        .detail-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .lvl-input { width: 64px; background: rgba(8,12,20,0.8); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.3rem 0.5rem; border-radius: 6px; font-size: 0.875rem; text-align: center; }
+        .btn-xs { padding: 0.3rem 0.7rem; font-size: 0.78rem; border-radius: 6px; }
+        .btn-teal { background: linear-gradient(135deg,#00b09b,#96c93d); }
+        .btn-sm-danger { background: var(--accent-red); }
+        .empty-msg { color: var(--text-muted); text-align: center; padding: 1.5rem; font-style: italic; }
     </style>
 </head>
 <body>
@@ -476,6 +514,38 @@ HTML_CONTENT = """<!DOCTYPE html>
                         <!-- Filled dynamically -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Player Detail Modal ── -->
+    <div class="modal modal-wide" id="detail-modal">
+        <div class="modal-content" style="max-width:860px;">
+            <div class="modal-header" id="detail-modal-title">Player Details</div>
+            <div class="detail-tabs">
+                <button class="detail-tab active" onclick="switchDetailTab('items')">🎒 Items</button>
+                <button class="detail-tab" onclick="switchDetailTab('pets')">🐾 Pets</button>
+            </div>
+            <!-- Items tab -->
+            <div class="detail-section active" id="detail-items-section">
+                <div style="max-height:420px;overflow-y:auto;">
+                    <table class="detail-table">
+                        <thead><tr><th>#</th><th>Item ID</th><th>Amount</th><th>Action</th></tr></thead>
+                        <tbody id="detail-items-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Pets tab -->
+            <div class="detail-section" id="detail-pets-section">
+                <div style="max-height:420px;overflow-y:auto;">
+                    <table class="detail-table">
+                        <thead><tr><th>#</th><th>Pet ID</th><th>Level</th><th>EXP</th><th>Amity</th><th>STR/CON/AGI/INT/WIS</th><th>Actions</th></tr></thead>
+                        <tbody id="detail-pets-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeDetailModal()">Close</button>
             </div>
         </div>
     </div>
@@ -1676,6 +1746,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             <button onclick="openGoldModal('${p.name}', ${p.gold})">Gold</button>
                             <button onclick="openItemModal('${p.name}')">Item</button>
                             <button onclick="openPetModal('${p.name}')">Pet</button>
+                            <button style="background:linear-gradient(135deg,#667eea,#764ba2);" onclick="openDetailModal('${p.name}')">&#128203; Details</button>
                             <button class="btn-danger" onclick="kickPlayer('${p.name}')">Kick</button>
                         </td>
                     `;
@@ -1923,6 +1994,104 @@ HTML_CONTENT = """<!DOCTYPE html>
             }
         }
 
+        // ── Player Detail Modal ────────────────────────────────────────────
+        let _detailPlayerName = '';
+        let _detailData = null;
+
+        async function openDetailModal(name) {
+            _detailPlayerName = name;
+            document.getElementById('detail-modal-title').textContent = '👤 ' + name + ' — Player Details';
+            document.getElementById('detail-modal').style.display = 'flex';
+            switchDetailTab('items');
+            await refreshDetailData();
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detail-modal').style.display = 'none';
+        }
+
+        function switchDetailTab(tab) {
+            document.querySelectorAll('.detail-tab').forEach((t,i) => {
+                t.classList.toggle('active', (i===0 && tab==='items') || (i===1 && tab==='pets'));
+            });
+            document.getElementById('detail-items-section').classList.toggle('active', tab==='items');
+            document.getElementById('detail-pets-section').classList.toggle('active', tab==='pets');
+        }
+
+        async function refreshDetailData() {
+            try {
+                const res = await fetch('/api/players/details?name=' + encodeURIComponent(_detailPlayerName));
+                if (!res.ok) { alert('Player not found or offline.'); return; }
+                _detailData = await res.json();
+                renderDetailItems(_detailData.items || []);
+                renderDetailPets(_detailData.pets || []);
+            } catch(e) { alert('Failed to load player details.'); }
+        }
+
+        function renderDetailItems(items) {
+            const tbody = document.getElementById('detail-items-body');
+            if (!items.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">No items in inventory.</td></tr>'; return; }
+            tbody.innerHTML = items.map((it, i) => `
+                <tr>
+                    <td>${i+1}</td>
+                    <td><span class="badge badge-cyan">${it.item_id}</span></td>
+                    <td>${it.amount || 1}</td>
+                    <td><button class="btn-xs btn-sm-danger" onclick="adminDeleteItem(${it.slot})">🗑 Delete</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderDetailPets(pets) {
+            const tbody = document.getElementById('detail-pets-body');
+            if (!pets.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">No pets.</td></tr>'; return; }
+            tbody.innerHTML = pets.map((p, i) => `
+                <tr>
+                    <td>${i+1}</td>
+                    <td><span class="badge badge-cyan">${p.pet_id}</span></td>
+                    <td><input class="lvl-input" id="pet-lvl-input-${i}" type="number" min="1" max="199" value="${p.level}"> <button class="btn-xs btn-teal" onclick="adminSetPetLevel(${i})">✓</button></td>
+                    <td>${p.exp || 0}</td>
+                    <td>${p.amity || 100}</td>
+                    <td style="font-size:0.78rem;">${p.str||5}/${p.con||5}/${p.agi||5}/${p.int||5}/${p.wis||5}</td>
+                    <td><button class="btn-xs btn-sm-danger" onclick="adminDeletePet(${i})">🗑 Delete</button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function adminDeleteItem(slot) {
+            if (!confirm(`Delete item at inventory slot ${slot}?`)) return;
+            const res = await fetch('/api/players/delete_item', {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({name: _detailPlayerName, slot: slot})
+            });
+            const data = await res.json();
+            if (data.status === 'success') { await refreshDetailData(); }
+            else alert('Error: ' + data.message);
+        }
+
+        async function adminDeletePet(idx) {
+            if (!confirm(`Delete pet at slot ${idx+1}?`)) return;
+            const res = await fetch('/api/players/delete_pet', {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({name: _detailPlayerName, slot: idx+1})
+            });
+            const data = await res.json();
+            if (data.status === 'success') { await refreshDetailData(); }
+            else alert('Error: ' + data.message);
+        }
+
+        async function adminSetPetLevel(idx) {
+            const newLevel = parseInt(document.getElementById(`pet-lvl-input-${idx}`).value);
+            if (isNaN(newLevel) || newLevel < 1 || newLevel > 199) { alert('Level must be 1-199.'); return; }
+            const res = await fetch('/api/players/pet_level', {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({name: _detailPlayerName, slot: idx+1, level: newLevel})
+            });
+            const data = await res.json();
+            if (data.status === 'success') { await refreshDetailData(); alert(`Pet level set to ${newLevel}!`); }
+            else alert('Error: ' + data.message);
+        }
+        // ──────────────────────────────────────────────────────────────────
+
         function formatUptime(secs) {
             const h = Math.floor(secs / 3600);
             const m = Math.floor((secs % 3600) / 60);
@@ -2011,6 +2180,10 @@ class WebAdminServer:
         self.app.router.add_get('/api/logs', self.handle_logs)
         self.app.router.add_get('/api/users', self.handle_get_users)
         self.app.router.add_post('/api/users/delete', self.handle_delete_user)
+        self.app.router.add_get('/api/players/details', self.handle_player_details)
+        self.app.router.add_post('/api/players/delete_item', self.handle_delete_item)
+        self.app.router.add_post('/api/players/delete_pet', self.handle_delete_pet)
+        self.app.router.add_post('/api/players/pet_level', self.handle_pet_level)
 
     async def handle_index(self, request):
         return web.Response(text=HTML_CONTENT, content_type='text/html')
@@ -2235,10 +2408,7 @@ class WebAdminServer:
                     pkt.write_8(1).write_32(0) # Skill 1 Grade, EXP
                     pkt.write_8(1).write_32(0) # Skill 2 Grade, EXP
                     pkt.write_8(1).write_32(0) # Skill 3 Grade, EXP
-                    pkt.write_8(100) # Amity
-                    pkt.write_16(0) # Weapon
-                    pkt.write_8(0) # Reborn
-                    pkt.write_8(0) # Potential
+                    pkt.write_8(1).write_16(0).write_16(0).write_8(0) # Skill 4 + Padding
                     
                     await session.send_packet(pkt)
                     
@@ -2259,6 +2429,102 @@ class WebAdminServer:
 
     async def handle_logs(self, request):
         return web.json_response(list(recent_logs))
+
+    async def handle_player_details(self, request):
+        """Returns inventory items and pets for a named online player."""
+        try:
+            name = request.rel_url.query.get('name', '').strip()
+            session = next((s for s in self.game_server.active_sessions if s.char_name == name), None)
+            if not session:
+                return web.json_response({'status': 'error', 'message': 'Player not found or offline'}, status=404)
+            items = [
+                {'slot': it.get('slot', 0), 'item_id': it.get('item_id', 0), 'amount': it.get('amount', 1)}
+                for it in session.inventory
+            ]
+            pets = [
+                {
+                    'pet_id': p.get('pet_id', 0), 'level': p.get('level', 1), 'exp': p.get('exp', 0),
+                    'amity': p.get('amity', 100), 'str': p.get('str', 5), 'con': p.get('con', 5),
+                    'agi': p.get('agi', 5), 'int': p.get('int', 5), 'wis': p.get('wis', 5),
+                    'reborn': p.get('reborn', 0), 'potential': p.get('potential', 0)
+                }
+                for p in session.pets
+            ]
+            return web.json_response({'items': items, 'pets': pets})
+        except Exception as e:
+            return web.json_response({'status': 'error', 'message': str(e)}, status=500)
+
+    async def handle_delete_item(self, request):
+        """Removes an item at the given inventory slot for an online player."""
+        try:
+            data = await request.json()
+            name = data.get('name', '').strip()
+            slot = int(data.get('slot', 0))
+            session = next((s for s in self.game_server.active_sessions if s.char_name == name), None)
+            if not session:
+                return web.json_response({'status': 'error', 'message': 'Player not found'}, status=404)
+            before = len(session.inventory)
+            session.inventory = [it for it in session.inventory if it.get('slot') != slot]
+            if len(session.inventory) == before:
+                return web.json_response({'status': 'error', 'message': f'No item found at slot {slot}'}, status=404)
+            self.game_server.save_player_to_db(session)
+            # Notify client to clear the slot visually
+            from server.network import PacketWriter
+            slot_pkt = PacketWriter().write_8(23).write_8(9).write_8(slot).write_8(0)
+            await session.send_packet(slot_pkt)
+            logger.info(f"[WebAdmin] Deleted item at slot {slot} from {name}")
+            return web.json_response({'status': 'success'})
+        except Exception as e:
+            return web.json_response({'status': 'error', 'message': str(e)}, status=500)
+
+    async def handle_delete_pet(self, request):
+        """Removes a pet at the given slot (1-based) for an online player."""
+        try:
+            data = await request.json()
+            name = data.get('name', '').strip()
+            slot = int(data.get('slot', 0))
+            session = next((s for s in self.game_server.active_sessions if s.char_name == name), None)
+            if not session:
+                return web.json_response({'status': 'error', 'message': 'Player not found'}, status=404)
+            if slot < 1 or slot > len(session.pets):
+                return web.json_response({'status': 'error', 'message': 'Invalid pet slot'}, status=400)
+            session.pets.pop(slot - 1)
+            self.game_server.save_player_to_db(session)
+            await self.game_server.send_pet_list(session)
+            logger.info(f"[WebAdmin] Deleted pet at slot {slot} from {name}")
+            return web.json_response({'status': 'success'})
+        except Exception as e:
+            return web.json_response({'status': 'error', 'message': str(e)}, status=500)
+
+    async def handle_pet_level(self, request):
+        """Sets the level (and recalculates stats) of a pet at the given slot for an online player."""
+        try:
+            data = await request.json()
+            name = data.get('name', '').strip()
+            slot = int(data.get('slot', 0))
+            new_level = max(1, min(199, int(data.get('level', 1))))
+            session = next((s for s in self.game_server.active_sessions if s.char_name == name), None)
+            if not session:
+                return web.json_response({'status': 'error', 'message': 'Player not found'}, status=404)
+            if slot < 1 or slot > len(session.pets):
+                return web.json_response({'status': 'error', 'message': 'Invalid pet slot'}, status=400)
+            pet = session.pets[slot - 1]
+            pet['level'] = new_level
+            # Recalculate base stats proportional to new level
+            pet['str'] = 5 + new_level // 3
+            pet['con'] = 5 + new_level // 3
+            pet['agi'] = 5 + new_level // 3
+            pet['int'] = 5 + new_level // 3
+            pet['wis'] = 5 + new_level // 3
+            con = pet['con']; wis = pet['wis']
+            pet['hp'] = int(round(((new_level ** 0.35) * con * 2) + new_level + (con * 2) + 180))
+            pet['sp'] = int(round(((new_level ** 0.3) * wis * 3.2) + new_level + (wis * 2) + 94))
+            self.game_server.save_player_to_db(session)
+            await self.game_server.send_pet_list(session)
+            logger.info(f"[WebAdmin] Set pet slot {slot} level={new_level} for {name}")
+            return web.json_response({'status': 'success'})
+        except Exception as e:
+            return web.json_response({'status': 'error', 'message': str(e)}, status=500)
 
     async def handle_get_users(self, request):
         try:

@@ -90,6 +90,10 @@ class DatabaseManager:
                 conn.execute("ALTER TABLE characters ADD COLUMN points INTEGER DEFAULT 0")
             except sqlite3.OperationalError:
                 pass
+            try:
+                conn.execute("ALTER TABLE characters ADD COLUMN skill_points INTEGER DEFAULT 0")
+            except sqlite3.OperationalError:
+                pass
             conn.commit()
 
     def register_user(self, username: str, password: str) -> tuple:
@@ -276,6 +280,7 @@ class DatabaseManager:
                 char_dict['quests'] = json.loads(char_dict['quests'])
                 char_dict['potential'] = char_dict.get('potential', 0)
                 char_dict['points'] = char_dict.get('points', 0)
+                char_dict['skill_points'] = char_dict.get('skill_points', 0)
                 char_dict['pets'] = json.loads(char_dict.get('pets', '[]') or '[]')
                 return char_dict
         return None
@@ -291,7 +296,7 @@ class DatabaseManager:
                     reborn = ?, job = ?, equipments = ?, inventory = ?,
                     skills = ?, quests = ?,
                     str = ?, con = ?, int = ?, wis = ?, agi = ?, exp = ?,
-                    pets = ?, potential = ?, points = ?
+                    pets = ?, potential = ?, points = ?, skill_points = ?
                 WHERE id = ?
             """, (
                 data.get('level', 1), data.get('element', 0), data.get('hp', 100), data.get('max_hp', 100),
@@ -306,6 +311,7 @@ class DatabaseManager:
                 json.dumps(data.get('pets', [])),
                 data.get('potential', 0),
                 data.get('points', 0),
+                data.get('skill_points', 0),
                 char_id
             ))
             conn.commit()

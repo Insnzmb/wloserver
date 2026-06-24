@@ -1,48 +1,55 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
-
-# Distribution / packaging
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# Environment
-.env
-.venv
 env/
 venv/
-ENV/
-env.bak/
-venv.bak/
+.env
+.venv
 
-# SQLite databases (if you don't want to track them)
+# Client / Binary Files
+*.exe
+*.dll
+*.dat
+*.Emg
+*.ogg
+*.wav
+*.bmp
+*.txt
+*.log
+*.ini
+*.ico
+!server/requirements.txt
+!requirements.txt
+
+# Specific client and debug directories
+scratch/
+cursor/
+data/
+data_backup/
+pic/
+sound/
+menu/
+font/
+sty/
+txt/
+upimg/
+user/
+jma/
+quest_output/
+tools/
+
+# Databases
+*.db
 *.sqlite3
 *.sqlite3-journal
-# *.db # Yorum satırı yapıldı çünkü wlo_server.db zaten repoda olabilir.
 
-# IDEs and editors
+# Except for static server db templates
+!server/ServerDataBase.db
+
+# IDE
 .vscode/
 .idea/
-*.swp
-*.swo
 .DS_Store
