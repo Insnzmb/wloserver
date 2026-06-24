@@ -1909,8 +1909,8 @@ class GameServer:
             await send_stat(33, session.wis_val)
 
         # Points
-        await send_stat(37, getattr(session, 'points', 0))
-        await send_stat(38, getattr(session, 'skill_points', 0))
+        await send_stat(38, getattr(session, 'points', 0))
+        await send_stat(37, getattr(session, 'skill_points', 0))
 
     async def send_5_3_login(self, session: PlayerSession):
         """Sends the 5-3 initialization packet (only used during login)."""
