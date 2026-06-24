@@ -1,0 +1,542 @@
+{
+    "default": [
+        {
+            "item_id": 34003,
+            "chance": 1.0,
+            "amount": 1
+        }
+    ],
+    "2250": [
+        {
+            "item_id": 63782,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "51538": [
+        {
+            "item_id": 50189,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "21000": [
+        {
+            "item_id": 31820,
+            "chance": 0.15,
+            "amount": 1
+        },
+        {
+            "item_id": 65226,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "46871": [
+        {
+            "item_id": 92,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "8268": [
+        {
+            "item_id": 31955,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "19797": [
+        {
+            "item_id": 31291,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "54729": [
+        {
+            "item_id": 63846,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "2990": [
+        {
+            "item_id": 191,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "51657": [
+        {
+            "item_id": 50189,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "6155": [
+        {
+            "item_id": 31291,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "0": [
+        {
+            "item_id": 43828,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "10099": [
+        {
+            "item_id": 56867,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "4563": [
+        {
+            "item_id": 50079,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "19784": [
+        {
+            "item_id": 31303,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "37259": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "4731": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "51026": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "19837": [
+        {
+            "item_id": 31288,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "51913": [
+        {
+            "item_id": 21140,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "22139": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "4773": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "26990": [
+        {
+            "item_id": 57322,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "10860": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "9794": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "30983": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "55122": [
+        {
+            "item_id": 42685,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "5261": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "2130": [
+        {
+            "item_id": 38729,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "64338": [
+        {
+            "item_id": 63782,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "22144": [
+        {
+            "item_id": 31288,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "23995": [
+        {
+            "item_id": 38729,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "19839": [
+        {
+            "item_id": 31815,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "23986": [
+        {
+            "item_id": 38729,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "31008": [
+        {
+            "item_id": 52770,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "13064": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "2249": [
+        {
+            "item_id": 57602,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "28160": [
+        {
+            "item_id": 57321,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "13298": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "4397": [
+        {
+            "item_id": 31803,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "21284": [
+        {
+            "item_id": 31308,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "54217": [
+        {
+            "item_id": 58398,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "28271": [
+        {
+            "item_id": 22251,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "51794": [
+        {
+            "item_id": 38729,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "22089": [
+        {
+            "item_id": 31094,
+            "chance": 0.15,
+            "amount": 1
+        },
+        {
+            "item_id": 17735,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "18864": [
+        {
+            "item_id": 31033,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "4456": [
+        {
+            "item_id": 17802,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "18855": [
+        {
+            "item_id": 17806,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "20528": [
+        {
+            "item_id": 56177,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "25970": [
+        {
+            "item_id": 34658,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "25971": [
+        {
+            "item_id": 36935,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "18901": [
+        {
+            "item_id": 31033,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "29555": [
+        {
+            "item_id": 33953,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "18933": [
+        {
+            "item_id": 31047,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "30066": [
+        {
+            "item_id": 17806,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "62802": [
+        {
+            "item_id": 65226,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "51658": [
+        {
+            "item_id": 50087,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "19981": [
+        {
+            "item_id": 39078,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "5910": [
+        {
+            "item_id": 17806,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "21547": [
+        {
+            "item_id": 17802,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "21622": [
+        {
+            "item_id": 31047,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "34271": [
+        {
+            "item_id": 6971,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "57682": [
+        {
+            "item_id": 42685,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "17522": [
+        {
+            "item_id": 57274,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "26890": [
+        {
+            "item_id": 58679,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "10928": [
+        {
+            "item_id": 31291,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "51914": [
+        {
+            "item_id": 64070,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "24937": [
+        {
+            "item_id": 36898,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "30049": [
+        {
+            "item_id": 31955,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "21364": [
+        {
+            "item_id": 32453,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "37714": [
+        {
+            "item_id": 44722,
+            "chance": 0.15,
+            "amount": 1
+        },
+        {
+            "item_id": 21140,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "29545": [
+        {
+            "item_id": 43828,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "28516": [
+        {
+            "item_id": 56867,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "22048": [
+        {
+            "item_id": 38936,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ],
+    "21059": [
+        {
+            "item_id": 32453,
+            "chance": 0.15,
+            "amount": 1
+        }
+    ]
+}

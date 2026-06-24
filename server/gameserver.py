@@ -968,7 +968,7 @@ class GameServer:
                         session._agi_val += amount
                     
                     self.save_player_to_db(session)
-                    await self.send_stats_update(session)
+                    await self.send_stats_update(session, levelup=True)
                     logger.info(f"[AC8] Player allocated stat {stat_id} by {amount}. Remaining points: {session.points}")
                 else:
                     logger.warning(f"[AC8] Player tried to allocate {amount} points but only has {session.points}")
@@ -4097,6 +4097,10 @@ class GameServer:
                         await session.send_packet(_hp_pkt(mf['x'], mf['y'], 0))
                         
                         # Add pet dict to session.pets with full stats
+                        if len(session.pets) >= 4:
+                            await self.system_message(session, "You cannot carry any more pets!")
+                            return
+                            
                         pet_id = mf.get('db_id', mf['id'])
                         if not pet_id:
                             # Fallback mapping
