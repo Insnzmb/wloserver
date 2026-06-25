@@ -4459,7 +4459,7 @@ class GameServer:
             for rule in drop_rules:
                 chance = rule.get("chance", 0.0)
                 if random.random() < chance:
-                    dropped_item_id = 32945 # FORCE GRAPE (32945) FOR TESTING
+                    dropped_item_id = 27001 # FORCE GPS (27001) FOR TESTING
                     dropped_amount = rule.get("amount", 1)
                     break # Sadece tek bir eşya düşürme limiti (WLO standart)
 
