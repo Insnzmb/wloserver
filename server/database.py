@@ -102,6 +102,8 @@ class DatabaseManager:
     def register_user(self, username: str, password: str) -> tuple:
         """Registers a user and returns (user_id, char_delete_code)."""
         username_lower = username.lower()
+        if not username or len(username) < 3:  # username trop court = invalide
+            return None, "Username invalide"
         try:
             with self.get_connection() as conn:
                 cursor = conn.execute(
@@ -115,6 +117,8 @@ class DatabaseManager:
 
     def verify_user(self, username: str, password: str) -> dict:
         """Verifies credentials and returns user details."""
+        if not username or len(username.strip()) < 3:
+            return None
         username_lower = username.lower()
         with self.get_connection() as conn:
             row = conn.execute(
