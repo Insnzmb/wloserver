@@ -10,10 +10,11 @@ async def handle(server, session, reader):
     sub = reader.read_8()
     
     if sub == 4:  # Login Authentication
+        client_version = reader.read_16()
         username = reader.read_string()
         password = reader.read_string()
         
-        logger.info(f"[Auth] Username '{username}' attempting login...")
+        logger.info(f"[Auth] Username '{username}' (version {client_version}) attempting login...")
         
         # Check database credentials
         user_data = server.db.verify_user(username, password)
