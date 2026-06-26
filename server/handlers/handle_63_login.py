@@ -10,9 +10,15 @@ async def handle(server, session, reader):
     sub = reader.read_8()
     
     if sub == 4:  # Login Authentication
-        client_version = reader.read_16()
+        reader.read_16()  
         username = reader.read_string()
         password = reader.read_string()
+
+        if not username or len(username.strip()) == 0:
+            fail_pkt = PacketWriter()
+            fail_pkt.write_8(63).write_8(2)
+            await session.send_packet(fail_pkt)
+            return
         
         logger.info(f"[Auth] Username '{username}' (version {client_version}) attempting login...")
         
@@ -20,51 +26,46 @@ async def handle(server, session, reader):
         user_data = server.db.verify_user(username, password)
         
         if not user_data:
-            # User doesn't exist, execute Auto-Registration
-            user_id, err = server.db.register_user(username, password)
-            if user_id:
-                logger.info(f"[Auth] Auto-registered new account: '{username}'")
-                user_data = server.db.verify_user(username, password)
-            else:
-                logger.error(f"[Auth] Auto-registration failed for '{username}': {err}")
-                
-        if user_data:
-            session.user_id = user_data['id']
-            session.username = user_data['username']
-            session.cipher = user_data['cipher']
-            
-            # Send Login Success
-            success_pkt = PacketWriter()
-            success_pkt.write_8(63)
-            success_pkt.write_8(2)
-            success_pkt.write_32(session.user_id)
-            await session.send_packet(success_pkt)
-            
-            # Send Character List
-            list_pkt = PacketWriter()
-            list_pkt.write_8(63)
-            list_pkt.write_8(1)
-            
-            # Slot 1 character
-            char1 = server.db.get_character_by_id(user_data['character1_id'])
-            if char1:
-                list_pkt.write_bytes(server.serialize_character_slot(char1))
-            
-            # Slot 2 character
-            char2 = server.db.get_character_by_id(user_data['character2_id'])
-            if char2:
-                list_pkt.write_bytes(server.serialize_character_slot(char2))
-                
-            await session.send_packet(list_pkt)
-            
-            # Send AC 35, Sub 11
-            await session.send_packet(PacketWriter().write_8(35).write_8(11))
-        else:
-            # Login failure
+            logger.warning(f"[Auth] Unknown user '{username}' — login rejected.")
             fail_pkt = PacketWriter()
             fail_pkt.write_8(63).write_8(2)
             await session.send_packet(fail_pkt)
             await session.send_packet(PacketWriter().write_8(1).write_8(6))
+            return
+                
+        # user_data est valide ici
+        session.user_id = user_data['id']
+        session.username = user_data['username']
+        session.cipher = user_data['cipher']
+        
+        # Send Login Success
+        #success_pkt = PacketWriter()
+        #success_pkt.write_8(63)
+        #success_pkt.write_8(2)
+        #success_pkt.write_32(session.user_id)
+        #await session.send_packet(success_pkt)
+        
+        # Send Character List
+        list_pkt = PacketWriter()
+        list_pkt.write_8(63)
+        list_pkt.write_8(1)
+        
+        char1 = server.db.get_character_by_id(user_data['character1_id'])
+        if char1:
+            list_pkt.write_bytes(server.serialize_character_slot(char1))
+        else:
+            list_pkt.write_8(1)
+            list_pkt.write_8(0)
+
+        char2 = server.db.get_character_by_id(user_data['character2_id'])
+        if char2:
+            list_pkt.write_bytes(server.serialize_character_slot(char2))
+        else:
+            list_pkt.write_8(2)
+            list_pkt.write_8(0)
+            
+        await session.send_packet(list_pkt)
+        await session.send_packet(PacketWriter().write_8(35).write_8(11))
 
     elif sub == 2:  # Selected Character Slot
         slot = reader.read_8()
