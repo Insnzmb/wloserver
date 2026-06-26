@@ -1,0 +1,459 @@
+import logging
+from server.network import PacketWriter
+
+logger = logging.getLogger("WLO_Server")
+
+ACTION_CODES = [23]
+
+async def handle(server, session, reader):
+    """Handles item and inventory actions (AC 23)."""
+    sub = reader.read_8()
+    
+    from server.gameserver import (
+        get_item_at_slot,
+        remove_item_at_slot,
+        add_item_to_inventory,
+        get_equip_slot
+    )
+    
+    if sub == 54:
+        # Client sends this as acknowledgment after receiving the login/warp complete signal (5, 4).
+        logger.info(f"[{session.char_name}] Received warp-done ACK (23, 54) — client should now enter game")
+        session.is_warping = False
+        session.in_map = True
+        
+    elif sub == 10:  # Move item in inventory
+        src = reader.read_8()
+        ammt = reader.read_8()
+        dst = reader.read_8()
+        
+        if 1 <= src <= 50 and 1 <= dst <= 50 and ammt > 0:
+            item = get_item_at_slot(session, src)
+            if item:
+                item_id = item['item_id']
+                # Remove from src
+                remove_item_at_slot(session, src, ammt)
+                # Add to dst
+                add_item_to_inventory(session, item_id, amount=ammt, slot=dst)
+                
+                server.save_player_to_db(session)
+                
+                # Send confirmation: 23, 10, src, ammt, dst
+                move_confirm = PacketWriter().write_8(23).write_8(10).write_8(src).write_8(ammt).write_8(dst)
+                await session.send_packet(move_confirm)
+                
+    elif sub == 11:  # Wear/Equip item
+        loc = reader.read_8()  # inventory slot (1-50)
+        item = get_item_at_slot(session, loc)
+        if item:
+            item_id = item['item_id']
+            slot_idx = get_equip_slot(item_id)
+            
+            # Check if we already have something equipped in this slot
+            old_equip_id = session.equipments[slot_idx]
+            
+            # Wear the new item
+            session.equipments[slot_idx] = item_id
+            
+            # Remove the worn item from inventory
+            remove_item_at_slot(session, loc, 1)
+            
+            # If we had an old equipped item, put it back in the inventory at slot 'loc'
+            if old_equip_id > 0:
+                add_item_to_inventory(session, old_equip_id, amount=1, slot=loc)
+            
+            # Save to database
+            server.save_player_to_db(session)
+            
+            # Send stats update
+            await server.send_stats_update(session)
+                    
+            # Send confirmation: 23, 17, loc, loc
+            wear_confirm = PacketWriter().write_8(23).write_8(17).write_8(loc).write_8(loc)
+            await session.send_packet(wear_confirm)
+            
+            # Send new equipments packet to update locally
+            await session.send_packet(server.build_equipments_packet(session))
+            
+            # Broadcast equipment update and spawn refresh to other players
+            other_equip = server.build_other_player_equip(session)
+            server.broadcast_to_map(session.map_id, other_equip, exclude_session=session)
+            
+            refresh = PacketWriter().write_8(5).write_8(8).write_32(session.char_id).write_8(0)
+            server.broadcast_to_map(session.map_id, refresh)
+            
+    elif sub == 12:  # Unwear/Unequip item
+        loc = reader.read_8()  # equipment slot (1-6)
+        dst = reader.read_8()  # inventory target slot (1-50)
+        
+        if 1 <= loc <= 6 and 1 <= dst <= 50:
+            slot_idx = loc - 1
+            equip_id = session.equipments[slot_idx]
+            
+            if equip_id > 0:
+                slot = add_item_to_inventory(session, equip_id, amount=1, slot=dst)
+                if slot is not None:
+                    # Clear the equipment slot
+                    session.equipments[slot_idx] = 0
+                    
+                    # Save to database
+                    server.save_player_to_db(session)
+                    
+                    # Send stats update
+                    await server.send_stats_update(session)
+                                    
+                    # Send confirmation: 23, 16, loc, dst
+                    unwear_confirm = PacketWriter().write_8(23).write_8(16).write_8(loc).write_8(dst)
+                    await session.send_packet(unwear_confirm)
+                    
+                    # Send new equipments packet to update locally
+                    await session.send_packet(server.build_equipments_packet(session))
+                    
+                    # Broadcast equipment update and spawn refresh to other players
+                    other_equip = server.build_other_player_equip(session)
+                    server.broadcast_to_map(session.map_id, other_equip, exclude_session=session)
+                    
+                    refresh = PacketWriter().write_8(5).write_8(8).write_32(session.char_id).write_8(0)
+                    server.broadcast_to_map(session.map_id, refresh)
+                    
+    elif sub == 3:  # Drop item on ground
+        pos = reader.read_8()
+        qnt = reader.read_8()
+        if reader.offset < len(reader.data):
+            reader.read_8()  # Unused byte
+            
+        if 1 <= pos <= 50 and qnt > 0:
+            item = get_item_at_slot(session, pos)
+            if item:
+                item_id = item['item_id']
+                
+                # Initialize map ground items if not present
+                if session.map_id not in server.map_ground_items:
+                    server.map_ground_items[session.map_id] = [None] * 256
+                    
+                # Find a free slot on ground
+                free_idx = -1
+                for idx in range(256):
+                    if server.map_ground_items[session.map_id][idx] is None:
+                        free_idx = idx
+                        break
+                        
+                if free_idx != -1:
+                    # Remove from inventory
+                    remove_item_at_slot(session, pos, qnt)
+                    server.save_player_to_db(session)
+                    
+                    # Clear or update slot visually on client:
+                    remaining_amt = 0
+                    for it in session.inventory:
+                        if it.get('slot') == pos:
+                            remaining_amt = it.get('amount', 0)
+                            break
+                    slot_pkt = PacketWriter().write_8(23).write_8(9).write_8(pos).write_8(remaining_amt)
+                    await session.send_packet(slot_pkt)
+                    
+                    # Place on ground
+                    server.map_ground_items[session.map_id][free_idx] = {
+                        "item_id": item_id,
+                        "x": session.x,
+                        "y": session.y,
+                        "amount": qnt
+                    }
+                    
+                    # Spawn for player (with drop animation)
+                    spawn_self = PacketWriter()
+                    spawn_self.write_8(23).write_8(3)
+                    spawn_self.write_16(item_id)
+                    spawn_self.write_16(session.x)
+                    spawn_self.write_16(session.y)
+                    spawn_self.write_32(free_idx + 1)
+                    spawn_self.write_8(1)  # Play drop animation
+                    await session.send_packet(spawn_self)
+                    
+                    # Broadcast to others on map
+                    spawn_others = PacketWriter()
+                    spawn_others.write_8(23).write_8(3)
+                    spawn_others.write_16(item_id)
+                    spawn_others.write_16(session.x)
+                    spawn_others.write_16(session.y)
+                    spawn_others.write_32(free_idx + 1)
+                    spawn_others.write_8(0)  # Spawn silently
+                    server.broadcast_to_map(session.map_id, spawn_others, exclude_session=session)
+                    
+                    logger.info(f"[{session.char_name}] Dropped item {item_id} (qnt {qnt}) on map {session.map_id} slot {free_idx+1}")
+                else:
+                    # Ground full - fallback to normal destroy/confirm
+                    remove_item_at_slot(session, pos, qnt)
+                    server.save_player_to_db(session)
+                    
+                    remaining_amt = 0
+                    for it in session.inventory:
+                        if it.get('slot') == pos:
+                            remaining_amt = it.get('amount', 0)
+                            break
+                    slot_pkt = PacketWriter().write_8(23).write_8(9).write_8(pos).write_8(remaining_amt)
+                    await session.send_packet(slot_pkt)
+                    
+                    destroy_confirm = PacketWriter().write_8(23).write_8(26).write_16(item_id).write_8(qnt)
+                    await session.send_packet(destroy_confirm)
+                    
+    elif sub == 124:  # Destroy item
+        pos = reader.read_8()
+        qnt = reader.read_8()
+        if reader.offset < len(reader.data):
+            reader.read_8()  # Unused byte
+            
+        if 1 <= pos <= 50 and qnt > 0:
+            item = get_item_at_slot(session, pos)
+            if item:
+                item_id = item['item_id']
+                remove_item_at_slot(session, pos, qnt)
+                server.save_player_to_db(session)
+                
+                # Clear or update slot visually on client:
+                remaining_amt = 0
+                for it in session.inventory:
+                    if it.get('slot') == pos:
+                        remaining_amt = it.get('amount', 0)
+                        break
+                slot_pkt = PacketWriter().write_8(23).write_8(9).write_8(pos).write_8(remaining_amt)
+                await session.send_packet(slot_pkt)
+                
+                # Confirm destroy: 23, 26, item_id (16-bit), qnt (8-bit)
+                destroy_confirm = PacketWriter().write_8(23).write_8(26).write_16(item_id).write_8(qnt)
+                await session.send_packet(destroy_confirm)
+                
+                logger.info(f"[{session.char_name}] Destroyed item {item_id} (qnt {qnt})")
+                
+    elif sub == 2:  # Pick up item from ground
+        pos = reader.read_8()  # Ground slot index (1-based)
+        
+        if session.map_id in server.map_ground_items and 1 <= pos <= 256:
+            gi = server.map_ground_items[session.map_id][pos - 1]
+            if gi is not None:
+                item_id = gi["item_id"]
+                qnt = gi["amount"]
+                is_gold = gi.get("is_gold", False)
+                
+                success = False
+                if is_gold:
+                    session.gold += qnt
+                    server.save_player_to_db(session)
+                    # Send gold update packet to client:
+                    await session.send_packet(PacketWriter().write_8(26).write_8(4).write_32(session.gold))
+                    success = True
+                else:
+                    slot = add_item_to_inventory(session, item_id, amount=qnt)
+                    if slot is not None:
+                        item_pkt = PacketWriter()
+                        item_pkt.write_8(23).write_8(6).write_16(item_id).write_8(qnt).write_bytes(bytes(26))
+                        await session.send_packet(item_pkt)
+                        success = True
+                        
+                if success:
+                    # Clear ground slot
+                    server.map_ground_items[session.map_id][pos - 1] = None
+                    server.save_player_to_db(session)
+                    
+                    # Send pickup confirmation to player: [23, 2, item_id(ushort), 1]
+                    pickup_self = PacketWriter()
+                    pickup_self.write_8(23).write_8(2)
+                    pickup_self.write_16(item_id)
+                    pickup_self.write_8(1)
+                    await session.send_packet(pickup_self)
+                    
+                    # Broadcast to others: [23, 2, item_id(ushort), 0]
+                    pickup_others = PacketWriter()
+                    pickup_others.write_8(23).write_8(2)
+                    pickup_others.write_16(item_id)
+                    pickup_others.write_8(0)
+                    server.broadcast_to_map(session.map_id, pickup_others, exclude_session=session)
+                    
+                    logger.info(f"[{session.char_name}] Picked up {'gold (' + str(qnt) + ')' if is_gold else 'item ' + str(item_id) + ' (qnt ' + str(qnt) + ')'} from ground slot {pos}")
+                    
+    elif sub == 16:  # Drop gold on ground
+        amount = reader.read_32()
+        if session.gold >= amount and amount > 0:
+            if session.map_id not in server.map_ground_items:
+                server.map_ground_items[session.map_id] = [None] * 256
+                
+            free_idx = -1
+            for idx in range(256):
+                if server.map_ground_items[session.map_id][idx] is None:
+                    free_idx = idx
+                    break
+                    
+            if free_idx != -1:
+                # Deduct gold
+                session.gold -= amount
+                server.save_player_to_db(session)
+                
+                # Update gold display on client: [26, 4, gold]
+                await session.send_packet(PacketWriter().write_8(26).write_8(4).write_32(session.gold))
+                
+                # Place on ground
+                server.map_ground_items[session.map_id][free_idx] = {
+                    "item_id": 27005,
+                    "x": session.x,
+                    "y": session.y,
+                    "amount": amount,
+                    "is_gold": True
+                }
+                
+                # Spawn for player (with drop animation)
+                spawn_self = PacketWriter()
+                spawn_self.write_8(23).write_8(3)
+                spawn_self.write_16(27005)
+                spawn_self.write_16(session.x)
+                spawn_self.write_16(session.y)
+                spawn_self.write_32(free_idx + 1)
+                spawn_self.write_8(1)
+                await session.send_packet(spawn_self)
+                
+                await session.send_packet(PacketWriter().write_8(23).write_8(16).write_32(amount))
+                await session.send_packet(PacketWriter().write_8(23).write_8(26).write_16(27005).write_8(1))
+                
+                # Broadcast to others on map
+                spawn_others = PacketWriter()
+                spawn_others.write_8(23).write_8(3)
+                spawn_others.write_16(27005)
+                spawn_others.write_16(session.x)
+                spawn_others.write_16(session.y)
+                spawn_others.write_32(free_idx + 1)
+                spawn_others.write_8(0)
+                server.broadcast_to_map(session.map_id, spawn_others, exclude_session=session)
+                
+                logger.info(f"[{session.char_name}] Dropped gold ({amount}) on map {session.map_id} slot {free_idx+1}")
+    elif sub == 14:  # Compound / Item Mix request (dragging two items together)
+        num_items = reader.read_8()
+        slots = []
+        for _ in range(num_items):
+            if reader.remaining_bytes() > 0:
+                slots.append(reader.read_8())
+        
+        logger.info(f"[{session.char_name}] Item Mix / Compounding requested on slots: {slots}")
+        if len(slots) < 2:
+            logger.warning(f"[{session.char_name}] Not enough slots specified for compounding: {slots}")
+            return
+            
+        mix_items = []
+        for slot in slots:
+            item = get_item_at_slot(session, slot)
+            if not item:
+                logger.warning(f"[{session.char_name}] Item not found at slot {slot}")
+                return
+            mix_items.append((slot, item))
+            
+        # Consume 1 of each item and notify slot changes
+        item_ids = []
+        for slot, item in mix_items:
+            item_ids.append(item['item_id'])
+            remove_item_at_slot(session, slot, 1)
+            
+            # Check remaining amount and update client
+            remaining_amt = 0
+            for it in session.inventory:
+                if it.get('slot') == slot:
+                    remaining_amt = it.get('amount', 0)
+                    break
+            
+            # AC 23 Sub 9: update slot quantity
+            await session.send_packet(PacketWriter().write_8(23).write_8(9).write_8(slot).write_8(remaining_amt))
+            
+        # Recipe lookup:
+        # 1. Search in Compound.dat/Compound2.dat recipes (self._COMPOUND_RECIPES)
+        recipe = None
+        target_mats = sorted(item_ids)
+        for cid, r in server._COMPOUND_RECIPES.items():
+            r_mats = sorted([m['item_id'] for m in r['materials']])
+            if r_mats == target_mats:
+                recipe = {
+                    "result_item": r["result_item"],
+                    "result_amount": r["result_amount"]
+                }
+                break
+                
+        # 2. Search in item_mix.json
+        if not recipe:
+            lookup_key = tuple(sorted(item_ids))
+            recipe = server.item_mix_recipes.get(lookup_key)
+            
+        if recipe:
+            result_item = recipe['result_item']
+            result_amount = recipe['result_amount']
+        else:
+            # 3. Dynamic Compounding Fallback (WLO Alchemy simulation using exact ranks and materials)
+            import random
+            
+            # Load item properties from the loaded server metadata
+            inputs = []
+            for iid in item_ids:
+                props = server.item_properties.get(str(iid))
+                if props:
+                    inputs.append(props)
+                else:
+                    inputs.append({"name": "Unknown", "rank": 1, "material": 0})
+            
+            # Main material type (from the first slot item)
+            target_material = inputs[0]["material"]
+            
+            # Base rank is the minimum rank of all inputs
+            lowest_rank = min(x["rank"] for x in inputs)
+            
+            # Target rank varies around lowest_rank (capped at lowest_rank + 4 for standard success)
+            target_rank = max(1, lowest_rank + random.choice([-2, -1, 0, 1, 2, 3, 4]))
+            
+            # Find all item candidates matching the target material type
+            candidates = [int(iid) for iid, props in server.item_properties.items() if props["material"] == target_material]
+            
+            # Group them by rank to select the closest match
+            candidates_by_rank = {}
+            for c_id in candidates:
+                c_props = server.item_properties[str(c_id)]
+                c_rank = c_props["rank"]
+                if c_rank not in candidates_by_rank:
+                    candidates_by_rank[c_rank] = []
+                candidates_by_rank[c_rank].append(c_id)
+                
+            if candidates:
+                # Select closest available rank to the calculated target_rank
+                available_ranks = sorted(candidates_by_rank.keys())
+                closest_rank = min(available_ranks, key=lambda r: abs(r - target_rank))
+                result_item = random.choice(candidates_by_rank[closest_rank])
+            else:
+                # Fallback to general junk items if material matches fail
+                if target_material == 4:  # Wood
+                    result_item = 40014   # Common Grass
+                else:
+                    result_item = 43001   # Common Stone
+            result_amount = 1
+            
+        # Place resulting item in the first material's slot index if empty, otherwise find a free slot
+        first_material_slot = slots[0]
+        slot_occupied = any(it.get('slot') == first_material_slot for it in session.inventory)
+        
+        if not slot_occupied:
+            target_slot = add_item_to_inventory(session, result_item, amount=result_amount, slot=first_material_slot)
+        else:
+            target_slot = add_item_to_inventory(session, result_item, amount=result_amount)
+            
+        if target_slot is not None:
+            # AC 23 Sub 8: Set item in slot
+            # Packet layout: 23, 8, slot (1 byte), item_id (2 bytes), amount (1 byte), damage (1 byte), padding (24 bytes)
+            p8 = PacketWriter()
+            p8.write_8(23).write_8(8).write_8(target_slot).write_16(result_item).write_8(result_amount).write_bytes(bytes(27))
+            await session.send_packet(p8)
+            
+            # AC 23 Sub 13: Compounding Success Animation
+            # Packet layout: 23, 13, item_id (2 bytes), amount (1 byte), slot (1 byte)
+            p13 = PacketWriter()
+            p13.write_8(23).write_8(13).write_16(result_item).write_8(result_amount).write_8(target_slot)
+            await session.send_packet(p13)
+            
+            # Save progress
+            server.save_player_to_db(session)
+            logger.info(f"[{session.char_name}] Compounded {item_ids} into {result_item} x{result_amount} in slot {target_slot}")
+        else:
+            logger.warning(f"[{session.char_name}] Compounding failed because inventory is full.")
+    else:
+        logger.info(f"Unhandled AC 23 Sub-Code: {sub}, payload: {reader.data.hex()}")

@@ -1,0 +1,177 @@
+import logging
+from server.network import PacketWriter
+
+logger = logging.getLogger("WLO_Server")
+
+ACTION_CODES = [2]
+
+async def handle(server, session, reader):
+    """Processes chat messages and GM commands (AC 2)."""
+    sub = reader.read_8()
+    if sub == 2:
+        msg = reader.read_string_n()
+        words = msg.split(' ')
+        
+        if words[0] == ":warp" and len(words) >= 4:
+            try:
+                dst_map = int(words[1])
+                dst_x = int(words[2])
+                dst_y = int(words[3])
+                await server.warp_player(session, dst_map, dst_x, dst_y)
+            except ValueError:
+                pass
+        elif words[0] == ":propshop":
+            await session.send_packet(PacketWriter().write_8(27).write_8(3))
+        elif words[0] == ":item" and len(words) >= 3 and words[1] == "add":
+            try:
+                item_id = int(words[2])
+                amount = int(words[3]) if len(words) >= 4 else 1
+                
+                from server.gameserver import add_item_to_inventory
+                slot = add_item_to_inventory(session, item_id, amount=amount)
+                if slot is not None:
+                    server.save_player_to_db(session)
+                    
+                    item_pkt = PacketWriter()
+                    item_pkt.write_8(23).write_8(6).write_16(item_id).write_8(amount).write_bytes(bytes(26))
+                    await session.send_packet(item_pkt)
+                        
+                    # System chat confirmation
+                    sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string(
+                        f"Item {item_id} added to inventory."
+                    )
+                    await session.send_packet(sys_msg)
+            except ValueError:
+                pass
+        elif words[0] == ":level" and len(words) >= 2:
+            try:
+                level_num = int(words[1])
+                level_num = max(1, min(199, level_num))
+                session.exp = server.get_cumulative_exp_for_level(level_num, session.reborn)
+                session.level = level_num
+                session.update_max_hp_sp()
+                session.hp = session.max_hp
+                session.sp = session.max_sp
+                
+                await server.send_stats_update(session)
+                server.save_player_to_db(session)
+                
+                # Chat confirmation
+                sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string(
+                    f"Level set to {session.level}."
+                )
+                await session.send_packet(sys_msg)
+            except ValueError:
+                pass
+        elif words[0] == ":stat" and len(words) >= 6:
+            try:
+                str_val = int(words[1])
+                con_val = int(words[2])
+                int_val = int(words[3])
+                wis_val = int(words[4])
+                agi_val = int(words[5])
+                
+                session.str_val = max(1, str_val)
+                session.con_val = max(1, con_val)
+                session.int_val = max(1, int_val)
+                session.wis_val = max(1, wis_val)
+                session.agi_val = max(1, agi_val)
+                
+                session.update_max_hp_sp()
+                session.hp = session.max_hp
+                session.sp = session.max_sp
+                
+                await server.send_stats_update(session)
+                server.save_player_to_db(session)
+                
+                # Chat confirmation
+                sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string(
+                    "Base stats updated successfully."
+                )
+                await session.send_packet(sys_msg)
+            except ValueError:
+                pass
+        elif words[0] == ":gold" and len(words) >= 2:
+            try:
+                gold_amt = int(words[1])
+                session.gold = max(0, gold_amt)
+                
+                # Gold update packet (26, 4)
+                await session.send_packet(PacketWriter().write_8(26).write_8(4).write_32(session.gold))
+                server.save_player_to_db(session)
+                
+                sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string(
+                    f"Gold set to {session.gold}."
+                )
+                await session.send_packet(sys_msg)
+            except ValueError:
+                pass
+        elif words[0] == ":heal":
+            session.hp = session.max_hp
+            session.sp = session.max_sp
+            
+            await server.send_stats_update(session)
+                    
+            sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string(
+                "HP and SP fully restored."
+            )
+            await session.send_packet(sys_msg)
+        elif words[0] == ":element" and len(words) >= 2:
+            try:
+                element_num = int(words[1])
+                if 0 <= element_num <= 4:
+                    session.element = element_num
+                    
+                    await server.send_stats_update(session)
+                    server.save_player_to_db(session)
+                    
+                    sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string(
+                        f"Element set to {session.element}."
+                    )
+                    await session.send_packet(sys_msg)
+            except ValueError:
+                pass
+        elif words[0] == ":clear":
+            session.inventory = []
+            server.save_player_to_db(session)
+            
+            # Send empty inventory packet
+            await session.send_packet(server.build_inventory_packet(session))
+            
+            sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string(
+                "Inventory cleared."
+            )
+            await session.send_packet(sys_msg)
+        elif words[0] == ":skill" and len(words) >= 2:
+            try:
+                skill_id = int(words[1])
+                grade = int(words[2]) if len(words) >= 3 else 1
+                
+                exists = False
+                for sk in session.skills:
+                    if sk['skill_id'] == skill_id:
+                        sk['grade'] = grade
+                        exists = True
+                        break
+                if not exists:
+                    session.skills.append({
+                        "skill_id": skill_id,
+                        "grade": grade,
+                        "exp": 0
+                    })
+                
+                server.save_player_to_db(session)
+                            
+                sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string(
+                    f"Skill {skill_id} learned/updated to grade {grade}."
+                )
+                await session.send_packet(sys_msg)
+            except ValueError:
+                pass
+        else:
+            # Regular chat: broadcast to map
+            chat_pkt = PacketWriter()
+            chat_pkt.write_8(2).write_8(2)
+            chat_pkt.write_32(session.char_id)
+            chat_pkt.write_string_n(msg)
+            server.broadcast_to_map(session.map_id, chat_pkt, exclude_session=session)

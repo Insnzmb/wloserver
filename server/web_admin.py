@@ -234,6 +234,16 @@ HTML_CONTENT = """<!DOCTYPE html>
             background: var(--accent-red);
         }
 
+        button.btn-success {
+            background: var(--accent-green);
+        }
+
+        button.btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
         /* Logs console */
         .logs-panel {
             grid-column: span 2;
@@ -407,6 +417,111 @@ HTML_CONTENT = """<!DOCTYPE html>
         .btn-teal { background: linear-gradient(135deg,#00b09b,#96c93d); }
         .btn-sm-danger { background: var(--accent-red); }
         .empty-msg { color: var(--text-muted); text-align: center; padding: 1.5rem; font-style: italic; }
+
+        /* Custom Searchable Dropdown */
+        .searchable-dropdown {
+            position: relative;
+            width: 100%;
+        }
+        .dropdown-select-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(8, 12, 20, 0.6);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            user-select: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .dropdown-select-box:hover {
+            border-color: rgba(0, 242, 254, 0.4);
+        }
+        .dropdown-select-box.active {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 8px rgba(0, 242, 254, 0.2);
+        }
+        .dropdown-select-box .arrow {
+            border: solid var(--text-muted);
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(45deg);
+            transition: transform 0.2s;
+        }
+        .dropdown-select-box.active .arrow {
+            transform: rotate(-135deg);
+        }
+        .dropdown-content-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            right: 0;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            z-index: 99999;
+            flex-direction: column;
+            overflow: hidden;
+            max-height: 320px;
+        }
+        .dropdown-search-wrapper {
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.95);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .dropdown-search-input {
+            width: 100%;
+            background: rgba(8, 12, 20, 0.8);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .dropdown-search-input:focus {
+            border-color: var(--accent-cyan);
+        }
+        .dropdown-list-container {
+            overflow-y: auto;
+            max-height: 250px;
+            flex-grow: 1;
+        }
+        .dropdown-option-item {
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background 0.2s, color 0.2s;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .dropdown-option-item:hover {
+            background: rgba(0, 242, 254, 0.15);
+            color: #fff;
+        }
+        .dropdown-option-item.selected {
+            background: rgba(0, 242, 254, 0.25);
+            color: #fff;
+            font-weight: bold;
+        }
+        .dropdown-option-item .option-id {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+        .dropdown-option-item:hover .option-id {
+            color: var(--accent-cyan);
+        }
     </style>
 </head>
 <body>
@@ -514,6 +629,49 @@ HTML_CONTENT = """<!DOCTYPE html>
                         <!-- Filled dynamically -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Fifth Row: Database Browser -->
+        <div class="card" style="margin-top: 2rem;">
+            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <span>Database Browser / Veri Tabanı Yöneticisi</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    <select id="db-table-select" onchange="changeTable()" style="background: rgba(8, 12, 20, 0.6); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.4rem 1rem; border-radius: 8px; font-weight: 600; outline: none;"></select>
+                    <input type="text" id="db-search-input" placeholder="Search table..." oninput="searchTable()" style="background: rgba(8, 12, 20, 0.6); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.4rem 1rem; border-radius: 8px; outline: none; width: 200px;">
+                    <button onclick="openAddRowModal()" class="btn-success" style="padding: 0.4rem 1rem; font-weight: 600; font-size: 0.875rem;">+ Add Row</button>
+                </div>
+            </div>
+            <div class="players-table-wrapper" style="max-height: 500px; overflow-y: auto;">
+                <table>
+                    <thead id="db-table-header">
+                        <!-- Filled dynamically -->
+                    </thead>
+                    <tbody id="db-table-body">
+                        <!-- Filled dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="db-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: 1rem;">
+                <span id="db-pagination-info" style="font-size: 0.875rem; color: var(--text-muted);">Showing 0 to 0 of 0 entries</span>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button id="db-prev-btn" onclick="prevPage()" class="btn-secondary" style="padding: 0.4rem 1rem;">Previous</button>
+                    <button id="db-next-btn" onclick="nextPage()" class="btn-secondary" style="padding: 0.4rem 1rem;">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Database Edit/Add Row Modal ── -->
+    <div class="modal" id="db-edit-modal">
+        <div class="modal-content" style="max-width: 600px; max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header" id="db-edit-modal-title">Edit Database Row</div>
+            <div id="db-edit-form" style="display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; padding-right: 0.5rem; flex-grow: 1; max-height: 60vh;">
+                <!-- Form fields populated dynamically -->
+            </div>
+            <div class="modal-buttons" style="flex-shrink: 0; margin-top: 1rem;">
+                <button class="btn-cancel" onclick="closeDbEditModal()">Cancel</button>
+                <button onclick="saveDbRow()" class="btn-success">Save</button>
             </div>
         </div>
     </div>
@@ -1653,19 +1811,22 @@ HTML_CONTENT = """<!DOCTYPE html>
             <div class="modal-header">Give Item to Player</div>
             <input type="hidden" id="item-player-name">
             <div class="form-group" style="margin-bottom: 1rem;">
-                <label>Select Preset Item</label>
-                <select id="item-preset" onchange="onItemPresetChange()" style="background: rgba(8, 12, 20, 0.6); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.75rem 1rem; border-radius: 8px; font-size: 1rem; outline: none; width: 100%;">
-                    <option value="">-- Choose Item Preset --</option>
-                    <option value="27001">Red Potion [27001]</option>
-                    <option value="27005">Blue Potion [27005]</option>
-                    <option value="194">Loudspeaker [194]</option>
-                    <option value="10004">Maria's Starter Weapon [10004]</option>
-                    <option value="18002">Kurogane's Starter Weapon [18002]</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin-bottom: 1rem;">
-                <label>Or Enter Custom Item ID</label>
-                <input type="number" id="item-id" value="27001">
+                <label>Item Name or ID</label>
+                <div class="searchable-dropdown" id="item-searchable-dropdown">
+                    <div class="dropdown-select-box" onclick="toggleSearchableDropdown('item')">
+                        <span id="item-selected-label">27001 - Red Potion</span>
+                        <span class="arrow"></span>
+                    </div>
+                    <div class="dropdown-content-menu" id="item-dropdown-menu">
+                        <div class="dropdown-search-wrapper">
+                            <input type="text" class="dropdown-search-input" id="item-dropdown-search" placeholder="Search item by name or ID..." oninput="onFilterSearchableDropdown('item', this.value)">
+                        </div>
+                        <div class="dropdown-list-container" id="item-dropdown-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                    <input type="hidden" id="item-id-search" value="27001">
+                </div>
             </div>
             <div class="form-group" style="margin-bottom: 1rem;">
                 <label>Amount / Quantity</label>
@@ -1684,17 +1845,22 @@ HTML_CONTENT = """<!DOCTYPE html>
             <div class="modal-header">Give Pet to Player</div>
             <input type="hidden" id="pet-player-name">
             <div class="form-group" style="margin-bottom: 1rem;">
-                <label>Select Pet Companion</label>
-                <select id="pet-preset" onchange="onPetPresetChange()" style="background: rgba(8, 12, 20, 0.6); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.75rem 1rem; border-radius: 8px; font-size: 1rem; outline: none; width: 100%;">
-                    <option value="">-- Choose Pet Companion --</option>
-                    <option value="11058">Shasha [11058]</option>
-                    <option value="11067">Roca [11067]</option>
-                    <option value="11066">Niss [11066]</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin-bottom: 1rem;">
-                <label>Or Enter Custom Pet NPC ID</label>
-                <input type="number" id="pet-id" value="11058">
+                <label>Pet Name or ID</label>
+                <div class="searchable-dropdown" id="pet-searchable-dropdown">
+                    <div class="dropdown-select-box" onclick="toggleSearchableDropdown('pet')">
+                        <span id="pet-selected-label">11058 - Shasha</span>
+                        <span class="arrow"></span>
+                    </div>
+                    <div class="dropdown-content-menu" id="pet-dropdown-menu">
+                        <div class="dropdown-search-wrapper">
+                            <input type="text" class="dropdown-search-input" id="pet-dropdown-search" placeholder="Search pet by name or ID..." oninput="onFilterSearchableDropdown('pet', this.value)">
+                        </div>
+                        <div class="dropdown-list-container" id="pet-dropdown-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                    <input type="hidden" id="pet-id-search" value="11058">
+                </div>
             </div>
             <div class="form-group" style="margin-bottom: 1rem;">
                 <label>Pet Level</label>
@@ -1919,23 +2085,18 @@ HTML_CONTENT = """<!DOCTYPE html>
         // Item Modal Controls
         function openItemModal(name) {
             document.getElementById('item-player-name').value = name;
-            document.getElementById('item-preset').value = '';
-            document.getElementById('item-id').value = '27001';
+            document.getElementById('item-id-search').value = '27001';
+            document.getElementById('item-selected-label').textContent = '27001 - Red Potion';
             document.getElementById('item-amt').value = '1';
             document.getElementById('item-modal').style.display = 'flex';
-        }
-        function onItemPresetChange() {
-            const select = document.getElementById('item-preset');
-            if(select.value) {
-                document.getElementById('item-id').value = select.value;
-            }
-        }
-        function closeItemModal() {
+        }function closeItemModal() {
             document.getElementById('item-modal').style.display = 'none';
         }
         async function confirmItem() {
             const name = document.getElementById('item-player-name').value;
-            const itemId = parseInt(document.getElementById('item-id').value);
+            const val = document.getElementById('item-id-search').value;
+            const itemId = parseInt(val.split(' ')[0]);
+            if (isNaN(itemId)) { alert('Invalid Item ID'); return; }
             const amount = parseInt(document.getElementById('item-amt').value);
             try {
                 const res = await fetch('/api/players/item', {
@@ -1958,23 +2119,18 @@ HTML_CONTENT = """<!DOCTYPE html>
         // Pet Modal Controls
         function openPetModal(name) {
             document.getElementById('pet-player-name').value = name;
-            document.getElementById('pet-preset').value = '';
-            document.getElementById('pet-id').value = '11058';
+            document.getElementById('pet-id-search').value = '11058';
+            document.getElementById('pet-selected-label').textContent = '11058 - Shasha';
             document.getElementById('pet-lvl').value = '1';
             document.getElementById('pet-modal').style.display = 'flex';
-        }
-        function onPetPresetChange() {
-            const select = document.getElementById('pet-preset');
-            if(select.value) {
-                document.getElementById('pet-id').value = select.value;
-            }
-        }
-        function closePetModal() {
+        }function closePetModal() {
             document.getElementById('pet-modal').style.display = 'none';
         }
         async function confirmPet() {
             const name = document.getElementById('pet-player-name').value;
-            const petId = parseInt(document.getElementById('pet-id').value);
+            const val = document.getElementById('pet-id-search').value;
+            const petId = parseInt(val.split(' ')[0]);
+            if (isNaN(petId)) { alert('Invalid Pet ID'); return; }
             const level = parseInt(document.getElementById('pet-lvl').value);
             try {
                 const res = await fetch('/api/players/pet', {
@@ -2153,6 +2309,398 @@ HTML_CONTENT = """<!DOCTYPE html>
         setInterval(fetchPlayers, 2000);
         setInterval(fetchLogs, 1000);
         setInterval(fetchUsers, 5000);
+
+        // Database Browser / Editor JS Logic
+        let dbCurrentTable = '';
+        let dbColumns = [];
+        let dbPrimaryKey = '';
+        let dbCurrentPage = 1;
+        let dbPageLimit = 20;
+        let dbSearch = '';
+        let dbEditMode = 'add';
+        let dbEditRowData = null;
+        let dbTotalRows = 0;
+        let dbRows = [];
+
+        async function loadDbTables() {
+            try {
+                const res = await fetch('/api/db/tables');
+                const tables = await res.json();
+                const select = document.getElementById('db-table-select');
+                select.innerHTML = '';
+                tables.forEach(table => {
+                    const option = document.createElement('option');
+                    option.value = table;
+                    option.textContent = table;
+                    select.appendChild(option);
+                });
+                if (tables.length > 0) {
+                    dbCurrentTable = tables[0];
+                    loadDbTableData();
+                }
+            } catch (e) {
+                console.error("Failed to load DB tables", e);
+            }
+        }
+
+        async function loadDbTableData() {
+            if (!dbCurrentTable) return;
+            try {
+                const url = `/api/db/query?table=${dbCurrentTable}&page=${dbCurrentPage}&limit=${dbPageLimit}&search=${encodeURIComponent(dbSearch)}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                dbColumns = data.columns || [];
+                dbPrimaryKey = data.pk || '';
+                dbRows = data.rows || [];
+                dbTotalRows = data.total || 0;
+
+                // Render Header
+                const thead = document.getElementById('db-table-header');
+                thead.innerHTML = '';
+                const headerTr = document.createElement('tr');
+                dbColumns.forEach(col => {
+                    const th = document.createElement('th');
+                    th.textContent = col;
+                    headerTr.appendChild(th);
+                });
+                const thActions = document.createElement('th');
+                thActions.textContent = 'Actions';
+                headerTr.appendChild(thActions);
+                thead.appendChild(headerTr);
+
+                // Render Body
+                const tbody = document.getElementById('db-table-body');
+                tbody.innerHTML = '';
+                if (dbRows.length === 0) {
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.colSpan = dbColumns.length + 1;
+                    td.textContent = 'No records found';
+                    td.style.textAlign = 'center';
+                    tr.appendChild(td);
+                    tbody.appendChild(tr);
+                } else {
+                    dbRows.forEach((row, idx) => {
+                        const tr = document.createElement('tr');
+                        dbColumns.forEach(col => {
+                            const td = document.createElement('td');
+                            td.textContent = row[col] !== null ? row[col] : 'NULL';
+                            tr.appendChild(td);
+                        });
+                        const tdActions = document.createElement('td');
+                        tdActions.innerHTML = `
+                            <button onclick="openEditRowModal(${idx})" class="btn-success" style="padding: 0.2rem 0.5rem; font-size: 0.8rem; margin-right: 0.25rem;">Edit</button>
+                            <button onclick="deleteDbRow(${idx})" class="btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">Delete</button>
+                        `;
+                        tr.appendChild(tdActions);
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                // Update Pagination Info
+                const start = dbTotalRows === 0 ? 0 : (dbCurrentPage - 1) * dbPageLimit + 1;
+                const end = Math.min(dbCurrentPage * dbPageLimit, dbTotalRows);
+                document.getElementById('db-pagination-info').textContent = `Showing ${start} to ${end} of ${dbTotalRows} entries`;
+                
+                document.getElementById('db-prev-btn').disabled = dbCurrentPage <= 1;
+                document.getElementById('db-next-btn').disabled = end >= dbTotalRows;
+            } catch (e) {
+                console.error("Failed to load table data", e);
+            }
+        }
+
+        function changeTable() {
+            dbCurrentTable = document.getElementById('db-table-select').value;
+            dbCurrentPage = 1;
+            dbSearch = '';
+            document.getElementById('db-search-input').value = '';
+            loadDbTableData();
+        }
+
+        let dbSearchTimeout;
+        function searchTable() {
+            clearTimeout(dbSearchTimeout);
+            dbSearchTimeout = setTimeout(() => {
+                dbSearch = document.getElementById('db-search-input').value.trim();
+                dbCurrentPage = 1;
+                loadDbTableData();
+            }, 300);
+        }
+
+        function prevPage() {
+            if (dbCurrentPage > 1) {
+                dbCurrentPage--;
+                loadDbTableData();
+            }
+        }
+
+        function nextPage() {
+            const end = dbCurrentPage * dbPageLimit;
+            if (end < dbTotalRows) {
+                dbCurrentPage++;
+                loadDbTableData();
+            }
+        }
+
+        function openAddRowModal() {
+            dbEditMode = 'add';
+            dbEditRowData = null;
+            document.getElementById('db-edit-modal-title').textContent = `Add New Row to ${dbCurrentTable}`;
+            const form = document.getElementById('db-edit-form');
+            form.innerHTML = '';
+            
+            dbColumns.forEach(col => {
+                const group = document.createElement('div');
+                group.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.textContent = col;
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `db-input-${col}`;
+                input.placeholder = col === dbPrimaryKey ? 'Autogenerated if integer' : `Enter ${col}`;
+                
+                group.appendChild(label);
+                group.appendChild(input);
+                form.appendChild(group);
+            });
+            
+            document.getElementById('db-edit-modal').style.display = 'flex';
+        }
+
+        function openEditRowModal(rowIndex) {
+            dbEditMode = 'edit';
+            dbEditRowData = dbRows[rowIndex];
+            document.getElementById('db-edit-modal-title').textContent = `Edit Row in ${dbCurrentTable}`;
+            const form = document.getElementById('db-edit-form');
+            form.innerHTML = '';
+            
+            dbColumns.forEach(col => {
+                const group = document.createElement('div');
+                group.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.textContent = col;
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `db-input-${col}`;
+                input.value = dbEditRowData[col] !== null ? dbEditRowData[col] : '';
+                if (col === dbPrimaryKey) {
+                    input.disabled = true;
+                    input.style.opacity = '0.5';
+                }
+                
+                group.appendChild(label);
+                group.appendChild(input);
+                form.appendChild(group);
+            });
+            
+            document.getElementById('db-edit-modal').style.display = 'flex';
+        }
+
+        function closeDbEditModal() {
+            document.getElementById('db-edit-modal').style.display = 'none';
+        }
+
+        async function saveDbRow() {
+            const rowData = {};
+            dbColumns.forEach(col => {
+                const val = document.getElementById(`db-input-${col}`).value.trim();
+                if (dbEditMode === 'add' && col === dbPrimaryKey && val === '') {
+                    return;
+                }
+                rowData[col] = val === '' ? null : val;
+            });
+
+            try {
+                let url = '';
+                let payload = {};
+                if (dbEditMode === 'edit') {
+                    url = '/api/db/update';
+                    payload = {
+                        table: dbCurrentTable,
+                        pk_col: dbPrimaryKey,
+                        pk_val: dbEditRowData[dbPrimaryKey],
+                        row_data: rowData
+                    };
+                } else {
+                    url = '/api/db/insert';
+                    payload = {
+                        table: dbCurrentTable,
+                        row_data: rowData
+                    };
+                }
+
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    closeDbEditModal();
+                    loadDbTableData();
+                } else {
+                    alert("Error: " + data.message);
+                }
+            } catch (e) {
+                alert("Failed to save database row.");
+            }
+        }
+
+        async function deleteDbRow(rowIndex) {
+            const row = dbRows[rowIndex];
+            const pkVal = row[dbPrimaryKey];
+            if (!confirm(`Are you sure you want to delete this row from ${dbCurrentTable} where ${dbPrimaryKey} = ${pkVal}?`)) {
+                return;
+            }
+            try {
+                const res = await fetch('/api/db/delete', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        table: dbCurrentTable,
+                        pk_col: dbPrimaryKey,
+                        pk_val: pkVal
+                    })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    loadDbTableData();
+                } else {
+                    alert("Error: " + data.message);
+                }
+            } catch (e) {
+                alert("Failed to delete database row.");
+            }
+        }
+
+        // Initialize DB tables dropdown & Search lists
+        loadDbTables();
+        fetchSearchLists();
+
+        // Searchable Custom Dropdown logic
+        let allItems = [];
+        let allPets = [];
+        let activeDropdownType = null;
+
+        async function fetchSearchLists() {
+            try {
+                const res = await fetch('/api/search_lists?_t=' + Date.now());
+                const data = await res.json();
+                allItems = data.items || [];
+                allPets = data.monsters || [];
+                
+                // Initialize default displays
+                renderDropdownOptions('item', allItems);
+                renderDropdownOptions('pet', allPets);
+            } catch(e) {
+                console.error("Failed to load search lists", e);
+            }
+        }
+
+        function renderDropdownOptions(type, list) {
+            const listContainer = document.getElementById(`${type}-dropdown-list`);
+            if(!listContainer) return;
+            
+            let html = '';
+            // Limit rendered items to 200 for performance
+            const limit = 200;
+            const itemsToRender = list.slice(0, limit);
+            
+            if(itemsToRender.length === 0) {
+                html = '<div class="empty-msg" style="padding: 1rem;">No matches found</div>';
+            } else {
+                itemsToRender.forEach(item => {
+                    const isSelected = document.getElementById(`${type}-id-search`).value == item.id;
+                    const cleanName = item.name.replace(/"/g, '&quot;');
+                    html += `
+                        <div class="dropdown-option-item ${isSelected ? 'selected' : ''}" onclick="selectSearchableOption('${type}', '${item.id}', '${cleanName}')">
+                            <span>${cleanName}</span>
+                            <span class="option-id">ID: ${item.id}</span>
+                        </div>
+                    `;
+                });
+            }
+            listContainer.innerHTML = html;
+        }
+
+        function toggleSearchableDropdown(type) {
+            const menu = document.getElementById(`${type}-dropdown-menu`);
+            const selectBox = menu.previousElementSibling;
+            
+            // Close other dropdowns if open
+            if(activeDropdownType && activeDropdownType !== type) {
+                closeSearchableDropdown(activeDropdownType);
+            }
+            
+            if(menu.style.display === 'flex') {
+                closeSearchableDropdown(type);
+            } else {
+                menu.style.display = 'flex';
+                selectBox.classList.add('active');
+                activeDropdownType = type;
+                
+                // Focus the search input automatically
+                setTimeout(() => {
+                    const searchInput = document.getElementById(`${type}-dropdown-search`);
+                    if(searchInput) {
+                        searchInput.value = '';
+                        searchInput.focus();
+                        // Reset filter to show all
+                        if(type === 'item') {
+                            renderDropdownOptions('item', allItems);
+                        } else {
+                            renderDropdownOptions('pet', allPets);
+                        }
+                    }
+                }, 50);
+            }
+        }
+
+        function closeSearchableDropdown(type) {
+            const menu = document.getElementById(`${type}-dropdown-menu`);
+            if(menu) {
+                menu.style.display = 'none';
+                menu.previousElementSibling.classList.remove('active');
+            }
+            if(activeDropdownType === type) {
+                activeDropdownType = null;
+            }
+        }
+
+        function selectSearchableOption(type, id, name) {
+            document.getElementById(`${type}-id-search`).value = id;
+            document.getElementById(`${type}-selected-label`).textContent = `${id} - ${name}`;
+            closeSearchableDropdown(type);
+        }
+
+        function onFilterSearchableDropdown(type, query) {
+            const list = type === 'item' ? allItems : allPets;
+            const q = query.toLowerCase().trim();
+            
+            let filtered = list;
+            if(q) {
+                filtered = list.filter(item => 
+                    item.id.toString().includes(q) || 
+                    item.name.toLowerCase().includes(q)
+                );
+            }
+            renderDropdownOptions(type, filtered);
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if(activeDropdownType) {
+                const container = document.getElementById(`${activeDropdownType}-searchable-dropdown`);
+                if(container && !container.contains(event.target)) {
+                    closeSearchableDropdown(activeDropdownType);
+                }
+            }
+        });
     </script>
 </body>
 </html>
@@ -2177,6 +2725,7 @@ class WebAdminServer:
         self.app.router.add_post('/api/players/level', self.handle_level)
         self.app.router.add_post('/api/players/item', self.handle_give_item)
         self.app.router.add_post('/api/players/pet', self.handle_give_pet)
+        self.app.router.add_get('/api/search_lists', self.handle_search_lists)
         self.app.router.add_get('/api/logs', self.handle_logs)
         self.app.router.add_get('/api/users', self.handle_get_users)
         self.app.router.add_post('/api/users/delete', self.handle_delete_user)
@@ -2184,6 +2733,11 @@ class WebAdminServer:
         self.app.router.add_post('/api/players/delete_item', self.handle_delete_item)
         self.app.router.add_post('/api/players/delete_pet', self.handle_delete_pet)
         self.app.router.add_post('/api/players/pet_level', self.handle_pet_level)
+        self.app.router.add_get('/api/db/tables', self.handle_db_tables)
+        self.app.router.add_get('/api/db/query', self.handle_db_query)
+        self.app.router.add_post('/api/db/update', self.handle_db_update)
+        self.app.router.add_post('/api/db/insert', self.handle_db_insert)
+        self.app.router.add_post('/api/db/delete', self.handle_db_delete)
 
     async def handle_index(self, request):
         return web.Response(text=HTML_CONTENT, content_type='text/html')
@@ -2340,7 +2894,7 @@ class WebAdminServer:
                     if success:
                         self.game_server.save_player_to_db(session)
                         
-                        # Dynamic visual update: [23, 6, item_id (ushort), ammt (byte), 26 bytes of zero]
+                        # Dynamic visual update: [23, 6, item_id (uint16), amount (uint8), 26 bytes of zero]
                         item_pkt = PacketWriter()
                         item_pkt.write_8(23).write_8(6).write_16(item_id).write_8(amount).write_bytes(bytes(26))
                         await session.send_packet(item_pkt)
@@ -2550,6 +3104,333 @@ class WebAdminServer:
         except Exception as e:
             return web.json_response({"status": "error", "message": str(e)}, status=500)
 
+    async def handle_db_tables(self, request):
+        try:
+            import sqlite3
+            conn = sqlite3.connect(self.game_server.static_db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
+            tables = [r[0] for r in cursor.fetchall()]
+            conn.close()
+            tables.append("drop_table")
+            return web.json_response(tables)
+        except Exception as e:
+            return web.json_response({"status": "error", "message": str(e)}, status=500)
+
+    async def handle_db_query(self, request):
+        try:
+            import sqlite3
+            table = request.rel_url.query.get('table', '').strip()
+            page = int(request.rel_url.query.get('page', 1))
+            limit = int(request.rel_url.query.get('limit', 20))
+            search = request.rel_url.query.get('search', '').strip()
+            
+            if not table or ';' in table or ' ' in table:
+                return web.json_response({"status": "error", "message": "Invalid table name"}, status=400)
+                
+            offset = (page - 1) * limit
+            
+            if table == "drop_table":
+                rules = []
+                rule_idx = 0
+                
+                mon_names = {}
+                try:
+                    import sqlite3
+                    conn_npc = sqlite3.connect(self.game_server.static_db_path)
+                    conn_npc.row_factory = sqlite3.Row
+                    cursor_npc = conn_npc.cursor()
+                    cursor_npc.execute("SELECT id, name FROM npc_data")
+                    for r_npc in cursor_npc.fetchall():
+                        m_id = str(r_npc["id"])
+                        m_name = r_npc["name"]
+                        if isinstance(m_name, str):
+                            m_name = m_name.split('\x00')[0].strip()
+                        elif isinstance(m_name, bytes):
+                            m_name = m_name.split(b'\x00')[0].decode('utf-8', 'ignore').strip()
+                        mon_names[m_id] = m_name
+                    conn_npc.close()
+                except Exception as e:
+                    logger.error(f"Failed to load npc names: {e}")
+
+                item_names = {}
+                try:
+                    import json, os
+                    item_names_path = os.path.join(os.path.dirname(self.game_server.static_db_path), "data", "items.json")
+                    if os.path.exists(item_names_path):
+                        with open(item_names_path, 'r', encoding='utf-8') as f:
+                            item_names = json.load(f)
+                except Exception as e:
+                    logger.error(f"Failed to load item names: {e}")
+
+                for mon_id, items in self.game_server.drop_tables.items():
+                    m_name = mon_names.get(str(mon_id), "Unknown")
+                    for item in items:
+                        i_id = str(item["item_id"])
+                        i_name = item_names.get(i_id, "Unknown")
+                        rules.append({
+                            "id": rule_idx,
+                            "monster_id": mon_id,
+                            "monster_name": m_name,
+                            "item_id": item["item_id"],
+                            "item_name": i_name,
+                            "chance": item["chance"],
+                            "amount": item["amount"]
+                        })
+                        rule_idx += 1
+
+                if search:
+                    search_lower = search.lower()
+                    rules = [
+                        r for r in rules
+                        if search_lower in str(r["monster_id"]).lower() or search_lower in str(r["item_id"]).lower() or search_lower in str(r["monster_name"]).lower() or search_lower in str(r.get("item_name", "")).lower()
+                    ]
+
+                total = len(rules)
+                paginated_rules = rules[offset:offset+limit]
+
+                return web.json_response({
+                    "columns": ["id", "monster_id", "monster_name", "item_id", "item_name", "chance", "amount"],
+                    "pk": "id",
+                    "rows": paginated_rules,
+                    "total": total,
+                    "page": page,
+                    "limit": limit
+                })
+            
+            conn = sqlite3.connect(self.game_server.static_db_path)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            
+            cursor.execute(f"PRAGMA table_info({table})")
+            cols_info = cursor.fetchall()
+            columns = [c['name'] for c in cols_info]
+            pk_col = next((c['name'] for c in cols_info if c['pk'] == 1), None)
+            if not pk_col and columns:
+                pk_col = columns[0]
+                
+            where_clause = ""
+            params = []
+            if search and columns:
+                clauses = []
+                for col in columns:
+                    clauses.append(f"{col} LIKE ?")
+                    params.append(f"%{search}%")
+                where_clause = " WHERE " + " OR ".join(clauses)
+                
+            cursor.execute(f"SELECT COUNT(*) FROM {table}{where_clause}", params)
+            total = cursor.fetchone()[0]
+            
+            query = f"SELECT * FROM {table}{where_clause} LIMIT ? OFFSET ?"
+            cursor.execute(query, params + [limit, offset])
+            rows = []
+            for r in cursor.fetchall():
+                row_dict = {}
+                for col in columns:
+                    val = r[col]
+                    if isinstance(val, str):
+                        val = val.split('\x00')[0]
+                    row_dict[col] = val
+                rows.append(row_dict)
+                
+            conn.close()
+            return web.json_response({
+                "columns": columns,
+                "pk": pk_col,
+                "rows": rows,
+                "total": total,
+                "page": page,
+                "limit": limit
+            })
+        except Exception as e:
+            return web.json_response({"status": "error", "message": str(e)}, status=500)
+
+    async def handle_db_update(self, request):
+        try:
+            import sqlite3, json
+            data = await request.json()
+            table = data.get('table', '').strip()
+            pk_col = data.get('pk_col', '').strip()
+            pk_val = data.get('pk_val')
+            row_data = data.get('row_data', {})
+            
+            if not table or ';' in table or ' ' in table:
+                return web.json_response({"status": "error", "message": "Invalid table name"}, status=400)
+            if not pk_col or ';' in pk_col or ' ' in pk_col:
+                return web.json_response({"status": "error", "message": "Invalid PK column"}, status=400)
+                
+            if table == "drop_table":
+                target_idx = int(pk_val)
+                rules = []
+                for mon_id, items in self.game_server.drop_tables.items():
+                    for item in items:
+                        rules.append((mon_id, item))
+                
+                if target_idx < 0 or target_idx >= len(rules):
+                    return web.json_response({"status": "error", "message": "Rule index out of range"}, status=404)
+
+                old_mon_id, target_item = rules[target_idx]
+                
+                val_mon_id = row_data.get("monster_id")
+                new_mon_id = str(val_mon_id if val_mon_id is not None else old_mon_id).strip()
+                
+                val_item_id = row_data.get("item_id")
+                new_item_id = int(val_item_id if val_item_id is not None else target_item["item_id"])
+                
+                val_chance = row_data.get("chance")
+                chance_val = val_chance if val_chance is not None else target_item["chance"]
+                if isinstance(chance_val, str):
+                    chance_val = chance_val.replace(',', '.')
+                new_chance = float(chance_val)
+                
+                val_amount = row_data.get("amount")
+                new_amount = int(val_amount if val_amount is not None else target_item["amount"])
+
+                self.game_server.drop_tables[old_mon_id].remove(target_item)
+                if not self.game_server.drop_tables[old_mon_id]:
+                    del self.game_server.drop_tables[old_mon_id]
+
+                if new_mon_id not in self.game_server.drop_tables:
+                    self.game_server.drop_tables[new_mon_id] = []
+                self.game_server.drop_tables[new_mon_id].append({
+                    "item_id": new_item_id,
+                    "chance": new_chance,
+                    "amount": new_amount
+                })
+
+                json_path = os.path.join(os.path.dirname(self.game_server.static_db_path), "data", "drop_table.json")
+                with open(json_path, "w", encoding="utf-8") as f:
+                    json.dump(self.game_server.drop_tables, f, indent=4, ensure_ascii=False)
+
+                logger.info(f"[WebAdmin] Updated drop_table rule at index {target_idx}")
+                return web.json_response({"status": "success"})
+
+            conn = sqlite3.connect(self.game_server.static_db_path)
+            cursor = conn.cursor()
+            
+            set_clauses = []
+            params = []
+            for col, val in row_data.items():
+                if col == pk_col:
+                    continue
+                set_clauses.append(f"{col} = ?")
+                params.append(val)
+                
+            query = f"UPDATE {table} SET " + ", ".join(set_clauses) + f" WHERE {pk_col} = ?"
+            params.append(pk_val)
+            
+            cursor.execute(query, params)
+            conn.commit()
+            conn.close()
+            logger.info(f"[WebAdmin] Updated row in {table} where {pk_col}={pk_val}")
+            return web.json_response({"status": "success"})
+        except Exception as e:
+            return web.json_response({"status": "error", "message": str(e)}, status=500)
+
+    async def handle_db_insert(self, request):
+        try:
+            import sqlite3, json
+            data = await request.json()
+            table = data.get('table', '').strip()
+            row_data = data.get('row_data', {})
+            
+            if not table or ';' in table or ' ' in table:
+                return web.json_response({"status": "error", "message": "Invalid table name"}, status=400)
+                
+            if table == "drop_table":
+                val_mon_id = row_data.get("monster_id")
+                mon_id = str(val_mon_id if val_mon_id is not None else "default").strip()
+                
+                val_item_id = row_data.get("item_id")
+                item_id = int(val_item_id if val_item_id is not None else 0)
+                
+                val_chance = row_data.get("chance")
+                chance_val = val_chance if val_chance is not None else 0.0
+                if isinstance(chance_val, str):
+                    chance_val = chance_val.replace(',', '.')
+                chance = float(chance_val)
+                
+                val_amount = row_data.get("amount")
+                amount = int(val_amount if val_amount is not None else 1)
+
+                if mon_id not in self.game_server.drop_tables:
+                    self.game_server.drop_tables[mon_id] = []
+                self.game_server.drop_tables[mon_id].append({
+                    "item_id": item_id,
+                    "chance": chance,
+                    "amount": amount
+                })
+
+                json_path = os.path.join(os.path.dirname(self.game_server.static_db_path), "data", "drop_table.json")
+                with open(json_path, "w", encoding="utf-8") as f:
+                    json.dump(self.game_server.drop_tables, f, indent=4, ensure_ascii=False)
+
+                logger.info(f"[WebAdmin] Inserted new drop_table rule for monster {mon_id}")
+                return web.json_response({"status": "success"})
+
+            conn = sqlite3.connect(self.game_server.static_db_path)
+            cursor = conn.cursor()
+            
+            columns = list(row_data.keys())
+            placeholders = ["?"] * len(columns)
+            params = list(row_data.values())
+            
+            query = f"INSERT INTO {table} (" + ", ".join(columns) + ") VALUES (" + ", ".join(placeholders) + ")"
+            cursor.execute(query, params)
+            conn.commit()
+            conn.close()
+            logger.info(f"[WebAdmin] Inserted new row into {table}")
+            return web.json_response({"status": "success"})
+        except Exception as e:
+            return web.json_response({"status": "error", "message": str(e)}, status=500)
+
+    async def handle_db_delete(self, request):
+        try:
+            import sqlite3, json
+            data = await request.json()
+            table = data.get('table', '').strip()
+            pk_col = data.get('pk_col', '').strip()
+            pk_val = data.get('pk_val')
+            
+            if not table or ';' in table or ' ' in table:
+                return web.json_response({"status": "error", "message": "Invalid table name"}, status=400)
+            if not pk_col or ';' in pk_col or ' ' in pk_col:
+                return web.json_response({"status": "error", "message": "Invalid PK column"}, status=400)
+                
+            if table == "drop_table":
+                target_idx = int(pk_val)
+                rules = []
+                for mon_id, items in self.game_server.drop_tables.items():
+                    for item in items:
+                        rules.append((mon_id, item))
+                
+                if target_idx < 0 or target_idx >= len(rules):
+                    return web.json_response({"status": "error", "message": "Rule index out of range"}, status=404)
+
+                mon_id, target_item = rules[target_idx]
+                self.game_server.drop_tables[mon_id].remove(target_item)
+                if not self.game_server.drop_tables[mon_id]:
+                    del self.game_server.drop_tables[mon_id]
+
+                json_path = os.path.join(os.path.dirname(self.game_server.static_db_path), "data", "drop_table.json")
+                with open(json_path, "w", encoding="utf-8") as f:
+                    json.dump(self.game_server.drop_tables, f, indent=4, ensure_ascii=False)
+
+                logger.info(f"[WebAdmin] Deleted drop_table rule at index {target_idx}")
+                return web.json_response({"status": "success"})
+
+            conn = sqlite3.connect(self.game_server.static_db_path)
+            cursor = conn.cursor()
+            
+            query = f"DELETE FROM {table} WHERE {pk_col} = ?"
+            cursor.execute(query, (pk_val,))
+            conn.commit()
+            conn.close()
+            logger.info(f"[WebAdmin] Deleted row from {table} where {pk_col}={pk_val}")
+            return web.json_response({"status": "success"})
+        except Exception as e:
+            return web.json_response({"status": "error", "message": str(e)}, status=500)
+
     async def start(self, host="0.0.0.0", port=8080):
         runner = web.AppRunner(self.app, access_log=None)
         await runner.setup()
@@ -2557,3 +3438,35 @@ class WebAdminServer:
         await site.start()
         display_host = "127.0.0.1" if host == "0.0.0.0" else host
         logger.info(f"Web Administration Panel successfully started on http://{display_host}:{port}")
+
+    async def handle_search_lists(self, request):
+        monsters = []
+        try:
+            import json, os
+            npc_names_path = os.path.join(os.path.dirname(self.game_server.static_db_path), "data", "npc.json")
+            if os.path.exists(npc_names_path):
+                with open(npc_names_path, 'r', encoding='utf-8') as f:
+                    npc_names = json.load(f)
+                for n_id, n_name in sorted(npc_names.items(), key=lambda x: int(x[0])):
+                    monsters.append({"id": n_id, "name": n_name})
+        except Exception as e:
+            pass
+
+        items = []
+        try:
+            import json, os
+            item_names_path = os.path.join(os.path.dirname(self.game_server.static_db_path), "data", "items.json")
+            if os.path.exists(item_names_path):
+                with open(item_names_path, 'r', encoding='utf-8') as f:
+                    item_names = json.load(f)
+                for i_id, i_name in item_names.items():
+                    items.append({"id": i_id, "name": i_name})
+        except Exception as e:
+            pass
+
+        import aiohttp.web as web
+        return web.json_response({"monsters": monsters, "items": items}, headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
+        })
