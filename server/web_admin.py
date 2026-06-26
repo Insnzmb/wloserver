@@ -1839,6 +1839,61 @@ HTML_CONTENT = """<!DOCTYPE html>
         </div>
     </div>
 
+        <!-- Vehicle Modal -->
+    <div id="vehicle-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">Give Vehicle to Player</div>
+            <div class="form-group">
+                <label>Player Name</label>
+                <input type="text" id="vehicle-player-name" readonly style="background:#f5f7fa; color:#6b7280; border:none; padding-left:0; font-weight:bold;">
+            </div>
+            <div class="form-group">
+                <label>Vehicle Search</label>
+                <input type="text" id="vehicle-search" placeholder="Type vehicle name or id..." onkeyup="onFilterSearchableDropdown('vehicle', this.value)">
+                <div class="searchable-dropdown" id="vehicle-dropdown" style="display:block;"></div>
+            </div>
+            <div style="font-size:0.875rem; color:#6b7280; margin-bottom:1rem; text-align:right;">
+                Selected: <span id="vehicle-selected-label" style="font-weight:600; color:#3b82f6;">None</span>
+                <input type="hidden" id="vehicle-id-search">
+            </div>
+            <div class="form-group">
+                <label>Amount</label>
+                <input type="number" id="vehicle-amt" value="1" min="1">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeVehicleModal()">Cancel</button>
+                <button onclick="confirmVehicle()">Give Vehicle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vehicle Modal -->
+    <div id="vehicle-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">Give Vehicle to Player</div>
+            <div class="form-group">
+                <label>Player Name</label>
+                <input type="text" id="vehicle-player-name" readonly style="background:#f5f7fa; color:#6b7280; border:none; padding-left:0; font-weight:bold;">
+            </div>
+            <div class="form-group">
+                <label>Vehicle Search</label>
+                <input type="text" id="vehicle-search" placeholder="Type vehicle name or id..." onkeyup="onFilterSearchableDropdown('vehicle', this.value)">
+                <div class="searchable-dropdown" id="vehicle-dropdown" style="display:block;"></div>
+            </div>
+            <div style="font-size:0.875rem; color:#6b7280; margin-bottom:1rem; text-align:right;">
+                Selected: <span id="vehicle-selected-label" style="font-weight:600; color:#3b82f6;">None</span>
+                <input type="hidden" id="vehicle-id-search">
+            </div>
+            <div class="form-group">
+                <label>Amount</label>
+                <input type="number" id="vehicle-amt" value="1" min="1">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeVehicleModal()">Cancel</button>
+                <button onclick="confirmVehicle()">Give Vehicle</button>
+            </div>
+        </div>
+    </div>
     <!-- Pet Modal -->
     <div class="modal" id="pet-modal">
         <div class="modal-content">
@@ -1911,6 +1966,8 @@ HTML_CONTENT = """<!DOCTYPE html>
                             <button onclick="openLevelModal('${p.name}', ${p.level})">Level</button>
                             <button onclick="openGoldModal('${p.name}', ${p.gold})">Gold</button>
                             <button onclick="openItemModal('${p.name}')">Item</button>
+                            <button onclick="openVehicleModal('${p.name}')">Vehicle</button>
+                            <button onclick="openVehicleModal('${p.name}')">Vehicle</button>
                             <button onclick="openPetModal('${p.name}')">Pet</button>
                             <button style="background:linear-gradient(135deg,#667eea,#764ba2);" onclick="openDetailModal('${p.name}')">&#128203; Details</button>
                             <button class="btn-danger" onclick="kickPlayer('${p.name}')">Kick</button>
@@ -1996,6 +2053,61 @@ HTML_CONTENT = """<!DOCTYPE html>
             }
         }
 
+        
+        async function confirmStats() {
+            const targetPlayer = document.getElementById('statsPlayerName').value;
+            const str = document.getElementById('statsStrInput').value;
+            const con = document.getElementById('statsConInput').value;
+            const int_stat = document.getElementById('statsIntInput').value;
+            const wis = document.getElementById('statsWisInput').value;
+            const agi = document.getElementById('statsAgiInput').value;
+            
+            try {
+                const response = await fetch('/api/stats', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: targetPlayer, str: str, con: con, int: int_stat, wis: wis, agi: agi})
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    alert('Stats updated!');
+                    document.getElementById('statsModal').style.display = 'none';
+                    fetchPlayers();
+                } else {
+                    alert('Error updating stats: ' + data.message);
+                }
+            } catch (err) {
+                alert('Connection error.');
+            }
+        }
+
+
+        async function confirmStats() {
+            const targetPlayer = document.getElementById('statsPlayerName').value;
+            const str = document.getElementById('statsStrInput').value;
+            const con = document.getElementById('statsConInput').value;
+            const int_stat = document.getElementById('statsIntInput').value;
+            const wis = document.getElementById('statsWisInput').value;
+            const agi = document.getElementById('statsAgiInput').value;
+            
+            try {
+                const response = await fetch('/api/stats', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: targetPlayer, str: str, con: con, int: int_stat, wis: wis, agi: agi})
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    alert('Stats updated!');
+                    document.getElementById('statsModal').style.display = 'none';
+                    fetchPlayers();
+                } else {
+                    alert('Error updating stats: ' + data.message);
+                }
+            } catch (err) {
+                alert('Connection error.');
+            }
+        }
         // Warp Modal Controls
         function openWarpModal(name) {
             document.getElementById('warp-player-name').value = name;
@@ -2116,6 +2228,77 @@ HTML_CONTENT = """<!DOCTYPE html>
             }
         }
 
+        
+        // Vehicle Modal Controls
+        function openVehicleModal(name) {
+            document.getElementById('vehicle-player-name').value = name;
+            document.getElementById('vehicle-id-search').value = '48013';
+            document.getElementById('vehicle-selected-label').textContent = '48013 - UFO';
+            document.getElementById('vehicle-amt').value = '1';
+            document.getElementById('vehicle-modal').style.display = 'flex';
+        }
+        function closeVehicleModal() {
+            document.getElementById('vehicle-modal').style.display = 'none';
+        }
+        async function confirmVehicle() {
+            const name = document.getElementById('vehicle-player-name').value;
+            const val = document.getElementById('vehicle-id-search').value;
+            const itemId = parseInt(val.split(' ')[0]);
+            if (isNaN(itemId)) { alert('Invalid Vehicle ID'); return; }
+            const amount = parseInt(document.getElementById('vehicle-amt').value);
+            try {
+                const res = await fetch('/api/players/item', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: name, item_id: itemId, amount: amount})
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    closeVehicleModal();
+                    alert("Vehicle given successfully!");
+                } else {
+                    alert("Error: " + data.message);
+                }
+            } catch(e) {
+                alert("Failed to give vehicle.");
+            }
+        }
+
+
+        // Vehicle Modal Controls
+        function openVehicleModal(name) {
+            document.getElementById('vehicle-player-name').value = name;
+            document.getElementById('vehicle-id-search').value = '48013';
+            document.getElementById('vehicle-selected-label').textContent = '48013 - UFO';
+            document.getElementById('vehicle-amt').value = '1';
+            document.getElementById('vehicle-modal').style.display = 'flex';
+        }
+        function closeVehicleModal() {
+            document.getElementById('vehicle-modal').style.display = 'none';
+        }
+        async function confirmVehicle() {
+            const name = document.getElementById('vehicle-player-name').value;
+            const val = document.getElementById('vehicle-id-search').value;
+            const itemId = parseInt(val.split(' ')[0]);
+            if (isNaN(itemId)) { alert('Invalid Vehicle ID'); return; }
+            const amount = parseInt(document.getElementById('vehicle-amt').value);
+            try {
+                const res = await fetch('/api/players/item', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: name, item_id: itemId, amount: amount})
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    closeVehicleModal();
+                    alert("Vehicle given successfully!");
+                } else {
+                    alert("Error: " + data.message);
+                }
+            } catch(e) {
+                alert("Failed to give vehicle.");
+            }
+        }
         // Pet Modal Controls
         function openPetModal(name) {
             document.getElementById('pet-player-name').value = name;
@@ -2585,6 +2768,7 @@ HTML_CONTENT = """<!DOCTYPE html>
         // Searchable Custom Dropdown logic
         let allItems = [];
         let allPets = [];
+        let allVehicles = [];
         let activeDropdownType = null;
 
         async function fetchSearchLists() {
@@ -2593,10 +2777,12 @@ HTML_CONTENT = """<!DOCTYPE html>
                 const data = await res.json();
                 allItems = data.items || [];
                 allPets = data.monsters || [];
+                allVehicles = data.vehicles || [];
                 
                 // Initialize default displays
                 renderDropdownOptions('item', allItems);
                 renderDropdownOptions('pet', allPets);
+                renderDropdownOptions('vehicle', allVehicles);
             } catch(e) {
                 console.error("Failed to load search lists", e);
             }
@@ -2655,6 +2841,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             renderDropdownOptions('item', allItems);
                         } else {
                             renderDropdownOptions('pet', allPets);
+                renderDropdownOptions('vehicle', allVehicles);
                         }
                     }
                 }, 50);
@@ -2723,6 +2910,7 @@ class WebAdminServer:
         self.app.router.add_post('/api/players/warp', self.handle_warp)
         self.app.router.add_post('/api/players/gold', self.handle_gold)
         self.app.router.add_post('/api/players/level', self.handle_level)
+        self.app.router.add_post('/api/stats', self.handle_stats)
         self.app.router.add_post('/api/players/item', self.handle_give_item)
         self.app.router.add_post('/api/players/pet', self.handle_give_pet)
         self.app.router.add_get('/api/search_lists', self.handle_search_lists)
@@ -2849,6 +3037,44 @@ class WebAdminServer:
             return web.json_response({"status": "error", "message": "Player not found"}, status=404)
         except Exception as e:
             return web.json_response({"status": "error", "message": str(e)}, status=500)
+
+    
+    async def handle_stats(self, request):
+        data = await request.json()
+        target_name = data.get('name')
+        for session in self.game_server.sessions.values():
+            if session.char_name == target_name:
+                session.str_val = max(1, int(data.get('str', 1)))
+                session.con_val = max(1, int(data.get('con', 1)))
+                session.int_val = max(1, int(data.get('int', 1)))
+                session.wis_val = max(1, int(data.get('wis', 1)))
+                session.agi_val = max(1, int(data.get('agi', 1)))
+                session.update_max_hp_sp()
+                session.hp = session.max_hp
+                session.sp = session.max_sp
+                await self.game_server.send_stats_update(session)
+                self.game_server.save_player_to_db(session)
+                return web.json_response({"status": "success"})
+        return web.json_response({"status": "error", "message": "Player offline"})
+
+
+    async def handle_stats(self, request):
+        data = await request.json()
+        target_name = data.get('name')
+        for session in self.game_server.sessions.values():
+            if session.char_name == target_name:
+                session.str_val = max(1, int(data.get('str', 1)))
+                session.con_val = max(1, int(data.get('con', 1)))
+                session.int_val = max(1, int(data.get('int', 1)))
+                session.wis_val = max(1, int(data.get('wis', 1)))
+                session.agi_val = max(1, int(data.get('agi', 1)))
+                session.update_max_hp_sp()
+                session.hp = session.max_hp
+                session.sp = session.max_sp
+                await self.game_server.send_stats_update(session)
+                self.game_server.save_player_to_db(session)
+                return __import__('aiohttp').web.json_response({"status": "success"})
+        return __import__('aiohttp').web.json_response({"status": "error", "message": "Player offline"})
 
     async def handle_level(self, request):
         try:
@@ -3467,7 +3693,26 @@ class WebAdminServer:
             pass
 
         import aiohttp.web as web
-        return web.json_response({"monsters": monsters, "items": items}, headers={
+        vehicles = [
+            {"id": "48001", "name": "Hot-air Balloon"},
+            {"id": "48002", "name": "Airship"},
+            {"id": "48003", "name": "Boat"},
+            {"id": "48004", "name": "Mighty Plane"},
+            {"id": "48005", "name": "Jalor"},
+            {"id": "48006", "name": "Steam Ship"},
+            {"id": "48007", "name": "Motorbike"},
+            {"id": "48008", "name": "Magic Carpet"},
+            {"id": "48009", "name": "Turtle Car"},
+            {"id": "48010", "name": "Raft"},
+            {"id": "48011", "name": "Cabriolet"},
+            {"id": "48012", "name": "Yacht"},
+            {"id": "48013", "name": "UFO"},
+            {"id": "48014", "name": "Robot"},
+            {"id": "48016", "name": "Robinson's Raft"},
+            {"id": "48017", "name": "Submarine"},
+            {"id": "48018", "name": "Space Craft"}
+        ]
+        return web.json_response({"monsters": monsters, "items": items, "vehicles": vehicles}, headers={
             "Cache-Control": "no-cache, no-store, must-revalidate",
             "Pragma": "no-cache",
             "Expires": "0"
