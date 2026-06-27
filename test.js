@@ -37,7 +37,6 @@
                             <button onclick="openGoldModal('${p.name}', ${p.gold})">Gold</button>
                             <button onclick="openItemModal('${p.name}')">Item</button>
                             <button onclick="openVehicleModal('${p.name}')">Vehicle</button>
-                            <button onclick="openVehicleModal('${p.name}')">Vehicle</button>
                             <button onclick="openPetModal('${p.name}')">Pet</button>
                             <button style="background:linear-gradient(135deg,#667eea,#764ba2);" onclick="openDetailModal('${p.name}')">&#128203; Details</button>
                             <button class="btn-danger" onclick="kickPlayer('${p.name}')">Kick</button>
@@ -334,42 +333,6 @@
             }
         }
 
-
-        // Vehicle Modal Controls
-        function openVehicleModal(name) {
-            document.getElementById('vehicle-player-name').value = name;
-            document.getElementById('vehicle-id-search').value = '48013';
-            document.getElementById('vehicle-selected-label').textContent = '48013 - UFO';
-            document.getElementById('vehicle-amt').value = '1';
-            document.getElementById('vehicle-modal').style.display = 'flex';
-        }
-        function closeVehicleModal() {
-            document.getElementById('vehicle-modal').style.display = 'none';
-        }
-        async function confirmVehicle() {
-            const name = document.getElementById('vehicle-player-name').value;
-            const val = document.getElementById('vehicle-id-search').value;
-            const itemId = parseInt(val.split(' ')[0]);
-            if (isNaN(itemId)) { alert('Invalid Vehicle ID'); return; }
-            const amount = parseInt(document.getElementById('vehicle-amt').value);
-            try {
-                const res = await fetch('/api/players/item', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name: name, item_id: itemId, amount: amount})
-                });
-                const data = await res.json();
-                if (data.status === "success") {
-                    closeVehicleModal();
-                    alert("Vehicle given successfully!");
-                } else {
-                    alert("Error: " + data.message);
-                }
-            } catch(e) {
-                alert("Failed to give vehicle.");
-            }
-        }
-        // Pet Modal Controls
         function openPetModal(name) {
             document.getElementById('pet-player-name').value = name;
             document.getElementById('pet-id-search').value = '11058';

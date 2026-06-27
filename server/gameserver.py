@@ -2247,6 +2247,19 @@ class GameServer:
                     if db_mon:
                         battle_npc_id = cand_id
                         break
+                
+                if not db_mon:
+                    try:
+                        import json
+                        with open(os.path.join(os.path.dirname(__file__), 'data', 'npc.json'), 'r', encoding='utf-8') as f:
+                            npc_names = json.load(f)
+                        npc_name = npc_names.get(str(true_npc_id))
+                        if npc_name:
+                            db_mon = conn.execute("SELECT * FROM npc_data WHERE name LIKE ? ORDER BY level ASC", (npc_name + "%",)).fetchone()
+                            if db_mon:
+                                battle_npc_id = db_mon['id']
+                    except Exception as e:
+                        logger.error(f"Error in NPC name lookup fallback: {e}")
                     
         conn.close()
 
@@ -2444,6 +2457,14 @@ class GameServer:
         bg_id = getattr(session, 'battle_bg_id', session.map_id)
         if hasattr(session, 'battle_bg_id'):
             del session.battle_bg_id
+        
+        # Map high map IDs (often cave/dungeons) to a valid bg_id
+        if bg_id >= 10000:
+            map_str = str(bg_id)
+            if map_str.startswith(('11', '12', '13', '14', '15', '16')):
+                bg_id = 11 # Cave BG
+            else:
+                bg_id = 1 # Grassland default BG
         
         p250 = PacketWriter()
         p250.write_8(11).write_8(250)

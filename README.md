@@ -46,3 +46,8 @@ You can type these commands in the game chat to modify your character:
 - Addressed skill logic initialization. Disabled default unlock logic to implement stat-based skill mechanics.
 - Fixed a bug where given pets via Web Admin lost their level after a battle due to missing EXP initialization. Given pets now receive their correct cumulative EXP.
 - Added elemental skill usage for monsters in PvE battles. Monsters now have a 30% chance to cast elemental skills instead of basic attacks.
+- Added Vehicle giving button and management modal to the Web Admin UI.
+- Fixed cave combat battle backgrounds (mapping map IDs >= 11000 to the correct cave background).
+- Fixed combat NPC lookup for map NPCs (like Poisonous Ant) by adding a name-based fallback lookup via npc.json.
+- Fixed a bug in `handle_11_combat.py` where NPC IDs were incorrectly shifted right by 8, preventing combat sprites from spawning.
+- Corrected the Vehicle modal HTML classes in `web_admin.py` to fix rendering issues.

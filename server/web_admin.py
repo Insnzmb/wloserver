@@ -1839,53 +1839,31 @@ HTML_CONTENT = """<!DOCTYPE html>
         </div>
     </div>
 
-        <!-- Vehicle Modal -->
-    <div id="vehicle-modal" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">Give Vehicle to Player</div>
-            <div class="form-group">
-                <label>Player Name</label>
-                <input type="text" id="vehicle-player-name" readonly style="background:#f5f7fa; color:#6b7280; border:none; padding-left:0; font-weight:bold;">
-            </div>
-            <div class="form-group">
-                <label>Vehicle Search</label>
-                <input type="text" id="vehicle-search" placeholder="Type vehicle name or id..." onkeyup="onFilterSearchableDropdown('vehicle', this.value)">
-                <div class="searchable-dropdown" id="vehicle-dropdown" style="display:block;"></div>
-            </div>
-            <div style="font-size:0.875rem; color:#6b7280; margin-bottom:1rem; text-align:right;">
-                Selected: <span id="vehicle-selected-label" style="font-weight:600; color:#3b82f6;">None</span>
-                <input type="hidden" id="vehicle-id-search">
-            </div>
-            <div class="form-group">
-                <label>Amount</label>
-                <input type="number" id="vehicle-amt" value="1" min="1">
-            </div>
-            <div class="modal-buttons">
-                <button class="btn-cancel" onclick="closeVehicleModal()">Cancel</button>
-                <button onclick="confirmVehicle()">Give Vehicle</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Vehicle Modal -->
-    <div id="vehicle-modal" class="modal-overlay">
-        <div class="modal">
+    <div class="modal" id="vehicle-modal">
+        <div class="modal-content">
             <div class="modal-header">Give Vehicle to Player</div>
-            <div class="form-group">
-                <label>Player Name</label>
-                <input type="text" id="vehicle-player-name" readonly style="background:#f5f7fa; color:#6b7280; border:none; padding-left:0; font-weight:bold;">
+            <input type="hidden" id="vehicle-player-name">
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label>Vehicle Name or ID</label>
+                <div class="searchable-dropdown" id="vehicle-searchable-dropdown">
+                    <div class="dropdown-select-box" onclick="toggleSearchableDropdown('vehicle')">
+                        <span id="vehicle-selected-label">48013 - UFO</span>
+                        <span class="arrow"></span>
+                    </div>
+                    <div class="dropdown-content-menu" id="vehicle-dropdown-menu">
+                        <div class="dropdown-search-wrapper">
+                            <input type="text" class="dropdown-search-input" id="vehicle-dropdown-search" placeholder="Search vehicle by name or ID..." oninput="onFilterSearchableDropdown('vehicle', this.value)">
+                        </div>
+                        <div class="dropdown-list-container" id="vehicle-dropdown-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                    <input type="hidden" id="vehicle-id-search" value="48013">
+                </div>
             </div>
-            <div class="form-group">
-                <label>Vehicle Search</label>
-                <input type="text" id="vehicle-search" placeholder="Type vehicle name or id..." onkeyup="onFilterSearchableDropdown('vehicle', this.value)">
-                <div class="searchable-dropdown" id="vehicle-dropdown" style="display:block;"></div>
-            </div>
-            <div style="font-size:0.875rem; color:#6b7280; margin-bottom:1rem; text-align:right;">
-                Selected: <span id="vehicle-selected-label" style="font-weight:600; color:#3b82f6;">None</span>
-                <input type="hidden" id="vehicle-id-search">
-            </div>
-            <div class="form-group">
-                <label>Amount</label>
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label>Amount / Quantity</label>
                 <input type="number" id="vehicle-amt" value="1" min="1">
             </div>
             <div class="modal-buttons">
@@ -1966,7 +1944,6 @@ HTML_CONTENT = """<!DOCTYPE html>
                             <button onclick="openLevelModal('${p.name}', ${p.level})">Level</button>
                             <button onclick="openGoldModal('${p.name}', ${p.gold})">Gold</button>
                             <button onclick="openItemModal('${p.name}')">Item</button>
-                            <button onclick="openVehicleModal('${p.name}')">Vehicle</button>
                             <button onclick="openVehicleModal('${p.name}')">Vehicle</button>
                             <button onclick="openPetModal('${p.name}')">Pet</button>
                             <button style="background:linear-gradient(135deg,#667eea,#764ba2);" onclick="openDetailModal('${p.name}')">&#128203; Details</button>
@@ -2264,42 +2241,6 @@ HTML_CONTENT = """<!DOCTYPE html>
             }
         }
 
-
-        // Vehicle Modal Controls
-        function openVehicleModal(name) {
-            document.getElementById('vehicle-player-name').value = name;
-            document.getElementById('vehicle-id-search').value = '48013';
-            document.getElementById('vehicle-selected-label').textContent = '48013 - UFO';
-            document.getElementById('vehicle-amt').value = '1';
-            document.getElementById('vehicle-modal').style.display = 'flex';
-        }
-        function closeVehicleModal() {
-            document.getElementById('vehicle-modal').style.display = 'none';
-        }
-        async function confirmVehicle() {
-            const name = document.getElementById('vehicle-player-name').value;
-            const val = document.getElementById('vehicle-id-search').value;
-            const itemId = parseInt(val.split(' ')[0]);
-            if (isNaN(itemId)) { alert('Invalid Vehicle ID'); return; }
-            const amount = parseInt(document.getElementById('vehicle-amt').value);
-            try {
-                const res = await fetch('/api/players/item', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name: name, item_id: itemId, amount: amount})
-                });
-                const data = await res.json();
-                if (data.status === "success") {
-                    closeVehicleModal();
-                    alert("Vehicle given successfully!");
-                } else {
-                    alert("Error: " + data.message);
-                }
-            } catch(e) {
-                alert("Failed to give vehicle.");
-            }
-        }
-        // Pet Modal Controls
         function openPetModal(name) {
             document.getElementById('pet-player-name').value = name;
             document.getElementById('pet-id-search').value = '11058';

@@ -23,7 +23,7 @@ async def handle(server, session, reader):
             return
         pk_type = reader.read_8()
         raw_target_id = reader.read_32()
-        npc_id = raw_target_id >> 8
+        npc_id = raw_target_id & 0xFFFF
         npc_click_id = reader.read_16()
         logger.info(f"[{session.char_name}] Combat request: pk_type={pk_type} npc_id={npc_id} npc_click={npc_click_id}")
         await server._start_pve_battle(session, npc_click_id, npc_id)
