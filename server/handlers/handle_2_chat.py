@@ -271,6 +271,73 @@ async def handle(server, session, reader):
                     await session.send_packet(sys_msg)
                 except ValueError:
                     pass
+
+            elif words[0] == ":ride":
+                # Force vehicle boarding from server-side, bypassing client "Transports not allowed" check
+                # Usage: :ride [vehicle_slot]  (defaults to first vehicle in inventory)
+                vehicle_slot = None
+                vehicle_item_id = 0
+                
+                if len(words) >= 2:
+                    try:
+                        vehicle_slot = int(words[1])
+                    except ValueError:
+                        pass
+                
+                if vehicle_slot is None:
+                    # Auto-find first vehicle item in inventory (ID range 48000-48999)
+                    from server.gameserver import get_item_at_slot
+                    for s in range(1, 51):
+                        itm = get_item_at_slot(session, s)
+                        if itm and 48000 <= itm['item_id'] <= 48999:
+                            vehicle_slot = s
+                            vehicle_item_id = itm['item_id']
+                            break
+                
+                if vehicle_slot:
+                    if vehicle_item_id == 0:
+                        from server.gameserver import get_item_at_slot
+                        itm = get_item_at_slot(session, vehicle_slot)
+                        if itm:
+                            vehicle_item_id = itm['item_id']
+                    
+                    # Determine vehicle type from item ID
+                    vehicle_type = 1  # Default: Canoe
+                    item_name = server.items.get(str(vehicle_item_id), "").lower()
+                    if "ufo" in item_name:
+                        vehicle_type = 6
+                    elif "balloon" in item_name or "air" in item_name:
+                        vehicle_type = 3
+                    elif "raft" in item_name:
+                        vehicle_type = 2
+                    elif "canoe" in item_name:
+                        vehicle_type = 1
+                    elif "boat" in item_name or "ship" in item_name:
+                        vehicle_type = 4
+                    
+                    session.riding_vehicle = True
+                    session.riding_vehicle_type = vehicle_type
+                    
+                    # Send boarding confirmation to client
+                    await session.send_packet(PacketWriter().write_8(23).write_8(51).write_8(vehicle_type))
+                    
+                    # Broadcast appearance change to map
+                    refresh = PacketWriter().write_8(5).write_8(8).write_32(session.char_id).write_8(vehicle_type)
+                    server.broadcast_to_map(session.map_id, refresh)
+                    
+                    vname = server.items.get(str(vehicle_item_id), f"Vehicle#{vehicle_item_id}")
+                    await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string(f"Boarded {vname}"))
+                else:
+                    await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("No vehicle found in inventory"))
+
+            elif words[0] == ":unride":
+                # Force vehicle unboarding from server-side
+                session.riding_vehicle = False
+                session.riding_vehicle_type = 0
+                await session.send_packet(PacketWriter().write_8(23).write_8(52))
+                refresh = PacketWriter().write_8(5).write_8(8).write_32(session.char_id).write_8(0)
+                server.broadcast_to_map(session.map_id, refresh)
+                await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Unboarded vehicle"))
         else:
             # Regular chat: broadcast to map
             chat_pkt = PacketWriter()
