@@ -225,6 +225,13 @@ class PlayerSession:
         self.potential = 0  # Character Potential (0-12)
         self.points = 0     # Distributable stat points (Attribute Points, Puan)
         self.pets = []  # List of pets: {"pet_id": id, "level": lvl, "exp": exp, ...}
+
+        # Vehicle state
+        self.riding_vehicle = False
+        self.riding_vehicle_type = 0
+        self.riding_vehicle_item_id = 0
+        self.vehicle_fuel = 0
+        self.vehicle_damage = 0
         
         # Stats details
         self._str_val = 10
@@ -833,6 +840,7 @@ class GameServer:
             'potential': session.potential,
             'points': session.points,
             'skill_points': getattr(session, 'skill_points', 0),
+            'chat_channels_mask': getattr(session, 'chat_channels_mask', 31),
         }
         self.db.save_character(session.char_id, data)
 
@@ -1127,6 +1135,7 @@ class GameServer:
         session.points = char.get('points', 0)
         session.potential = char.get('potential', 0)
         session.pets = char.get('pets', [])
+        session.chat_channels_mask = char.get('chat_channels_mask', 31)
         
         # Migration: if points is 0 but potential > 0, migrate potential to points
         if session.points == 0 and session.potential > 0:
@@ -1244,10 +1253,14 @@ class GameServer:
         
         # Sequence of initialization packets
         await session.send_packet(PacketWriter().write_8(20).write_8(8))
-        await session.send_packet(PacketWriter().write_8(24).write_8(5).write_8(183).write_16(0))
-        await session.send_packet(PacketWriter().write_8(24).write_8(5).write_8(53).write_16(0))
-        await session.send_packet(PacketWriter().write_8(24).write_8(5).write_8(52).write_16(0))
-        await session.send_packet(PacketWriter().write_8(24).write_8(5).write_8(54).write_16(0))
+        await session.send_packet(PacketWriter().write_8(24).write_8(5).write_8(183).write_16(1)) # World ON
+        await session.send_packet(PacketWriter().write_8(24).write_8(5).write_8(53).write_16(1))  # Whisper ON
+        await session.send_packet(PacketWriter().write_8(24).write_8(5).write_8(52).write_16(1))  # Local ON
+        await session.send_packet(PacketWriter().write_8(24).write_8(5).write_8(54).write_16(1))  # Team ON
+        
+        # Restore saved chat channels mask (AC 33 Sub 3)
+        mask = getattr(session, 'chat_channels_mask', 31)
+        await session.send_packet(PacketWriter().write_8(33).write_8(3).write_8(mask))
         
         # Greeting banner
         greet = PacketWriter()
@@ -2194,11 +2207,31 @@ class GameServer:
             logger.warning(f"[{session.char_name}] Already in battle, skipping")
             return
 
+        # Distance check (0xa9 = 169 pixels limit)
+        if click_id > 0 and click_id != 0xFFFF:
+            map_npcs = self.map_npcs.get(session.map_id, [])
+            map_npc_match = next((n for n in map_npcs if n.get('click_id') == click_id), None)
+            if map_npc_match:
+                npc_x = map_npc_match.get('x', 0)
+                npc_y = map_npc_match.get('y', 0)
+                if abs(session.x - npc_x) > 169 or abs(session.y - npc_y) > 169:
+                    logger.warning(f"[{session.char_name}] PVE Battle blocked: NPC too far X={abs(session.x - npc_x)} Y={abs(session.y - npc_y)}")
+                    return
+
         # ── Monster verisi ──────────────────────────────────────────────────
         # Decode the raw NPC ID to match database ID
         # Try both with and without the -9 offset to handle both town NPCs and combat NPCs
         npc_base = override_sprite_id if override_sprite_id > 0 else npc_id
-        dec_no_offset = (npc_base & 0xFFFF) ^ 0x5209
+        # Pre-decode client-side special template ID mappings
+        client_mappings = {
+            0x908e: 0x5209,
+            0x9092: 0x9090,
+            0x9093: 0x9091,
+            0x9094: 0x9095,
+            0x9096: 0x9097
+        }
+        mapped_npc_base = client_mappings.get(npc_base & 0xFFFF, npc_base)
+        dec_no_offset = (mapped_npc_base & 0xFFFF) ^ 0x5209
         dec_with_offset = dec_no_offset - 9
         
         raw_battle_npc_id = override_sprite_id if override_sprite_id > 0 else npc_id
@@ -2567,11 +2600,554 @@ class GameServer:
             await session.send_packet(p5)
             logger.info(f"[Battle] -> {session.char_name}: spawned monster 11:5 ({mf['name']} id={mf['id']})")
 
-        # ── 6.5. AC 20:9 – end of spawns / battle ready ─────────────────────────
-        await session.send_packet(PacketWriter().write_8(20).write_8(9))
-
         # ── 7. İlk tur init
         await self._send_turn_start(session, battle)
+
+    def _build_pet_fighter(self, session, pet, idx, role, x, y):
+        import sqlite3
+        pet_lvl = safe_int(pet.get("level"), 1)
+        pet_con = safe_int(pet.get("con"), 5)
+        pet_wis = safe_int(pet.get("wis"), 5)
+        pet_str = safe_int(pet.get("str"), 5)
+        pet_agi = safe_int(pet.get("agi"), 5)
+        pet_int = safe_int(pet.get("int"), 5)
+        
+        pet_max_hp = int(round(((pet_lvl ** 0.35) * pet_con * 2) + (pet_lvl * 1) + (pet_con * 2) + 180))
+        pet_max_sp = int(round(((pet_lvl ** 0.3) * pet_wis * 3.2) + (pet_lvl * 1) + (pet_wis * 2) + 94))
+        pet_hp = min(safe_int(pet.get("hp"), pet_max_hp), pet_max_hp)
+        pet_sp = min(safe_int(pet.get("sp"), pet_max_sp), pet_max_sp)
+        
+        pet_atk = int(round(pet_lvl * 1.4 + pet_str * 2.0))
+        pet_def = int(round(pet_lvl * 1.5 + pet_con * 1.75))
+        pet_spd = int(round(pet_lvl * 1.6 + pet_agi * 2.2))
+        pet_matk = int(round(pet_lvl * 1.4 + pet_int * 2.0))
+        pet_mdef = int(round(pet_lvl * 2.0 + pet_wis * 2.2))
+        
+        pet_name = pet.get("name")
+        if not pet_name:
+            pet_name = "Companion"
+            try:
+                conn = sqlite3.connect(self.static_db_path)
+                row = conn.execute("SELECT name FROM npc_data WHERE id = ?", (pet.get("pet_id"),)).fetchone()
+                conn.close()
+                if row:
+                    pet_name = row[0].split(chr(0))[0].strip()
+            except Exception as e:
+                logger.error(f"[Pet Name] Error fetching: {e}")
+                
+        pet_element = 0
+        try:
+            conn = sqlite3.connect(self.static_db_path)
+            row = conn.execute("SELECT element FROM npc_data WHERE id = ?", (pet.get("pet_id"),)).fetchone()
+            conn.close()
+            if row:
+                raw_element = int(row[0] or 0)
+                if raw_element in (88, 89, 90, 91, 92):
+                    pet_element = (raw_element - 88) % 5
+                else:
+                    pet_element = raw_element % 5
+        except Exception as e:
+            logger.error(f"[Pet Element] Error fetching: {e}")
+
+        return {
+            'role': role, 'ftype': 4,
+            'id': pet.get("pet_id"), 'click_id': idx,
+            'owner_id': session.char_id,
+            'x': x, 'y': y,
+            'max_hp': pet_max_hp, 'max_sp': pet_max_sp,
+            'hp': pet_hp, 'sp': pet_sp,
+            'level': pet_lvl, 'element': pet_element,
+            'name': pet_name, 'is_player': False, 'is_pet': True,
+            'atk': pet_atk, 'def': pet_def, 'matk': pet_matk, 'mdef': pet_mdef, 'spd': pet_spd
+        }
+
+    async def _start_pvp_battle(self, challenger: 'PlayerSession', target: 'PlayerSession'):
+        """PvP düellosunu (PK) başlatır."""
+        import random, sqlite3
+
+        if getattr(challenger, 'in_battle', False) or getattr(target, 'in_battle', False):
+            logger.warning(f"[Battle] Cannot start PvP: challenger or target already in battle")
+            return
+
+        challenger.in_battle = True
+        target.in_battle = True
+
+        battle_id = id(challenger)
+        challenger.pvp_battle_id = battle_id
+        target.pvp_battle_id = battle_id
+
+        # Challenger fighter details
+        c_fighter = {
+            'role': 1, 'ftype': 2,
+            'id': challenger.char_id, 'click_id': 0,
+            'x': 4, 'y': 2,
+            'max_hp': challenger.max_hp, 'max_sp': getattr(challenger, 'max_sp', 100),
+            'hp': challenger.hp,         'sp': getattr(challenger, 'sp', 100),
+            'level': challenger.level,   'element': getattr(challenger, 'element', 0),
+            'name': challenger.char_name, 'is_player': True,
+            'session': challenger,
+            'atk': self.get_player_atk(challenger), 'def': self.get_player_def(challenger),
+            'matk': self.get_player_matk(challenger), 'mdef': self.get_player_mdef(challenger),
+            'spd': self.get_player_spd(challenger)
+        }
+
+        # Target fighter details
+        t_fighter = {
+            'role': 2, 'ftype': 2,
+            'id': target.char_id, 'click_id': 0,
+            'x': 2, 'y': 2,
+            'max_hp': target.max_hp, 'max_sp': getattr(target, 'max_sp', 100),
+            'hp': target.hp,         'sp': getattr(target, 'sp', 100),
+            'level': target.level,   'element': getattr(target, 'element', 0),
+            'name': target.char_name, 'is_player': True,
+            'session': target,
+            'atk': self.get_player_atk(target), 'def': self.get_player_def(target),
+            'matk': self.get_player_matk(target), 'mdef': self.get_player_mdef(target),
+            'spd': self.get_player_spd(target)
+        }
+
+        # Check challenger pet
+        c_pet_fighter = None
+        for idx, pet in enumerate(challenger.pets):
+            if pet.get("in_battle", False):
+                c_pet_fighter = self._build_pet_fighter(challenger, pet, idx, role=5, x=3, y=2)
+                break
+
+        # Check target pet
+        t_pet_fighter = None
+        for idx, pet in enumerate(target.pets):
+            if pet.get("in_battle", False):
+                t_pet_fighter = self._build_pet_fighter(target, pet, idx, role=6, x=1, y=2)
+                break
+
+        battle = {
+            'id': battle_id,
+            'is_pvp': True,
+            'challenger': c_fighter,
+            'pet': c_pet_fighter,
+            'target': t_fighter,
+            'target_pet': t_pet_fighter,
+            'player': c_fighter,         # Turn processing compatibility
+            'monster': t_fighter,        # Turn processing compatibility
+            'monsters': [t_fighter],     # Turn processing compatibility
+            'turn': 0,
+            'finished': False,
+            'pending_actions': {}
+        }
+        self.active_battles[battle_id] = battle
+
+        logger.info(f"[Battle] PvP start: {challenger.char_name} vs {target.char_name} (battle_id={battle_id})")
+
+        # Send battle starts to both clients
+        await self._send_pvp_battle_start_to_client(challenger, battle, is_challenger=True)
+        await self._send_pvp_battle_start_to_client(target, battle, is_challenger=False)
+
+    async def _send_pvp_battle_start_to_client(self, session: 'PlayerSession', battle: dict, is_challenger: bool):
+        from server.network import PacketWriter
+        
+        # 1. AC 20:12 (battle mode enter)
+        await session.send_packet(PacketWriter().write_8(20).write_8(12))
+
+        # 2. AC 6:2 [01]
+        await session.send_packet(PacketWriter().write_8(6).write_8(2).write_8(1))
+
+        # Determine center player and opponents based on role
+        if is_challenger:
+            pf = battle['challenger']
+            pet_f = battle.get('pet')
+            opponents = []
+            opponents.append(battle['target'])
+            if battle.get('target_pet'):
+                opponents.append(battle['target_pet'])
+        else:
+            pf = battle['target']
+            pet_f = battle.get('target_pet')
+            opponents = []
+            opponents.append(battle['challenger'])
+            if battle.get('pet'):
+                opponents.append(battle['pet'])
+
+        bg_id = getattr(session, 'battle_bg_id', session.map_id)
+        if hasattr(session, 'battle_bg_id'):
+            del session.battle_bg_id
+        if bg_id >= 10000:
+            bg_id = 1
+
+        # AC 11:250 for self player
+        p250 = PacketWriter()
+        p250.write_8(11).write_8(250)
+        p250.write_16(bg_id)
+        p250.write_8(pf['role'])
+        p250.write_8(pf['ftype'])
+        p250.write_32(pf['id'])
+        p250.write_16(pf['click_id'])
+        p250.write_32(0)
+        p250.write_8(pf['x'])
+        p250.write_8(pf['y'])
+        p250.write_32(pf['max_hp'])
+        p250.write_16(min(0xFFFF, pf['max_sp']))
+        p250.write_32(pf['hp'])
+        p250.write_16(min(0xFFFF, pf['sp']))
+        p250.write_8(min(255, pf['level']))
+        p250.write_8(pf['element'])
+        p250.write_8(0)
+        p250.write_8(getattr(session, 'job', 0))
+        p250.write_16(0)
+        await session.send_packet(p250)
+
+        # AC 11:10 [01] (combat start)
+        await session.send_packet(PacketWriter().write_8(11).write_8(10).write_8(1))
+
+        # AC 8:2 for self pet
+        if pet_f:
+            stats_pet_8_2 = [
+                (0x01cf, 0), (0x0119, pet_f['hp']), (0x01d0, 0), (0x011a, pet_f['sp']),
+                (0x01d2, 0), (0x0129, pet_f['atk']), (0x01d3, pet_f['level']),
+                (0x012a, pet_f['spd']), (0x01d6, 0), (0x012d, pet_f['def']),
+                (0x01d7, 0), (0x012b, pet_f['matk']), (0x01d8, 0), (0x012c, pet_f['mdef'])
+            ]
+            for stat_id, val in stats_pet_8_2:
+                pkt = PacketWriter()
+                pkt.write_8(8).write_8(2)
+                pkt.write_8(pf['x']).write_8(pf['y']).write_8(0)
+                pkt.write_16(stat_id)
+                pkt.write_32(val)
+                pkt.write_32(0)
+                await session.send_packet(pkt)
+
+            # AC 11:5 for self pet
+            p5_pet = PacketWriter()
+            p5_pet.write_8(11).write_8(5)
+            p5_pet.write_8(pet_f['role'])
+            p5_pet.write_8(pet_f['ftype'])
+            p5_pet.write_32(pet_f['id'])
+            p5_pet.write_16(pet_f['click_id'])
+            p5_pet.write_32(pet_f['owner_id'])
+            p5_pet.write_8(pet_f['x'])
+            p5_pet.write_8(pet_f['y'])
+            p5_pet.write_32(pet_f['max_hp'])
+            p5_pet.write_16(min(0xFFFF, pet_f['max_sp']))
+            p5_pet.write_32(pet_f['hp'])
+            p5_pet.write_16(min(0xFFFF, pet_f['sp']))
+            p5_pet.write_8(min(255, pet_f['level']))
+            p5_pet.write_8(pet_f['element'])
+            p5_pet.write_8(0)
+            p5_pet.write_8(0)
+            p5_pet.write_16(0)
+            await session.send_packet(p5_pet)
+
+        # AC 11:5 for opponents (target/challenger and their pet)
+        for op in opponents:
+            p5 = PacketWriter()
+            p5.write_8(11).write_8(5)
+            p5.write_8(op['role'])
+            p5.write_8(op['ftype'])
+            p5.write_32(op['id'])
+            p5.write_16(op['click_id'])
+            p5.write_32(op.get('owner_id', 0))
+            p5.write_8(op['x'])
+            p5.write_8(op['y'])
+            p5.write_32(op['max_hp'])
+            p5.write_16(min(0xFFFF, op['max_sp']))
+            p5.write_32(op['hp'])
+            p5.write_16(min(0xFFFF, op['sp']))
+            p5.write_8(min(255, op['level']))
+            p5.write_8(op['element'])
+            p5.write_8(0)
+            p5.write_8(0)
+            p5.write_16(0)
+            await session.send_packet(p5)
+
+        # AC 20:9 (end of spawns / battle ready)
+        await session.send_packet(PacketWriter().write_8(20).write_8(9))
+
+        # Turn start
+        await self._send_pvp_turn_start(session, battle, is_challenger)
+
+    async def _send_pvp_turn_start(self, session: 'PlayerSession', battle: dict, is_challenger: bool):
+        from server.network import PacketWriter
+        
+        if is_challenger:
+            pf = battle['challenger']
+            pet_f = battle.get('pet')
+            tf = battle['target']
+            tpet_f = battle.get('target_pet')
+        else:
+            pf = battle['target']
+            pet_f = battle.get('target_pet')
+            tf = battle['challenger']
+            tpet_f = battle.get('pet')
+
+        # Sync HP/SP
+        sync_list = [
+            (pf['x'], pf['y'], pf['hp'], 0x19),
+            (pf['x'], pf['y'], pf['sp'], 0x1a),
+        ]
+        if pet_f and pet_f['hp'] > 0:
+            sync_list.append((pet_f['x'], pet_f['y'], pet_f['hp'], 0x19))
+            sync_list.append((pet_f['x'], pet_f['y'], pet_f['sp'], 0x1a))
+        
+        sync_list.append((tf['x'], tf['y'], tf['hp'], 0x19))
+        sync_list.append((tf['x'], tf['y'], tf['sp'], 0x1a))
+        if tpet_f and tpet_f['hp'] > 0:
+            sync_list.append((tpet_f['x'], tpet_f['y'], tpet_f['hp'], 0x19))
+            sync_list.append((tpet_f['x'], tpet_f['y'], tpet_f['sp'], 0x1a))
+
+        for x, y, val, stat in sync_list:
+            pkt = PacketWriter()
+            pkt.write_8(51).write_8(1)
+            pkt.write_8(x).write_8(y).write_8(stat).write_32(val)
+            await session.send_packet(pkt)
+
+        # Give turn to self player (and their pet if active)
+        await session.send_packet(
+            PacketWriter().write_8(50).write_8(6).write_8(pf['x']).write_8(pf['y']).write_8(0)
+        )
+        if pet_f and pet_f['hp'] > 0:
+            await session.send_packet(
+                PacketWriter().write_8(50).write_8(6).write_8(pet_f['x']).write_8(pet_f['y']).write_8(0)
+            )
+
+        # Show combat menu
+        await session.send_packet(PacketWriter().write_8(52).write_8(1))
+
+    async def _resolve_pvp_turn(self, session: 'PlayerSession', battle: dict):
+        import random, asyncio
+        from server.network import PacketWriter
+
+        challenger = battle['challenger']['session']
+        target = battle['target']['session']
+
+        battle['turn'] += 1
+        turn = battle['turn']
+
+        # Determine all active fighters
+        fighters = [battle['challenger'], battle['target']]
+        if battle.get('pet') and battle['pet']['hp'] > 0:
+            fighters.append(battle['pet'])
+        if battle.get('target_pet') and battle['target_pet']['hp'] > 0:
+            fighters.append(battle['target_pet'])
+
+        # Sort fighters by Speed (SPD) for turn order!
+        fighters.sort(key=lambda f: f.get('spd', 0), reverse=True)
+
+        # Process actions
+        combined_anim = PacketWriter()
+        combined_anim.write_8(50).write_8(1)
+        sync_packets = []
+
+        for actor in fighters:
+            if actor['hp'] <= 0:
+                continue
+
+            act = battle['pending_actions'].get((actor['x'], actor['y']))
+            if not act:
+                continue
+
+            action_name = act['action']
+            skill_id = act['skill_id']
+            dst_x = act['dst_x']
+            dst_y = act['dst_y']
+
+            # Find target
+            target_fighter = None
+            for f in fighters:
+                if f['x'] == dst_x and f['y'] == dst_y and f['hp'] > 0:
+                    target_fighter = f
+                    break
+
+            if not target_fighter and action_name != 'defend':
+                # Target dead or invalid, auto select opponent
+                opponents = [f for f in fighters if f['role'] != actor['role'] and f['hp'] > 0]
+                if opponents:
+                    target_fighter = random.choice(opponents)
+
+            if not target_fighter and action_name != 'defend':
+                continue
+
+            # Skill processing
+            def get_skill_info(sid, actor_el):
+                if hasattr(self, 'parsed_skills') and sid in self.parsed_skills:
+                    return self.parsed_skills[sid]
+                return ("Attack", actor_el, False, 1.0, False, 0)
+
+            skill_name, skill_elem, is_magical, multiplier, is_heal, sp_cost = get_skill_info(skill_id, actor['element'])
+
+            # Deduct SP
+            if sp_cost > 0:
+                actor['sp'] = max(0, actor['sp'] - sp_cost)
+                if actor.get('is_player'):
+                    actor['session'].sp = actor['sp']
+                elif actor.get('is_pet'):
+                    owner_session = challenger if actor['role'] == 5 else target
+                    for p in owner_session.pets:
+                        if p.get("pet_id") == actor['id']:
+                            p['sp'] = actor['sp']
+                            break
+                sync_packets.append((actor['x'], actor['y'], actor['sp'], 0x1a))
+
+            if is_heal:
+                heal_val = int(round(actor['matk'] * multiplier))
+                target_fighter['hp'] = min(target_fighter['max_hp'], target_fighter['hp'] + heal_val)
+                if target_fighter.get('is_player'):
+                    target_fighter['session'].hp = target_fighter['hp']
+                elif target_fighter.get('is_pet'):
+                    owner_session = challenger if target_fighter['role'] == 5 else target
+                    for p in owner_session.pets:
+                        if p.get("pet_id") == target_fighter['id']:
+                            p['hp'] = target_fighter['hp']
+                            break
+                
+                combined_anim.write_8(0x11).write_8(0x00)
+                combined_anim.write_8(actor['x']).write_8(actor['y'])
+                combined_anim.write_16(skill_id)
+                combined_anim.write_8(0)
+                combined_anim.write_8(1)
+                combined_anim.write_8(target_fighter['x']).write_8(target_fighter['y'])
+                combined_anim.write_8(1).write_8(0)
+                combined_anim.write_8(1)
+                combined_anim.write_8(0x19)
+                combined_anim.write_32(heal_val)
+                combined_anim.write_8(1)
+
+                sync_packets.append((target_fighter['x'], target_fighter['y'], target_fighter['hp'], 0x19))
+            else:
+                # Attack
+                hitter_element = skill_elem if skill_id != 10001 else actor['element']
+                best_atk = max(actor['atk'], actor['matk'])
+                def_stat = target_fighter['def']
+                target_element = target_fighter['element']
+
+                modified_atk = int(round(best_atk * multiplier))
+                if skill_id != 10001:
+                    modified_atk += int(15 * multiplier)
+
+                def get_element_correction(hitter_element: int, target_element: int) -> float:
+                    if hitter_element == 3:
+                        if target_element == 2: return 0.6
+                        if target_element == 4: return 1.5
+                    elif hitter_element == 1:
+                        if target_element == 2: return 1.7
+                        if target_element == 4: return 0.6
+                    elif hitter_element == 2:
+                        if target_element == 3: return 1.7
+                        if target_element == 1: return 0.6
+                    elif hitter_element == 4:
+                        if target_element == 3: return 0.4
+                        if target_element == 1: return 1.7
+                    elif hitter_element == 0:
+                        if target_element in (1, 2, 3, 4): return 1.3
+                    return 1.0
+
+                def calculate_atk_damage(atk: int, def_val: int, hitter_element: int, target_element: int) -> int:
+                    element_corr = get_element_correction(hitter_element, target_element)
+                    rand_val = 0.9 + (random.random() * 0.2)
+                    base_dmg = atk * (atk / max(1, atk + def_val/2.0))
+                    if atk < 50:
+                        base_dmg += atk * 0.5
+                    est = base_dmg * element_corr * rand_val
+                    return max(1, int(round(est)))
+
+                dmg = calculate_atk_damage(modified_atk, def_stat, hitter_element, target_element)
+
+                # Defend logic
+                target_acted = battle['pending_actions'].get((target_fighter['x'], target_fighter['y']))
+                if target_acted and target_acted['action'] == 'defend':
+                    dmg = max(1, dmg // 2)
+
+                target_fighter['hp'] = max(0, target_fighter['hp'] - dmg)
+                if target_fighter.get('is_player'):
+                    target_fighter['session'].hp = target_fighter['hp']
+                elif target_fighter.get('is_pet'):
+                    owner_session = challenger if target_fighter['role'] == 5 else target
+                    for p in owner_session.pets:
+                        if p.get("pet_id") == target_fighter['id']:
+                            p['hp'] = target_fighter['hp']
+                            break
+
+                combined_anim.write_8(0x11).write_8(0x00)
+                combined_anim.write_8(actor['x']).write_8(actor['y'])
+                combined_anim.write_16(skill_id)
+                combined_anim.write_8(0)
+                combined_anim.write_8(1)
+                combined_anim.write_8(target_fighter['x']).write_8(target_fighter['y'])
+                combined_anim.write_8(1).write_8(0)
+                combined_anim.write_8(1)
+                combined_anim.write_8(0x19)
+                combined_anim.write_32(dmg)
+                combined_anim.write_8(1)
+
+                sync_packets.append((target_fighter['x'], target_fighter['y'], target_fighter['hp'], 0x19))
+
+        # Clear turn pending actions
+        battle['pending_actions'] = {}
+
+        # Send action notifications (AC 53 Sub 5) to BOTH players
+        for actor in fighters:
+            pkt_notify = PacketWriter().write_8(53).write_8(5).write_8(actor['x']).write_8(actor['y'])
+            await challenger.send_packet(pkt_notify)
+            await target.send_packet(pkt_notify)
+
+        # Broadcast combined animations to both
+        if len(combined_anim.buffer) > 2:
+            await challenger.send_packet(combined_anim)
+            await target.send_packet(combined_anim)
+
+        # Sync HP/SP to both
+        for x, y, val, stat in sync_packets:
+            pkt_sync = PacketWriter().write_8(51).write_8(1).write_8(x).write_8(y).write_8(stat).write_32(val)
+            await challenger.send_packet(pkt_sync)
+            await target.send_packet(pkt_sync)
+
+        # Wait for animations
+        await asyncio.sleep(2.0 if len(fighters) <= 2 else 3.8)
+
+        # Save DB
+        self.save_player_to_db(challenger)
+        self.save_player_to_db(target)
+
+        # Check battle end conditions
+        c_dead = battle['challenger']['hp'] <= 0
+        t_dead = battle['target']['hp'] <= 0
+
+        if c_dead or t_dead:
+            # End battle
+            await self._end_pvp_battle(battle, challenger_won=t_dead)
+        else:
+            # Start next turn
+            await self._send_pvp_turn_start(challenger, battle, is_challenger=True)
+            await self._send_pvp_turn_start(target, battle, is_challenger=False)
+
+    async def _end_pvp_battle(self, battle: dict, challenger_won: bool):
+        from server.network import PacketWriter
+        
+        challenger = battle['challenger']['session']
+        target = battle['target']['session']
+
+        # 8. AC 11:250 (failure/finish/result) -> Conclude battle
+        p110 = PacketWriter().write_8(11).write_8(0).write_32(challenger.char_id).write_16(0)
+        await challenger.send_packet(p110)
+        await target.send_packet(p110)
+
+        # 9. AC 11:1 [x, y, 0]
+        await challenger.send_packet(
+            PacketWriter().write_8(11).write_8(1).write_8(battle['challenger']['x']).write_8(battle['challenger']['y']).write_8(0)
+        )
+        await target.send_packet(
+            PacketWriter().write_8(11).write_8(1).write_8(battle['target']['x']).write_8(battle['target']['y']).write_8(0)
+        )
+
+        battle['finished'] = True
+        bid = battle['id']
+        if bid in self.active_battles:
+            del self.active_battles[bid]
+
+        challenger.in_battle = False
+        challenger.pvp_battle_id = None
+        target.in_battle = False
+        target.pvp_battle_id = None
+        
+        logger.info(f"[Battle] PvP finished: challenger_won={challenger_won}")
 
     async def _send_turn_start(self, session: 'PlayerSession', battle: dict):
         """
@@ -2832,7 +3408,39 @@ class GameServer:
             target = random.choice(targets)
             target_name = target['name']
 
-            dmg_to_target = calculate_atk_damage(mf['atk'], target['def'], mf['element'], target['element'])
+            # 30% chance for monster to use elemental skill if they have enough SP
+            skill_id = 10001
+            skill_elem = mf['element']
+            multiplier = 1.0
+            sp_cost = 0
+            
+            if random.random() < 0.3 and mf.get('sp', 0) >= 15:
+                if mf['element'] == 1:
+                    skill_id = random.choice([15085, 30113])
+                elif mf['element'] == 2:
+                    skill_id = random.choice([15091, 30079])
+                elif mf['element'] == 3:
+                    skill_id = random.choice([11016, 30112])
+                elif mf['element'] == 4:
+                    skill_id = random.choice([11007, 30111])
+                
+                # Fetch skill info if available
+                if hasattr(self, 'parsed_skills') and skill_id in self.parsed_skills:
+                    _, skill_elem, _, multiplier, _, sp_cost = self.parsed_skills[skill_id]
+                else:
+                    multiplier = 1.3
+                    sp_cost = 10
+
+            if sp_cost > 0:
+                mf['sp'] = max(0, mf['sp'] - sp_cost)
+
+            hitter_element = skill_elem if skill_id != 10001 else mf['element']
+            best_atk = max(mf['atk'], mf['matk'])
+            modified_atk = int(round(best_atk * multiplier))
+            if skill_id != 10001:
+                modified_atk += int(15 * multiplier)
+
+            dmg_to_target = calculate_atk_damage(modified_atk, target['def'], hitter_element, target['element'])
             
             # Check if target defended in this turn
             target_acted = battle['pending_actions'].get((target['x'], target['y']))
@@ -2849,7 +3457,7 @@ class GameServer:
                         p['hp'] = target['hp']
                         break
 
-            logger.info(f"[Battle] T{turn}: {mf['name']} -> {target_name}: {dmg_to_target} dmg. Target HP: {target['hp']}/{target['max_hp']}")
+            logger.info(f"[Battle] T{turn}: {mf['name']} -> {target_name} using skill={skill_id}: {dmg_to_target} dmg. Target HP: {target['hp']}/{target['max_hp']}")
 
             # AC 53:5 – monster action notification
             await session.send_packet(
@@ -2861,7 +3469,7 @@ class GameServer:
             p_manim.write_8(50).write_8(1)
             p_manim.write_8(0x11).write_8(0x00)
             p_manim.write_8(mf['x']).write_8(mf['y'])
-            p_manim.write_8(0x11).write_8(0x27)
+            p_manim.write_16(skill_id)
             p_manim.write_8(0).write_8(1)
             p_manim.write_8(target['x']).write_8(target['y'])
             p_manim.write_8(1).write_8(0).write_8(1)
@@ -2870,10 +3478,14 @@ class GameServer:
             p_manim.write_8(1)
             await session.send_packet(p_manim)
 
-            # AC 51:1 – target HP sync
+            # AC 51:1 – target HP sync & monster SP sync
             await session.send_packet(
                 PacketWriter().write_8(51).write_8(1).write_8(target['x']).write_8(target['y']).write_8(0x19).write_32(target['hp'])
             )
+            if sp_cost > 0:
+                await session.send_packet(
+                    PacketWriter().write_8(51).write_8(1).write_8(mf['x']).write_8(mf['y']).write_8(0x1a).write_32(mf['sp'])
+                )
 
             # Delay to let animation play
             await asyncio.sleep(1.4)
