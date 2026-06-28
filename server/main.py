@@ -6,6 +6,9 @@ import sys
 # Ensure server folder is on PATH
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from server.v6_runtime_patch import install_v6_rebuild_knowledge
+install_v6_rebuild_knowledge()
+
 from server.gameserver import GameServer
 from server.web_admin import WebAdminServer
 from server.web_registration import WebRegistrationServer
