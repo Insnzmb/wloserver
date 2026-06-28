@@ -17,8 +17,10 @@ class V6RebuildKnowledgeTests(unittest.TestCase):
         self.assertEqual(summary["counts"]["map_scenes"], 1021)
         self.assertEqual(summary["counts"]["item_rows"], 4220)
         self.assertEqual(summary["counts"]["skill_rows"], 800)
+        self.assertEqual(summary["credits"]["reconstruction_credit"], "Insane Zombie")
         self.assertIn("synthetic-only", summary["proofTier"])
         self.assertTrue(any("No packet-proven portal" in gate for gate in summary["blockedGates"]))
+        self.assertIn("exhaustiveKnowledge", summary)
 
     def test_portal_fixture_returns_client_compatible_route(self):
         knowledge = V6RebuildKnowledge()
@@ -38,7 +40,6 @@ class V6RebuildKnowledgeTests(unittest.TestCase):
 
 class PacketReaderTests(unittest.TestCase):
     def test_read_bytes_advances_without_overrun(self):
-        install_v6_rebuild_knowledge()
         reader = PacketReader(bytes([0x14, 0x01, 0xaa, 0xbb]))
 
         self.assertEqual(reader.read_8(), 0x14)
@@ -53,6 +54,21 @@ class RuntimePatchTests(unittest.TestCase):
         install_v6_rebuild_knowledge()
 
         self.assertTrue(hasattr(PacketReader, "read_bytes"))
+
+
+class ExhaustiveKnowledgeHarvestTests(unittest.TestCase):
+    def test_generated_harvest_loads_packet_and_script_inventory(self):
+        knowledge = V6RebuildKnowledge()
+        harvest = knowledge.summary()["exhaustiveKnowledge"]
+
+        self.assertTrue(harvest["available"])
+        self.assertTrue(harvest["roots"]["B"]["available"])
+        self.assertFalse(harvest["roots"]["F"]["available"])
+        self.assertGreater(harvest["summary"]["filesScanned"], 0)
+        self.assertGreater(harvest["sourceInventory"]["categoryCounts"].get("packet", 0), 0)
+        self.assertGreater(harvest["packetKnowledge"]["uniqueKeyCount"], 0)
+        self.assertGreater(harvest["scriptKnowledge"]["routeCandidateCount"], 0)
+        self.assertIn("decompile-observed", harvest["sourceInventory"]["proofTierCounts"])
 
 
 if __name__ == "__main__":
