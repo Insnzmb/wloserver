@@ -1939,13 +1939,14 @@ HTML_CONTENT = """<!DOCTYPE html>
                         <td>🗺️ ${p.map_id}</td>
                         <td>${p.x}, ${p.y}</td>
                         <td>${p.ip}</td>
-                        <td class="player-actions">
+                         <td class="player-actions">
                             <button onclick="openWarpModal('${p.name}')">Teleport</button>
                             <button onclick="openLevelModal('${p.name}', ${p.level})">Level</button>
                             <button onclick="openGoldModal('${p.name}', ${p.gold})">Gold</button>
                             <button onclick="openItemModal('${p.name}')">Item</button>
                             <button onclick="openVehicleModal('${p.name}')">Vehicle</button>
                             <button onclick="openPetModal('${p.name}')">Pet</button>
+                            <button style="background:${p.is_gm ? 'linear-gradient(135deg,#ecc94b,#d69e2e)' : 'linear-gradient(135deg,#a0aec0,#718096)'}; color:white;" onclick="toggleGM('${p.name}')">${p.is_gm ? '⭐ GM' : 'Make GM'}</button>
                             <button style="background:linear-gradient(135deg,#667eea,#764ba2);" onclick="openDetailModal('${p.name}')">&#128203; Details</button>
                             <button class="btn-danger" onclick="kickPlayer('${p.name}')">Kick</button>
                         </td>
@@ -2027,6 +2028,24 @@ HTML_CONTENT = """<!DOCTYPE html>
                 fetchPlayers();
             } catch(e) {
                 alert("Failed to kick player.");
+            }
+        }
+
+        async function toggleGM(name) {
+            try {
+                const res = await fetch('/api/players/toggle_gm', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: name})
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    fetchPlayers();
+                } else {
+                    alert("Failed: " + data.message);
+                }
+            } catch(e) {
+                alert("Failed to toggle GM status.");
             }
         }
 
@@ -2392,6 +2411,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                         <td>${user.id}</td>
                         <td style="font-weight: 600; color: var(--accent-cyan);">${user.username}</td>
                         <td>
+                            <button style="background:${user.is_gm ? 'linear-gradient(135deg,#ecc94b,#d69e2e)' : 'linear-gradient(135deg,#a0aec0,#718096)'}; color:white; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius:4px; border:none; cursor:pointer; margin-right: 5px;" onclick="toggleUserGM(${user.id})">${user.is_gm ? '⭐ GM' : 'Make GM'}</button>
                             <button class="btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="deleteUser(${user.id}, '${user.username}')">Delete / Sil</button>
                         </td>
                     `;
@@ -2399,6 +2419,25 @@ HTML_CONTENT = """<!DOCTYPE html>
                 });
             } catch(e) {
                 console.error("Failed to fetch users", e);
+            }
+        }
+
+        async function toggleUserGM(userId) {
+            try {
+                const res = await fetch('/api/players/toggle_gm', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: userId})
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    fetchUsers();
+                    fetchPlayers();
+                } else {
+                    alert("Failed: " + data.message);
+                }
+            } catch(e) {
+                alert("Failed to toggle GM status.");
             }
         }
 
@@ -2862,6 +2901,7 @@ class WebAdminServer:
         self.app.router.add_post('/api/players/delete_item', self.handle_delete_item)
         self.app.router.add_post('/api/players/delete_pet', self.handle_delete_pet)
         self.app.router.add_post('/api/players/pet_level', self.handle_pet_level)
+        self.app.router.add_post('/api/players/toggle_gm', self.handle_toggle_gm)
         self.app.router.add_get('/api/db/tables', self.handle_db_tables)
         self.app.router.add_get('/api/db/query', self.handle_db_query)
         self.app.router.add_post('/api/db/update', self.handle_db_update)
@@ -2892,9 +2932,54 @@ class WebAdminServer:
                 "map_id": session.map_id,
                 "x": session.x,
                 "y": session.y,
-                "ip": session.ip
+                "ip": session.ip,
+                "is_gm": getattr(session, 'is_gm', False)
             })
         return web.json_response(players)
+
+    async def handle_toggle_gm(self, request):
+        try:
+            data = await request.json()
+            name = data.get('name', '').strip()
+            user_id = data.get('user_id')
+            
+            # Query User ID and current GM status
+            with self.game_server.db.get_connection() as conn:
+                if user_id is not None:
+                    row = conn.execute("SELECT id, is_gm FROM users WHERE id = ?", (user_id,)).fetchone()
+                elif name:
+                    row = conn.execute("""
+                        SELECT u.id, u.is_gm FROM users u
+                        JOIN characters c ON c.user_id = u.id
+                        WHERE c.name = ?
+                    """, (name,)).fetchone()
+                else:
+                    return web.json_response({"status": "error", "message": "Missing character name or user_id"}, status=400)
+                
+                if not row:
+                    return web.json_response({"status": "error", "message": "User not found in database"}, status=404)
+                    
+                target_user_id = row['id']
+                current_gm = row['is_gm']
+                new_gm = 0 if current_gm == 1 else 1
+                
+                conn.execute("UPDATE users SET is_gm = ? WHERE id = ?", (new_gm, target_user_id))
+                conn.commit()
+                
+            # Update online session if they are online
+            for session in list(self.game_server.active_sessions):
+                if session.user_id == target_user_id:
+                    session.is_gm = (new_gm == 1)
+                    from server.network import PacketWriter
+                    # Send overlay chat message to target informing them
+                    msg_text = "Your GM privileges have been activated!" if session.is_gm else "Your GM privileges have been deactivated."
+                    await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string(msg_text))
+                    break
+                    
+            logger.info(f"[WebAdmin] Toggled GM status for User {target_user_id} to {new_gm == 1}")
+            return web.json_response({"status": "success", "is_gm": new_gm == 1})
+        except Exception as e:
+            return web.json_response({"status": "error", "message": str(e)}, status=500)
 
     async def handle_update_config(self, request):
         try:

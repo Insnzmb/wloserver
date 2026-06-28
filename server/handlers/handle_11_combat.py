@@ -26,4 +26,23 @@ async def handle(server, session, reader):
         npc_id = raw_target_id & 0xFFFF
         npc_click_id = reader.read_16()
         logger.info(f"[{session.char_name}] Combat request: pk_type={pk_type} npc_id={npc_id} npc_click={npc_click_id}")
+        
+        # PK / PVP challenge distance verification
+        if pk_type == 3:
+            target_session = server.players.get(raw_target_id)
+            if target_session:
+                if target_session.map_id != session.map_id:
+                    logger.warning(f"[{session.char_name}] PK blocked: target not on same map")
+                    return
+                # Distance check (0x10f = 271 pixels limit)
+                if abs(session.x - target_session.x) > 271 or abs(session.y - target_session.y) > 271:
+                    logger.warning(f"[{session.char_name}] PK blocked: target too far X={abs(session.x - target_session.x)} Y={abs(session.y - target_session.y)}")
+                    return
+                logger.info(f"[{session.char_name}] PK challenge verified against {target_session.char_name}")
+                await server._start_pvp_battle(session, target_session)
+                return
+            else:
+                logger.warning(f"[{session.char_name}] PK blocked: target player ID {raw_target_id} not found")
+                return
+
         await server._start_pve_battle(session, npc_click_id, npc_id)

@@ -13,6 +13,19 @@ async def handle(server, session, reader):
 
     battle_id = getattr(session, 'pvp_battle_id', None)
     if battle_id is None or battle_id not in server.active_battles:
+        # Handle Spectate (7/8) or Join Battle (1/2) outside active battle state
+        from server.network import PacketWriter
+        if sub in (7, 8):  # Spectate Battle
+            logger.info(f"[{session.char_name}] Spectating request received outside battle.")
+            # Echo failure/cancel response to prevent client hang
+            writer = PacketWriter().write_8(50).write_8(7).write_8(0)
+            await session.send_packet(writer)
+            return
+        elif sub in (1, 2):  # Join Battle/PK challenge
+            logger.info(f"[{session.char_name}] Join Battle/PK challenge received outside battle.")
+            writer = PacketWriter().write_8(50).write_8(sub).write_8(0)
+            await session.send_packet(writer)
+            return
         logger.warning(f"[{session.char_name}] AC50 but not in battle, raw={raw_data.hex()}")
         return
 
@@ -77,9 +90,16 @@ async def handle(server, session, reader):
     }
 
     # Expected participants to submit action
-    expected_coords = [(4, 2)]
-    if battle.get('pet') is not None and battle['pet']['hp'] > 0:
-        expected_coords.append((3, 2))
+    if battle.get('is_pvp'):
+        expected_coords = [(4, 2), (2, 2)]
+        if battle.get('pet') is not None and battle['pet']['hp'] > 0:
+            expected_coords.append((3, 2))
+        if battle.get('target_pet') is not None and battle['target_pet']['hp'] > 0:
+            expected_coords.append((1, 2))
+    else:
+        expected_coords = [(4, 2)]
+        if battle.get('pet') is not None and battle['pet']['hp'] > 0:
+            expected_coords.append((3, 2))
 
     logger.info(f"[{session.char_name}] Buffered action from ({src_x},{src_y}): {action_type} skill={skill_id}. "
                 f"Pending: {list(battle['pending_actions'].keys())}, Expected: {expected_coords}")
@@ -88,4 +108,7 @@ async def handle(server, session, reader):
     all_received = all(coord in battle['pending_actions'] for coord in expected_coords)
     if all_received:
         logger.info(f"[{session.char_name}] All actions received. Resolving turn {battle['turn'] + 1}")
-        await server._resolve_pve_turn(session, battle)
+        if battle.get('is_pvp'):
+            await server._resolve_pvp_turn(session, battle)
+        else:
+            await server._resolve_pve_turn(session, battle)

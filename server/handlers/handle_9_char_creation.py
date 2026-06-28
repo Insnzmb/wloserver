@@ -36,6 +36,19 @@ async def handle(server, session, reader):
         int_val = reader.read_8()  # int
         con_val = reader.read_8()  # con
         
+        # Validate stats distribution (maximum of 5 starting points)
+        stat_sum = str_val + agi_val + wis_val + int_val + con_val
+        if stat_sum > 5 or any(s < 0 for s in (str_val, agi_val, wis_val, int_val, con_val)):
+            logger.warning(f"[Char] Hacked packet detected! Stat sum {stat_sum} exceeds 5.")
+            await session.send_packet(PacketWriter().write_8(0).write_8(30))
+            return
+
+        # Validate name existence and length
+        if not session.char_name or len(session.char_name) < 4 or len(session.char_name) > 14:
+            logger.warning(f"[Char] Invalid name length for character creation.")
+            await session.send_packet(PacketWriter().write_8(0).write_8(30))
+            return
+            
         cipher = ""
         if not session.cipher:
             cipher = reader.read_string()
@@ -52,6 +65,7 @@ async def handle(server, session, reader):
             hair_color, skin_color, clothing_color, eye_color, element, cipher,
             str_val=str_val, con_val=con_val, int_val=int_val, wis_val=wis_val, agi_val=agi_val
         )
+
         
         if char_id:
             logger.info(f"[Char] Character '{session.char_name}' created in slot {slot}")

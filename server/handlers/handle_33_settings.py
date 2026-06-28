@@ -24,3 +24,10 @@ async def handle(server, session, reader):
             
         resp = PacketWriter().write_8(33).write_8(1).write_8(setting_type).write_8(val)
         await session.send_packet(resp)
+    elif sub == 3:
+        mask = reader.read_8()
+        session.chat_channels_mask = mask
+        logger.info(f"[{session.char_name}] Updated chat channels mask: {mask}")
+        resp = PacketWriter().write_8(33).write_8(3).write_8(mask)
+        await session.send_packet(resp)
+        server.save_player_to_db(session)

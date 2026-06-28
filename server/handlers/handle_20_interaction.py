@@ -10,6 +10,19 @@ ACTION_CODES = [20]
 async def handle(server, session, reader):
     """Processes portals, chest, and dialog clicks (AC 20)."""
     sub = reader.read_8()
+    
+    # General constraints based on client findings
+    if getattr(session, 'is_fishing', False):
+        logger.warning(f"[{session.char_name}] Interaction blocked: Player is currently fishing.")
+        await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Fishing, can't act"))
+        await session.send_packet(PacketWriter().write_8(20).write_8(8))
+        return
+    if getattr(session, 'is_remote_control', False):
+        logger.warning(f"[{session.char_name}] Interaction blocked: Remote control active.")
+        await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Can't perform during remote control"))
+        await session.send_packet(PacketWriter().write_8(20).write_8(8))
+        return
+        
     if sub == 8:  # Portal Collision Warp Request
         portal_id = reader.read_16()
         print(f"[PORTAL-RAW] {session.char_name} map={session.map_id} pos=({session.x},{session.y}) portal_id={portal_id} raw={reader.data.hex()}")
@@ -68,6 +81,14 @@ async def handle(server, session, reader):
                 break
         
         if npc:
+            # Distance check (0xa9 = 169 pixels limit)
+            npc_x = npc.get('x', 0)
+            npc_y = npc.get('y', 0)
+            if abs(session.x - npc_x) > 169 or abs(session.y - npc_y) > 169:
+                logger.warning(f"[{session.char_name}] NPC interaction blocked: NPC too far X={abs(session.x - npc_x)} Y={abs(session.y - npc_y)}")
+                await session.send_packet(PacketWriter().write_8(20).write_8(8))  # Release client lock
+                return
+
             # --- DOOR / PORTAL TRIGGER CHECK ---
             linked_portals = npc.get('linked_portals', [])
             if linked_portals:
@@ -102,7 +123,16 @@ async def handle(server, session, reader):
                     row = conn.execute("SELECT * FROM npc_data WHERE id = ?", (db_id,)).fetchone()
                 
                 if not row:
-                    dec_no_offset = (npc_id & 0xFFFF) ^ 0x5209
+                    # Pre-decode client-side special template ID mappings
+                    client_mappings = {
+                        0x908e: 0x5209,
+                        0x9092: 0x9090,
+                        0x9093: 0x9091,
+                        0x9094: 0x9095,
+                        0x9096: 0x9097
+                    }
+                    mapped_npc_id = client_mappings.get(npc_id & 0xFFFF, npc_id)
+                    dec_no_offset = (mapped_npc_id & 0xFFFF) ^ 0x5209
                     dec_with_offset = dec_no_offset - 9
                     candidates = [
                         dec_no_offset,
@@ -514,10 +544,24 @@ async def handle(server, session, reader):
 
         await session.send_packet(PacketWriter().write_8(20).write_8(8))
         
-    elif sub == 9:  # Select dialogue option
+    elif sub == 9 or sub == 2:  # Select dialogue option (sub=9 legacy, sub=2 client-accurate)
         option_id = reader.read_8()
-        logger.info(f"[{session.char_name}] Selected dialogue option {option_id} (Hex: {hex(option_id)})")
+        logger.info(f"[{session.char_name}] Selected dialogue option {option_id} (Hex: {hex(option_id)}) (sub={sub})")
         
+        # Marriage Wedding Dress Check (Option 14: hold hands / oath)
+        if option_id == 14:
+            has_wedding_dress = False
+            for equip_id in session.equipments:
+                item_name = server.items.get(str(equip_id), "")
+                if "wedding" in item_name.lower() or "dress" in item_name.lower():
+                    has_wedding_dress = True
+                    break
+            if not has_wedding_dress:
+                logger.warning(f"[{session.char_name}] Marriage blocked: Bride needs to dress up.")
+                await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Bride needs to dress up"))
+                await session.send_packet(PacketWriter().write_8(20).write_8(8))
+                return
+
         if option_id == 0x1f:  # Option 31: Buy
             await session.send_packet(PacketWriter().write_8(27).write_8(3))
             await session.send_packet(PacketWriter().write_8(20).write_8(8))

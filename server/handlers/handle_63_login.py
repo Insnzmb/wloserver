@@ -32,11 +32,24 @@ async def handle(server, session, reader):
             await session.send_packet(fail_pkt)
             await session.send_packet(PacketWriter().write_8(1).write_8(6))
             return
+            
+        if user_data.get('banned'):
+            logger.warning(f"[Auth] Banned user '{username}' attempted login — login rejected.")
+            # Send login failed / account banned message
+            fail_pkt = PacketWriter()
+            fail_pkt.write_8(63).write_8(2)
+            await session.send_packet(fail_pkt)
+            # Send system overlay: "Account is banned"
+            sys_msg = PacketWriter().write_8(23).write_8(57).write_8(0).write_string("This account has been banned.")
+            await session.send_packet(sys_msg)
+            await session.send_packet(PacketWriter().write_8(1).write_8(6))
+            return
                 
         # user_data est valide ici
         session.user_id = user_data['id']
         session.username = user_data['username']
         session.cipher = user_data['cipher']
+        session.is_gm = user_data.get('is_gm', False)
         
         # Send Login Success
         #success_pkt = PacketWriter()

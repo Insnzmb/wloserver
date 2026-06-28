@@ -21,7 +21,9 @@ class DatabaseManager:
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT UNIQUE NOT NULL,
                     password TEXT NOT NULL,
-                    char_delete_code TEXT DEFAULT ''
+                    char_delete_code TEXT DEFAULT '',
+                    is_gm INTEGER DEFAULT 0,
+                    banned INTEGER DEFAULT 0
                 )
             """)
 
@@ -71,6 +73,13 @@ class DatabaseManager:
                 )
             """)
             
+            # Ensure GM/Banned columns exist in users table
+            for col in ['is_gm', 'banned']:
+                try:
+                    conn.execute(f"ALTER TABLE users ADD COLUMN {col} INTEGER DEFAULT 0")
+                except sqlite3.OperationalError:
+                    pass
+
             # Ensure base stats and exp columns exist in characters table
             for col in ['str', 'con', 'int', 'wis', 'agi']:
                 try:
@@ -97,6 +106,10 @@ class DatabaseManager:
                 conn.execute("ALTER TABLE characters ADD COLUMN skill_points INTEGER DEFAULT 0")
             except sqlite3.OperationalError:
                 pass
+            try:
+                conn.execute("ALTER TABLE characters ADD COLUMN chat_channels_mask INTEGER DEFAULT 31")
+            except sqlite3.OperationalError:
+                pass
             conn.commit()
 
     def register_user(self, username: str, password: str) -> tuple:
@@ -107,7 +120,7 @@ class DatabaseManager:
         try:
             with self.get_connection() as conn:
                 cursor = conn.execute(
-                    "INSERT INTO users (username, password) VALUES (?, ?)",
+                    "INSERT INTO users (username, password, is_gm, banned) VALUES (?, ?, 0, 0)",
                     (username_lower, password)
                 )
                 conn.commit()
@@ -126,6 +139,8 @@ class DatabaseManager:
                 (username_lower, password)
             ).fetchone()
             if row:
+                if row['banned'] == 1:
+                    return {"id": 0, "banned": True}
                 user_id = row['id']
                 # Check for characters in slots 1 and 2
                 char1 = conn.execute(
@@ -139,6 +154,8 @@ class DatabaseManager:
                     "id": user_id,
                     "username": row['username'],
                     "cipher": row['char_delete_code'],
+                    "is_gm": row['is_gm'] == 1,
+                    "banned": False,
                     "character1_id": char1['id'] if char1 else 0,
                     "character2_id": char2['id'] if char2 else 0,
                 }
@@ -289,6 +306,7 @@ class DatabaseManager:
                 char_dict['points'] = char_dict.get('points', 0)
                 char_dict['skill_points'] = char_dict.get('skill_points', 0)
                 char_dict['pets'] = json.loads(char_dict.get('pets', '[]') or '[]')
+                char_dict['chat_channels_mask'] = char_dict.get('chat_channels_mask', 31)
                 return char_dict
         return None
  
@@ -303,7 +321,8 @@ class DatabaseManager:
                     reborn = ?, job = ?, equipments = ?, inventory = ?,
                     skills = ?, quests = ?,
                     str = ?, con = ?, int = ?, wis = ?, agi = ?, exp = ?,
-                    pets = ?, potential = ?, points = ?, skill_points = ?
+                    pets = ?, potential = ?, points = ?, skill_points = ?,
+                    chat_channels_mask = ?
                 WHERE id = ?
             """, (
                 data.get('level', 1), data.get('element', 0), data.get('hp', 100), data.get('max_hp', 100),
@@ -319,13 +338,14 @@ class DatabaseManager:
                 data.get('potential', 0),
                 data.get('points', 0),
                 data.get('skill_points', 0),
+                data.get('chat_channels_mask', 31),
                 char_id
             ))
             conn.commit()
 
     def get_all_users(self) -> list:
         with self.get_connection() as conn:
-            rows = conn.execute("SELECT id, username FROM users").fetchall()
+            rows = conn.execute("SELECT id, username, is_gm FROM users").fetchall()
             return [dict(r) for r in rows]
 
     def delete_user(self, user_id: int):

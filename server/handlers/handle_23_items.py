@@ -15,12 +15,39 @@ async def handle(server, session, reader):
         add_item_to_inventory,
         get_equip_slot
     )
+
+    # General constraints based on client findings
+    if sub in (10, 11, 12, 3, 124, 14, 65, 51, 52, 134, 135):
+        if getattr(session, 'in_battle', False):
+            logger.warning(f"[{session.char_name}] Action {sub} blocked: Player is in battle.")
+            await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Can't repair in battle" if sub == 135 else "Can't act in battle"))
+            return
+        if getattr(session, 'is_fishing', False):
+            logger.warning(f"[{session.char_name}] Action {sub} blocked: Player is currently fishing.")
+            await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Fishing, can't act"))
+            return
+        if getattr(session, 'is_remote_control', False):
+            logger.warning(f"[{session.char_name}] Action {sub} blocked: Remote control active.")
+            await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Can't perform during remote control"))
+            return
     
     if sub == 54:
-        # Client sends this as acknowledgment after receiving the login/warp complete signal (5, 4).
-        logger.info(f"[{session.char_name}] Received warp-done ACK (23, 54) — client should now enter game")
-        session.is_warping = False
-        session.in_map = True
+        # Client sends this as acknowledgment after receiving the login/warp complete signal (5, 4), or to stop fishing
+        if getattr(session, 'is_fishing', False):
+            session.is_fishing = False
+            logger.info(f"[{session.char_name}] Stop fishing request received (23, 54)")
+            # Send stop fishing confirmation: [23, 54, 0]
+            await session.send_packet(PacketWriter().write_8(23).write_8(54).write_8(0))
+        else:
+            logger.info(f"[{session.char_name}] Received warp-done ACK (23, 54) — client should now enter game")
+            session.is_warping = False
+            session.in_map = True
+            
+    elif sub == 53:  # Start fishing request (23, 53)
+        logger.info(f"[{session.char_name}] Start fishing request received (23, 53)")
+        session.is_fishing = True
+        # Echo success response for fishing activation: [23, 53, 1]
+        await session.send_packet(PacketWriter().write_8(23).write_8(53).write_8(1))
         
     elif sub == 10:  # Move item in inventory
         src = reader.read_8()
@@ -47,7 +74,54 @@ async def handle(server, session, reader):
         item = get_item_at_slot(session, loc)
         if item:
             item_id = item['item_id']
+            item_name = server.items.get(str(item_id), "")
+            
+            # Check if it is a consumable recovery food/potion item (not equipment)
+            is_consumable = not (10000 <= item_id < 27000)
+            if is_consumable or any(x in item_name.lower() for x in ["pill", "water", "potion", "bread", "meat", "juice", "roasted"]):
+                # Determine recovery values
+                heal_hp = 0
+                heal_sp = 0
+                if any(x in item_name.lower() for x in ["pill", "meat", "bread", "noodles", "roasted", "hp"]):
+                    heal_hp = 100
+                if any(x in item_name.lower() for x in ["water", "potion", "juice", "sp", "cure"]):
+                    heal_sp = 100
+                if heal_hp == 0 and heal_sp == 0:
+                    heal_hp = 50  # Fallback recovery
+                
+                # Heal player
+                if heal_hp > 0:
+                    session.hp = min(session.max_hp, session.hp + heal_hp)
+                if heal_sp > 0:
+                    session.sp = min(session.max_sp, session.sp + heal_sp)
+                    
+                # Deduct 1 from inventory
+                remove_item_at_slot(session, loc, 1)
+                server.save_player_to_db(session)
+                
+                # Refresh inventory display:
+                await session.send_packet(server.build_inventory_packet(session))
+                await server.send_stats_update(session)
+                
+                # Send confirmation message
+                msg = f"Recovered HP+{heal_hp} SP+{heal_sp} using {item_name}"
+                await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string(msg))
+                return
+
+            if item.get('locked') or item.get('is_locked'):
+                logger.warning(f"[{session.char_name}] Action Wear blocked: Item is locked.")
+                await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Item locked, can't use"))
+                return
+
+            # Level Requirement validation based on item rank
+            props = server.item_properties.get(str(item_id))
+            if props and session.level < props.get('rank', 1):
+                logger.warning(f"[{session.char_name}] Level too low to equip {item_id}: level={session.level}, required={props.get('rank')}")
+                await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Level is not enough"))
+                return
+
             slot_idx = get_equip_slot(item_id)
+
             
             # Check if we already have something equipped in this slot
             old_equip_id = session.equipments[slot_idx]
@@ -125,6 +199,10 @@ async def handle(server, session, reader):
         if 1 <= pos <= 50 and qnt > 0:
             item = get_item_at_slot(session, pos)
             if item:
+                if item.get('locked') or item.get('is_locked'):
+                    logger.warning(f"[{session.char_name}] Action Drop blocked: Item is locked.")
+                    await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Item locked, can't use"))
+                    return
                 item_id = item['item_id']
                 
                 # Initialize map ground items if not present
@@ -206,6 +284,10 @@ async def handle(server, session, reader):
         if 1 <= pos <= 50 and qnt > 0:
             item = get_item_at_slot(session, pos)
             if item:
+                if item.get('locked') or item.get('is_locked'):
+                    logger.warning(f"[{session.char_name}] Action Destroy blocked: Item is locked.")
+                    await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Item locked, can't use"))
+                    return
                 item_id = item['item_id']
                 remove_item_at_slot(session, pos, qnt)
                 server.save_player_to_db(session)
@@ -342,6 +424,10 @@ async def handle(server, session, reader):
             if not item:
                 logger.warning(f"[{session.char_name}] Item not found at slot {slot}")
                 return
+            if item.get('locked') or item.get('is_locked'):
+                logger.warning(f"[{session.char_name}] Compounding blocked: Item in slot {slot} is locked.")
+                await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Item locked, can't use"))
+                return
             mix_items.append((slot, item))
             
         # Consume 1 of each item and notify slot changes
@@ -400,8 +486,14 @@ async def handle(server, session, reader):
             # Base rank is the minimum rank of all inputs
             lowest_rank = min(x["rank"] for x in inputs)
             
-            # Target rank varies around lowest_rank (capped at lowest_rank + 4 for standard success)
-            target_rank = max(1, lowest_rank + random.choice([-2, -1, 0, 1, 2, 3, 4]))
+            # Check if player has Junior Alchemy skill (ID 15998 or similar)
+            has_alchemy = any(sk.get('skill_id') == 15998 or sk.get('id') == 15998 for sk in getattr(session, 'skills', []) if isinstance(sk, dict))
+            
+            # Target rank varies around lowest_rank (capped at lowest_rank + 4 for standard success, higher for Alchemy)
+            if has_alchemy:
+                target_rank = max(1, lowest_rank + random.choice([-1, 0, 1, 2, 3, 4, 5]))
+            else:
+                target_rank = max(1, lowest_rank + random.choice([-3, -2, -1, 0, 1, 2, 3]))
             
             # Find all item candidates matching the target material type
             candidates = [int(iid) for iid, props in server.item_properties.items() if props["material"] == target_material]
@@ -455,5 +547,91 @@ async def handle(server, session, reader):
             logger.info(f"[{session.char_name}] Compounded {item_ids} into {result_item} x{result_amount} in slot {target_slot}")
         else:
             logger.warning(f"[{session.char_name}] Compounding failed because inventory is full.")
+            
+    elif sub == 65:  # Street Stall Open/Activate Request (0x17, 0x41)
+        logger.info(f"[{session.char_name}] Open Street Stall requested")
+        # Echo success response for stall activation
+        await session.send_packet(PacketWriter().write_8(23).write_8(65).write_8(1))
+        
+    elif sub == 99:  # Open NPC Shop Request (0x17, 99)
+        npc_id = reader.read_16() if reader.remaining_bytes() >= 2 else 0
+        logger.info(f"[{session.char_name}] NPC Shop open request for NPC ID={npc_id}")
+        # Echo success response to open NPC shop UI
+        await session.send_packet(PacketWriter().write_8(23).write_8(99).write_16(npc_id).write_8(1))
+        
+    elif sub == 51:  # Board / Ride Vehicle
+        vehicle_type = reader.read_8() if reader.remaining_bytes() > 0 else 1
+        session.riding_vehicle = True
+        session.riding_vehicle_type = vehicle_type
+        logger.info(f"[{session.char_name}] Boarded vehicle type {vehicle_type}")
+        
+        # Confirm to player: [23, 51, vehicle_type]
+        await session.send_packet(PacketWriter().write_8(23).write_8(51).write_8(vehicle_type))
+        
+        # Refresh maps appearance spawns
+        await session.send_packet(server.build_local_char_spawn(session))
+        server.broadcast_to_map(session.map_id, server.build_remote_char_spawn(session), exclude_session=session)
+        
+    elif sub == 52:  # Leave / Unboard Vehicle
+        session.riding_vehicle = False
+        session.riding_vehicle_type = 0
+        logger.info(f"[{session.char_name}] Unboarded vehicle")
+        
+        # Confirm to player: [23, 52]
+        await session.send_packet(PacketWriter().write_8(23).write_8(52))
+        
+        # Refresh maps appearance spawns
+        await session.send_packet(server.build_local_char_spawn(session))
+        server.broadcast_to_map(session.map_id, server.build_remote_char_spawn(session), exclude_session=session)
+        
+    elif sub == 134:  # Load Vehicle Fuel
+        slot = reader.read_8()
+        item = get_item_at_slot(session, slot)
+        if item:
+            item_id = item['item_id']
+            item_name = server.items.get(str(item_id), "")
+            if not any(x in item_name.lower() for x in ["fuel", "gasoline", "diesel", "oil"]):
+                logger.warning(f"[{session.char_name}] Fuel load failed: {item_name} is not suitable.")
+                await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("No suitable fuel type"))
+                return
+                
+            # Deduct fuel
+            remove_item_at_slot(session, slot, 1)
+            session.vehicle_fuel = getattr(session, 'vehicle_fuel', 0) + 100
+            if session.vehicle_fuel > 1000:
+                session.vehicle_fuel = 1000
+                
+            server.save_player_to_db(session)
+            await session.send_packet(server.build_inventory_packet(session))
+            await session.send_packet(PacketWriter().write_8(23).write_8(57).write_8(0).write_string("Vehicle fueled successfully"))
+            
+    elif sub == 135:  # Repair Vehicle Request
+        slot = reader.read_8()
+        item = get_item_at_slot(session, slot)
+        if item:
+            item_id = item['item_id']
+            item_name = server.items.get(str(item_id), "")
+            if not any(x in item_name.lower() for x in ["spanner", "repair", "wrench"]):
+                logger.warning(f"[{session.char_name}] Repair failed: {item_name} is not a valid repair tool.")
+                # Send Repair failed packet: Opcode 15, sub 23, status 3 (Repairs failed)
+                await session.send_packet(PacketWriter().write_8(15).write_8(23).write_8(3))
+                return
+                
+            # Verify vehicle is active/equipped or player is riding
+            if not getattr(session, 'riding_vehicle', False):
+                logger.warning(f"[{session.char_name}] Repair failed: Only for Vehicles.")
+                await session.send_packet(PacketWriter().write_8(15).write_8(23).write_8(3))
+                return
+                
+            # Deduct 1 repair tool
+            remove_item_at_slot(session, slot, 1)
+            session.vehicle_damage = 0  # Reset damage
+            
+            server.save_player_to_db(session)
+            await session.send_packet(server.build_inventory_packet(session))
+            
+            # Send Success: Opcode 15, sub 23, status 2 (Vehicle repaired)
+            await session.send_packet(PacketWriter().write_8(15).write_8(23).write_8(2))
+            
     else:
         logger.info(f"Unhandled AC 23 Sub-Code: {sub}, payload: {reader.data.hex()}")
