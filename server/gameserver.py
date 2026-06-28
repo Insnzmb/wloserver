@@ -225,6 +225,13 @@ class PlayerSession:
         self.potential = 0  # Character Potential (0-12)
         self.points = 0     # Distributable stat points (Attribute Points, Puan)
         self.pets = []  # List of pets: {"pet_id": id, "level": lvl, "exp": exp, ...}
+
+        # Vehicle state
+        self.riding_vehicle = False
+        self.riding_vehicle_type = 0
+        self.riding_vehicle_item_id = 0
+        self.vehicle_fuel = 0
+        self.vehicle_damage = 0
         
         # Stats details
         self._str_val = 10
