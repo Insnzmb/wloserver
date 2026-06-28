@@ -8,6 +8,8 @@ promote a behavior above the proof tiers listed here.
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from dataclasses import dataclass
 from typing import Dict, Iterable, Optional, Tuple
 
@@ -19,6 +21,14 @@ DECOMPILE_OBSERVED = "decompile-observed"
 CPU_EMULATED = "cpu-emulated"
 SYNTHETIC_ONLY = "synthetic-only"
 HYPOTHESIS = "hypothesis"
+
+PROJECT_CREDITS = {
+    "reconstruction_credit": "Insane Zombie",
+    "credit_boundary": (
+        "Insane Zombie is credited for the WLO v6 server reconstruction effort, "
+        "testing direction, evidence gathering, and project ownership context."
+    ),
+}
 
 
 @dataclass(frozen=True)
@@ -110,9 +120,31 @@ class V6RebuildKnowledge:
         self._portal_by_key: Dict[Tuple[int, int], PortalFixture] = {
             (fixture.map_id, fixture.click_id): fixture for fixture in self.PORTAL_FIXTURES
         }
+        self.exhaustive = self._load_exhaustive_knowledge()
+
+    def _load_exhaustive_knowledge(self) -> dict:
+        data_path = Path(__file__).resolve().parent / "data" / "v6_exhaustive_knowledge.json"
+        if not data_path.exists():
+            return {
+                "available": False,
+                "proofTier": HYPOTHESIS,
+                "boundary": "No generated exhaustive knowledge file is present.",
+            }
+        try:
+            with data_path.open("r", encoding="utf-8") as handle:
+                data = json.load(handle)
+        except Exception as exc:
+            return {
+                "available": False,
+                "proofTier": HYPOTHESIS,
+                "boundary": f"Generated exhaustive knowledge file could not be loaded: {exc}",
+            }
+        data["available"] = True
+        return data
 
     def summary(self) -> dict:
         return {
+            "credits": dict(PROJECT_CREDITS),
             "source": self.PROOF.source,
             "proofTier": self.PROOF.tier,
             "boundary": self.PROOF.boundary,
@@ -121,6 +153,7 @@ class V6RebuildKnowledge:
             "itemEffectCounts": dict(self.ITEM_EFFECT_COUNTS),
             "portalFixtures": [fixture.__dict__.copy() for fixture in self.PORTAL_FIXTURES],
             "blockedGates": list(self.BLOCKED_GATES),
+            "exhaustiveKnowledge": self.exhaustive,
         }
 
     def portal_fixture(self, map_id: int, click_id: int) -> Optional[PortalFixture]:
