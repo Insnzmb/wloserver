@@ -1,0 +1,185 @@
+{
+  "errors": [
+    {
+      "error": "Unterminated string starting at: line 4953 column 19 (char 249912)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-2026-06-17_0621\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4953 column 19 (char 249912)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260617_062217\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4496 column 7 (char 249993)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260617_064108\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260617_064355\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_084546\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_084637\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_084734\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_090705\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_091135\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_165555\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_170202\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_170651\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_181524\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_191527\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_213952\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260618_214814\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260620_163601\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260620_165956\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260620_172531\\client_data_api.json"
+    },
+    {
+      "error": "Unterminated string starting at: line 4226 column 7 (char 249986)",
+      "path": "B:\\WLOTest\\packet-frame-analysis\\v6-client-data-api\\client-data-api-20260620_173345\\client_data_api.json"
+    }
+  ],
+  "generatedAt": "2026-06-28T23:04:28Z",
+  "packetKnowledge": {
+    "exactByteSampleCount": 10,
+    "exactByteSamples": [
+      "3f 01 09 01",
+      "04 00 3f 01 09 01",
+      "a9 ad 92 ac a4 ac",
+      "BD C6 3F 01 09 01",
+      "bd c6 3f 01 09 01",
+      "10 6b 92 ac a4 ac",
+      "af ad 92 ac ae ad a4 af ad",
+      "02 00 3f 01 03 00 09 02 00",
+      "09 02 00",
+      "08 01 cf 01 00 00 00 00 00 00 00 00"
+    ],
+    "families": ["14", "23", "34", "39", "45", "62", "70", "74", "82", "85"],
+    "familyCount": 10,
+    "uniqueKeyCount": 10,
+    "uniqueKeys": ["06-15", "48-24", "04-58", "31-23", "59-07", "42-09", "43-20", "44-28", "06-17", "0x3f,4"]
+  },
+  "proofBoundary": {
+    "boundary": "This file imports evidence and known scripts into the Python server. Rows remain at their source proof tier; static/decompiled/client-compatible data is not exact original server reply proof unless exact bytes or decoded request/response artifacts are present.",
+    "proofTier": "decompile-observed + packet-proven + runtime-proven + cpu-emulated + synthetic-only"
+  },
+  "proofCounts": {
+    "cpu-emulated": 3975,
+    "decompile-observed": 8670,
+    "hypothesis": 161,
+    "packet-proven": 123871,
+    "runtime-proven": 1458,
+    "state-proven": 1890,
+    "synthetic-only": 4735
+  },
+  "roots": {
+    "B": {
+      "available": true,
+      "path": "B:\\WLOTest",
+      "scanPaths": [
+        "B:\\WLOTest\\packet-frame-analysis",
+        "B:\\WLOTest\\runtime-proof",
+        "B:\\WLOTest\\v6-full",
+        "B:\\WLOTest\\Wonderland Onlinev6_full_decomp_20260514-144112",
+        "B:\\WLOTest\\preproof-server",
+        "B:\\WLOTest\\RUNTIME_PROOF_STATUS.md",
+        "B:\\WLOTest\\SERVER_BUILD_HANDOFF.md",
+        "B:\\WLOTest\\SERVER_BUILD_INPUTS.json"
+      ]
+    },
+    "F": {
+      "available": false,
+      "boundary": "Root was not mounted or accessible during this harvest.",
+      "path": "F:\\_WLO_SUPER_ORGANIZED",
+      "proofTier": "hypothesis"
+    }
+  },
+  "scriptKnowledge": {
+    "opcodeCounts": {
+      "answer-menu-branch-candidate": 28624,
+      "battle/control-candidate": 1143,
+      "dialog-text-pointer-candidate": 16666,
+      "effect/control-candidate": 70,
+      "event/control-candidate": 89,
+      "inventory/item-command-candidate": 1705,
+      "map-reference-command-candidate": 500,
+      "quest/scalar-candidate": 341,
+      "shop/reward/control-candidate": 158,
+      "state/reference-command-candidate": 3256,
+      "state/scalar-candidate": 9727,
+      "unknown-dialog-ptr": 1165
+    },
+    "routeCandidateCount": 10,
+    "routeCandidates": [
+      {"clickId": null, "mapId": "10000", "name": "Residence", "proofTier": "decompile-observed", "sceneId": "10000", "source": "map_reply_byte_recovery.csv"},
+      {"clickId": null, "mapId": "10001", "name": "Deck", "proofTier": "decompile-observed", "sceneId": "10001", "source": "map_reply_byte_recovery.csv"},
+      {"clickId": null, "mapId": "10002", "name": "Cabin", "proofTier": "packet-proven", "sceneId": "10002", "source": "map_reply_byte_recovery.csv"},
+      {"clickId": null, "mapId": "10003", "name": "Newbie Island", "proofTier": "packet-proven", "sceneId": "10003", "source": "map_reply_byte_recovery.csv"},
+      {"clickId": null, "mapId": "10004", "name": "Prison", "proofTier": "decompile-observed", "sceneId": "10004", "source": "map_reply_byte_recovery.csv"},
+      {"clickId": null, "mapId": "10005", "name": "Test", "proofTier": "decompile-observed", "sceneId": "10005", "source": "map_reply_byte_recovery.csv"},
+      {"clickId": null, "mapId": "10006", "name": "Test", "proofTier": "decompile-observed", "sceneId": "10006", "source": "map_reply_byte_recovery.csv"},
+      {"clickId": null, "mapId": "10007", "name": "Test", "proofTier": "decompile-observed", "sceneId": "10007", "source": "map_reply_byte_recovery.csv"},
+      {"clickId": null, "mapId": "10008", "name": "Test", "proofTier": "decompile-observed", "sceneId": "10008", "source": "map_reply_byte_recovery.csv"},
+      {"clickId": null, "mapId": "10009", "name": "Maze", "proofTier": "decompile-observed", "sceneId": "10009", "source": "map_reply_byte_recovery.csv"}
+    ]
+  },
+  "sourceInventory": {
+    "categoryCounts": {"client_assets": 140, "decompile": 84, "general": 3, "items_battle_skills": 31, "packet": 9733, "runtime": 2245, "scripts": 18, "server_harness": 85},
+    "numericFacts": {"alogin-ptr-fun-00410450-vtable.json:entries.count": 32, "alogin-ptr-fun-00410450-vtable.json:entries[0].slot": 0, "alogin-ptr-fun-00410450-vtable.json:entries[1].slot": 1, "alogin-ptr-fun-00410450-vtable.json:entries[2].slot": 2, "alogin-ptr-fun-00410450-vtable.json:entries[3].slot": 3, "alogin-ptr-fun-00410450-vtable.json:entries[4].slot": 4, "alogin-ptr-fun-00410450-vtable.json:entries[5].slot": 5, "alogin-ptr-fun-00410450-vtable.json:entries[6].slot": 6, "alogin-ptr-fun-00410450-vtable.json:entries[7].slot": 7, "alogin-ptr-fun-00410450-vtable.json:entries[8].slot": 8},
+    "proofTierCounts": {"cpu-emulated": 1402, "decompile-observed": 358, "hypothesis": 7722, "packet-proven": 876, "runtime-proven": 1827, "state-proven": 8, "synthetic-only": 146},
+    "sources": [
+      {"category": "packet", "mtimeUtc": "2026-06-15T07:46:21Z", "proofTier": "hypothesis", "relativePath": "packet-frame-analysis/alogin-ptr-fun-00410450-vtable.csv", "root": "B", "sha256": "3e1ef8b23d0f5a7f5e933b8ba9d39fab21929b7f5bb186428d8a265ca2aba492", "size": 1411},
+      {"category": "packet", "mtimeUtc": "2026-06-15T07:46:21Z", "proofTier": "hypothesis", "relativePath": "packet-frame-analysis/alogin-ptr-fun-00410450-vtable.json", "root": "B", "sha256": "485f6d8b4cd6387a8f93bbf98f385d6dea67f0d5c3dfe297744f3355d1e28ae9", "size": 5229},
+      {"category": "packet", "mtimeUtc": "2026-06-17T03:43:08Z", "proofTier": "hypothesis", "relativePath": "packet-frame-analysis/argc2-hidden-stack-args.csv", "root": "B", "sha256": "bff4a9a9f37d5e2e73de56f3bb542c7933cb2cabe9857a88ec49d9f00876dbbc", "size": 1452}
+    ]
+  },
+  "summary": {
+    "bytesScanned": 1681821382,
+    "csvRowsScanned": 9641358,
+    "errorCount": 504,
+    "filesScanned": 12339,
+    "sourcesRecorded": 3
+  }
+}
